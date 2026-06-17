@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Creative Trail Map — Bantul Creative Village</title>
+  <meta name="description" content="Jelajahi peta kreatif Bantul sambil berkarya. Temukan lokasi pengrajin, seniman, dan komunitas kreatif di seluruh Bantul." />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/components.css" />
+</head>
+<body>
+
+  <!-- ══ NAVIGATION ════════════════════════════════════════ -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-inner">
+
+      <a href="index.html" class="nav-logo" aria-label="Bantul Creative Home">
+        <div class="nav-logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <div class="nav-logo-text">
+          <span class="brand-name">Bantul Creative</span>
+          <span class="brand-sub">Freelancer Trail</span>
+        </div>
+      </a>
+
+      <div class="nav-tabs" role="tablist">
+        <a href="ai-match.html"   class="nav-tab" role="tab" id="tab-ai">AI Match</a>
+        <a href="index.html"      class="nav-tab" role="tab" id="tab-market">Marketplace</a>
+        <a href="trail-map.html"  class="nav-tab" role="tab" id="tab-trail">Trail Map</a>
+        <a href="portfolio.html"  class="nav-tab" role="tab" id="tab-portfolio">Impact Portfolio</a>
+      </div>
+
+      <div class="nav-right">
+        <button class="notif-btn" aria-label="Notifikasi">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+          <span class="notif-badge" aria-label="3 notifikasi">3</span>
+        </button>
+        <div class="user-pill" aria-label="Profil pengguna Nazwa">
+          <div class="user-avatar">NS</div>
+          <span class="user-name">Nazwa</span>
+        </div>
+      </div>
+
+    </div>
+  </nav>
+
+  <!-- ══ PAGE ══════════════════════════════════════════════ -->
+  <main class="page-wrapper">
+    <div class="container">
+
+      <!-- Sub-header -->
+      <section class="subheader" aria-label="Trail Map Header">
+        <h1>Creative Trail Map</h1>
+        <p>Jelajahi Bantul sambil berkarya — temukan komunitas kreatif, pengrajin, dan seniman lokal di setiap sudut.</p>
+      </section>
+
+      <!-- Map Visual -->
+      <section class="map-section" aria-label="Peta kreatif Bantul">
+        <div class="map-container" id="map-container" role="img" aria-label="Peta visual lokasi kreatif Bantul">
+          <!-- Center Pin -->
+          <div class="map-center-pin">
+            <div class="map-center-dot"></div>
+            <span class="map-center-label">Bantul Creative Trail</span>
+          </div>
+          <!-- Dynamic Location Pins -->
+          <div class="map-pins-layer" id="map-pins" aria-label="Titik lokasi kreatif">
+            <!-- Rendered by app.js -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Location Cards Grid -->
+      <div class="section-title-row">
+        <h2 class="section-title">Semua Lokasi Kreatif</h2>
+        <span class="section-count">6 lokasi ditemukan</span>
+      </div>
+
+      <div class="trail-grid" id="trail-grid" role="list" aria-label="Daftar lokasi kreatif">
+        <!-- Rendered by app.js -->
+      </div>
+
+    </div>
+  </main>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 10);
+    });
+  </script>
+</body>
+</html>
