@@ -3,121 +3,195 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Challenge Marketplace — Bantul Creative Village</title>
-  <meta name="description" content="Jelajahi ratusan tantangan kreatif dari UMKM dan komunitas Bantul. Temukan proyek sesuai keahlianmu dan mulai berkarya." />
-  <link rel="stylesheet" href="css/style.css" />
-  <link rel="stylesheet" href="css/components.css" />
+  <title>Masuk — Bantul Creative Village Freelancer Trail</title>
+  <meta name="description" content="Masuk ke platform Bantul Creative Village. Temukan proyek lokal, kembangkan portfolio, dan berdampak nyata bagi budaya daerah." />
+  <link rel="stylesheet" href="css/login.css" />
 </head>
 <body>
 
-  <!-- ══ NAVIGATION ════════════════════════════════════════ -->
-  <nav class="navbar" id="navbar">
-    <div class="nav-inner">
+  <!-- ══ BACKGROUND DECOR ══════════════════════════════════ -->
+  <div class="bg-decor" aria-hidden="true">
+    <div class="bg-circle bg-circle-1"></div>
+    <div class="bg-circle bg-circle-2"></div>
+    <div class="bg-circle bg-circle-3"></div>
+  </div>
 
-      <a href="index.html" class="nav-logo" aria-label="Bantul Creative Home">
-        <div class="nav-logo-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
-          </svg>
-        </div>
-        <div class="nav-logo-text">
-          <span class="brand-name">Bantul Creative</span>
-          <span class="brand-sub">Freelancer Trail</span>
-        </div>
-      </a>
+  <!-- ══ LOGIN CARD ════════════════════════════════════════ -->
+  <div class="login-card" role="main">
 
-      <div class="nav-tabs" role="tablist">
-        <a href="ai-match.html"   class="nav-tab" role="tab" id="tab-ai">AI Match</a>
-        <a href="index.html"      class="nav-tab" role="tab" id="tab-market">Marketplace</a>
-        <a href="trail-map.html"  class="nav-tab" role="tab" id="tab-trail">Trail Map</a>
-        <a href="portfolio.html"  class="nav-tab" role="tab" id="tab-portfolio">Impact Portfolio</a>
+    <!-- ── LEFT PANEL (Branding) ─────────────────────────── -->
+    <aside class="login-left" aria-label="Informasi platform">
+
+      <!-- Decorative circles (inside green panel) -->
+      <div class="left-decor" aria-hidden="true">
+        <div class="left-circle left-circle-1"></div>
+        <div class="left-circle left-circle-2"></div>
+        <div class="left-circle left-circle-3"></div>
+        <div class="left-circle left-circle-4"></div>
       </div>
 
-      <div class="nav-right">
-        <button class="notif-btn" aria-label="Notifikasi">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+      <!-- Logo -->
+      <div class="left-logo">
+        <div class="left-logo-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+            <path d="M2 17l10 5 10-5"/>
+            <path d="M2 12l10 5 10-5"/>
           </svg>
-          <span class="notif-badge" aria-label="3 notifikasi">3</span>
-        </button>
-        <div class="user-pill" aria-label="Profil pengguna admin">
-          <div class="user-avatar">A</div>
-          <span class="user-name">admin123</span>
+        </div>
+        <div class="left-logo-text">
+          <span class="left-logo-brand">Bantul Creative</span>
+          <span class="left-logo-sub">Village Freelancer Trail</span>
         </div>
       </div>
 
-    </div>
-  </nav>
+      <!-- Headline -->
+      <div class="left-body">
+        <h1 class="left-headline">Wujudkan Potensi&nbsp;Kreatifmu.</h1>
+        <p class="left-desc">
+          Platform freelancer komunitas Bantul — temukan proyek lokal,
+          kembangkan portfolio, dan berdampak nyata bagi budaya daerah.
+        </p>
+      </div>
 
-  <!-- ══ PAGE ══════════════════════════════════════════════ -->
-  <main class="page-wrapper">
-    <div class="container">
-
-      <!-- Sub-header -->
-      <section class="subheader" aria-label="Marketplace Header">
-        <div class="subheader-row">
-          <div>
-            <h1>Challenge Marketplace</h1>
-            <p>Temukan tantangan kreatif dari UMKM dan komunitas Bantul yang menunggumu.</p>
-          </div>
+      <!-- Stats -->
+      <div class="left-stats" aria-label="Statistik platform">
+        <div class="stat-item">
+          <span class="stat-value">120+</span>
+          <span class="stat-label">Freelancer</span>
         </div>
-        <div class="filter-row">
-          <div class="search-wrap">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-            </svg>
+        <div class="stat-item">
+          <span class="stat-value">48</span>
+          <span class="stat-label">Proyek Aktif</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-value">15</span>
+          <span class="stat-label">Komunitas</span>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- ── RIGHT PANEL (Form) ─────────────────────────────── -->
+    <section class="login-right" aria-label="Form masuk">
+
+      <!-- Header -->
+      <div class="form-header">
+        <h2 class="form-title">Selamat Datang! 👋</h2>
+        <p class="form-subtitle">Masuk ke akun Bantul Creative Anda</p>
+      </div>
+
+      <!-- Form -->
+      <form id="login-form" novalidate>
+
+        <!-- Email -->
+        <div class="form-group">
+          <label for="email" class="form-label">Alamat Email</label>
+          <div class="input-wrap">
+            <span class="input-icon-left" aria-hidden="true">
+              <!-- Mail icon -->
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                   stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="4" width="20" height="16" rx="2"/>
+                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+              </svg>
+            </span>
             <input
-              type="search"
-              id="search-input"
-              class="search-input"
-              placeholder="Cari proyek, kategori, atau lokasi..."
-              aria-label="Cari proyek"
+              type="email"
+              id="email"
+              name="email"
+              class="form-input"
+              placeholder="nama@contoh.com"
+              autocomplete="email"
+              required
+              aria-label="Alamat Email"
             />
           </div>
-          <select id="status-filter" class="select-filter" aria-label="Filter status">
-            <option value="">Semua Status</option>
-            <option value="Open">Open</option>
-            <option value="In Review">In Review</option>
-            <option value="Closed">Closed</option>
-          </select>
-          <select id="category-filter" class="select-filter" aria-label="Filter kategori">
-            <option value="">Semua Kategori</option>
-            <option value="Desain Grafis">Desain Grafis</option>
-            <option value="Branding">Branding</option>
-            <option value="Fotografi">Fotografi</option>
-            <option value="Videografi">Videografi</option>
-            <option value="Web Dev">Web Dev</option>
-            <option value="UI/UX">UI/UX</option>
-            <option value="Digital Marketing">Digital Marketing</option>
-            <option value="Konten">Konten</option>
-            <option value="Ilustrasi">Ilustrasi</option>
-            <option value="Seni Publik">Seni Publik</option>
-            <option value="Musik">Musik</option>
-            <option value="Audio Produksi">Audio Produksi</option>
-          </select>
         </div>
-      </section>
 
-      <!-- Projects Grid -->
-      <div class="section-title-row">
-        <h2 class="section-title">Semua Proyek</h2>
-        <span class="section-count">6 proyek tersedia</span>
-      </div>
+        <!-- Password -->
+        <div class="form-group">
+          <label for="password" class="form-label">Password</label>
+          <div class="input-wrap">
+            <span class="input-icon-left" aria-hidden="true">
+              <!-- Lock icon -->
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                   stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+            </span>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              class="form-input has-right-icon"
+              placeholder="Masukkan password Anda"
+              autocomplete="current-password"
+              required
+              aria-label="Password"
+            />
+            <!-- Eye toggle button -->
+            <button
+              type="button"
+              id="eye-toggle"
+              class="input-icon-right"
+              aria-label="Tampilkan atau sembunyikan password"
+              tabindex="0"
+            >
+              <!-- Eye icon (default: visible = password hidden) -->
+              <svg id="icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+              <!-- Eye-off icon (hidden by default) -->
+              <svg id="icon-eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                   style="display:none;">
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+                <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+                <line x1="1" y1="1" x2="23" y2="23"/>
+              </svg>
+            </button>
+          </div>
+        </div>
 
-      <div class="marketplace-grid" id="marketplace-grid" role="list" aria-label="Daftar proyek marketplace">
-        <!-- Rendered by app.js -->
-      </div>
+        <!-- Options row -->
+        <div class="form-options">
+          <label class="checkbox-label" for="remember">
+            <input type="checkbox" id="remember" name="remember" />
+            Ingat saya
+          </label>
+          <a href="#" class="forgot-link" id="forgot-link">Lupa password?</a>
+        </div>
 
-    </div>
-  </main>
+        <!-- Submit -->
+        <button type="submit" id="btn-submit" class="btn-submit">
+          Masuk
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </button>
 
-  <script src="js/data.js"></script>
-  <script src="js/app.js"></script>
-  <script>
-    const navbar = document.getElementById('navbar');
-    window.addEventListener('scroll', () => {
-      navbar.classList.toggle('scrolled', window.scrollY > 10);
-    });
-  </script>
+        <!-- Divider -->
+        <div class="form-divider" aria-hidden="true">
+          <span class="divider-text">atau</span>
+        </div>
+
+        <!-- Sign-up footer -->
+        <p class="form-footer">
+          Belum punya akun?
+          <a href="#" id="register-link">Daftar di sini</a>
+        </p>
+
+      </form>
+    </section>
+
+  </div><!-- /login-card -->
+
+  <script src="js/login.js"></script>
 </body>
 </html>

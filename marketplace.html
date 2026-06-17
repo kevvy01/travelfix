@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Challenge Marketplace — Bantul Creative Village</title>
+  <meta name="description" content="Jelajahi ratusan tantangan kreatif dari UMKM dan komunitas Bantul. Temukan proyek sesuai keahlianmu dan mulai berkarya." />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/components.css" />
+</head>
+<body>
+
+  <!-- ══ NAVIGATION ════════════════════════════════════════ -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-inner">
+
+      <a href="marketplace.html" class="nav-logo" aria-label="Bantul Creative Home">
+        <div class="nav-logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <div class="nav-logo-text">
+          <span class="brand-name">Bantul Creative</span>
+          <span class="brand-sub">Freelancer Trail</span>
+        </div>
+      </a>
+
+      <div class="nav-tabs" role="tablist">
+        <a href="ai-match.html"   class="nav-tab" role="tab" id="tab-ai">AI Match</a>
+        <a href="marketplace.html" class="nav-tab active" role="tab" id="tab-market">Marketplace</a>
+        <a href="trail-map.html"  class="nav-tab" role="tab" id="tab-trail">Trail Map</a>
+        <a href="portfolio.html"  class="nav-tab" role="tab" id="tab-portfolio">Impact Portfolio</a>
+      </div>
+
+      <div class="nav-right">
+        <button class="notif-btn" aria-label="Notifikasi">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+          <span class="notif-badge" aria-label="3 notifikasi">3</span>
+        </button>
+        <div class="user-pill-wrap">
+          <div class="user-pill" id="user-pill" aria-label="Buka profil pengguna admin" role="button" tabindex="0">
+            <div class="user-avatar">A</div>
+            <span class="user-name">admin123</span>
+          </div>
+
+          <!-- ── PROFILE MODAL ──────────────────────────── -->
+          <div class="profile-modal" id="profile-modal" role="dialog" aria-modal="true" aria-label="Profil pengguna" hidden>
+
+            <!-- Header -->
+            <div class="pm-header">
+              <div class="pm-avatar">A</div>
+              <div class="pm-info">
+                <p class="pm-name">admin123</p>
+                <p class="pm-email">admin123@gmail.com</p>
+                <p class="pm-join">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                  Bergabung: Jan 2026
+                </p>
+              </div>
+            </div>
+
+            <!-- Section 1 — Skills -->
+            <div class="pm-section">
+              <p class="pm-section-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.46 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.96-4.67A2.5 2.5 0 0 1 9.5 2Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.46 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.96-4.67A2.5 2.5 0 0 0 14.5 2Z"/></svg>
+                Skill yang Dikuasai
+              </p>
+              <div class="pm-pills pm-pills--green">
+                <span>Branding</span>
+                <span>Graphic Design</span>
+                <span>Video Editing</span>
+              </div>
+            </div>
+
+            <!-- Section 2 — Interests -->
+            <div class="pm-section">
+              <p class="pm-section-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+                Minat &amp; Bidang
+              </p>
+              <div class="pm-pills pm-pills--amber">
+                <span>Pariwisata</span>
+                <span>Budaya Lokal</span>
+                <span>Kuliner</span>
+              </div>
+            </div>
+
+            <!-- Section 3 — Stats -->
+            <div class="pm-section">
+              <p class="pm-section-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                Statistik
+              </p>
+              <div class="pm-stats-row">
+                <div class="pm-stat-card">
+                  <span class="pm-stat-val">4</span>
+                  <span class="pm-stat-lbl">Proyek Selesai</span>
+                </div>
+                <div class="pm-stat-card">
+                  <span class="pm-stat-val">4.8</span>
+                  <span class="pm-stat-lbl">Rating Rata-rata</span>
+                </div>
+                <div class="pm-stat-card">
+                  <span class="pm-stat-val">128</span>
+                  <span class="pm-stat-lbl">Impact Score</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="pm-actions">
+              <button class="pm-btn pm-btn--primary" id="pm-update-skill">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                Update Skill &amp; Minat
+              </button>
+              <button class="pm-btn pm-btn--outline" id="pm-ai-rec">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="8.5" cy="16" r="1.5"/><circle cx="15.5" cy="16" r="1.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/><line x1="12" y1="3" x2="12" y2="5"/></svg>
+                Lihat Rekomendasi AI
+              </button>
+              <button class="pm-btn pm-btn--danger" id="pm-logout">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                Logout
+              </button>
+            </div>
+
+          </div><!-- /profile-modal -->
+        </div><!-- /user-pill-wrap -->
+      </div>
+
+    </div>
+  </nav>
+
+  <!-- ══ PAGE ══════════════════════════════════════════════ -->
+  <main class="page-wrapper">
+    <div class="container">
+
+      <!-- Sub-header -->
+      <section class="subheader" aria-label="Marketplace Header">
+        <div class="subheader-row">
+          <div>
+            <h1>Challenge Marketplace</h1>
+            <p>Temukan tantangan kreatif dari UMKM dan komunitas Bantul yang menunggumu.</p>
+          </div>
+        </div>
+        <div class="filter-row">
+          <div class="search-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input
+              type="search"
+              id="search-input"
+              class="search-input"
+              placeholder="Cari proyek, kategori, atau lokasi..."
+              aria-label="Cari proyek"
+            />
+          </div>
+          <select id="status-filter" class="select-filter" aria-label="Filter status">
+            <option value="">Semua Status</option>
+            <option value="Open">Open</option>
+            <option value="In Review">In Review</option>
+            <option value="Closed">Closed</option>
+          </select>
+          <select id="category-filter" class="select-filter" aria-label="Filter kategori">
+            <option value="">Semua Kategori</option>
+            <option value="Desain Grafis">Desain Grafis</option>
+            <option value="Branding">Branding</option>
+            <option value="Fotografi">Fotografi</option>
+            <option value="Videografi">Videografi</option>
+            <option value="Web Dev">Web Dev</option>
+            <option value="UI/UX">UI/UX</option>
+            <option value="Digital Marketing">Digital Marketing</option>
+            <option value="Konten">Konten</option>
+            <option value="Ilustrasi">Ilustrasi</option>
+            <option value="Seni Publik">Seni Publik</option>
+            <option value="Musik">Musik</option>
+            <option value="Audio Produksi">Audio Produksi</option>
+          </select>
+        </div>
+      </section>
+
+      <!-- Projects Grid -->
+      <div class="section-title-row">
+        <h2 class="section-title">Semua Proyek</h2>
+        <span class="section-count">6 proyek tersedia</span>
+      </div>
+
+      <div class="marketplace-grid" id="marketplace-grid" role="list" aria-label="Daftar proyek marketplace">
+        <!-- Rendered by app.js -->
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ══ SKILL & MINAT MODAL ══════════════════════════════ -->
+  <div class="sm-backdrop" id="skill-modal-backdrop" hidden aria-hidden="true"></div>
+
+  <div class="sm-modal" id="skill-modal" role="dialog" aria-modal="true"
+       aria-labelledby="sm-modal-title" hidden>
+
+    <!-- ── STEP 1: Skills ───────────────────────────────── -->
+    <div id="skill-step-1">
+
+      <!-- Progress -->
+      <div class="sm-progress-wrap">
+        <span class="sm-badge">Update Skill &amp; Minat</span>
+        <div class="sm-progress-bar" aria-label="Langkah 1 dari 2">
+          <div class="sm-progress-fill" style="width: 50%;"></div>
+        </div>
+      </div>
+
+      <!-- Header -->
+      <div class="sm-header">
+        <span class="sm-header-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.46
+                     2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58
+                     2.5 2.5 0 0 1 1.96-4.67A2.5 2.5 0 0 1 9.5 2Z"/>
+            <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.46
+                     2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58
+                     2.5 2.5 0 0 0-1.96-4.67A2.5 2.5 0 0 0 14.5 2Z"/>
+          </svg>
+        </span>
+        <h2 class="sm-title" id="sm-modal-title">Pilih Skill yang Kamu Kuasai</h2>
+      </div>
+
+      <!-- Pill grid -->
+      <div class="sm-pill-grid" id="skill-pill-grid" role="group"
+           aria-label="Pilih skill">
+        <button class="skill-pill skill-pill--active" aria-pressed="true">Branding</button>
+        <button class="skill-pill skill-pill--active" aria-pressed="true">Graphic Design</button>
+        <button class="skill-pill skill-pill--active" aria-pressed="true">Social Media</button>
+        <button class="skill-pill" aria-pressed="false">Content Writing</button>
+        <button class="skill-pill" aria-pressed="false">Video Editing</button>
+        <button class="skill-pill" aria-pressed="false">Photography</button>
+        <button class="skill-pill" aria-pressed="false">UI/UX Design</button>
+        <button class="skill-pill" aria-pressed="false">Copywriting</button>
+        <button class="skill-pill" aria-pressed="false">Web Design</button>
+        <button class="skill-pill" aria-pressed="false">Illustration</button>
+      </div>
+
+      <!-- Hint -->
+      <p class="sm-hint">Pilih minimal 3 skill yang kamu kuasai</p>
+
+      <!-- CTA -->
+      <button class="sm-btn-primary" id="skill-btn-next">
+        Lanjut ke Minat
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </button>
+
+    </div><!-- /step-1 -->
+
+    <!-- ── STEP 2: Interests ─────────────────────────────── -->
+    <div id="skill-step-2" hidden>
+
+      <!-- Progress -->
+      <div class="sm-progress-wrap">
+        <span class="sm-badge">Langkah 2 dari 2</span>
+        <div class="sm-progress-bar" aria-label="Langkah 2 dari 2, selesai">
+          <div class="sm-progress-fill" style="width: 100%;"></div>
+        </div>
+      </div>
+
+      <!-- Header -->
+      <div class="sm-header">
+        <span class="sm-header-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <circle cx="12" cy="12" r="6"/>
+            <circle cx="12" cy="12" r="2"/>
+          </svg>
+        </span>
+        <h2 class="sm-title">Pilih Minat &amp; Bidang yang Kamu Sukai</h2>
+      </div>
+
+      <!-- Pill grid -->
+      <div class="sm-pill-grid" id="interest-pill-grid" role="group"
+           aria-label="Pilih minat">
+        <button class="interest-pill interest-pill--active" aria-pressed="true">Pariwisata</button>
+        <button class="interest-pill interest-pill--active" aria-pressed="true">Budaya Lokal</button>
+        <button class="interest-pill" aria-pressed="false">Kuliner</button>
+        <button class="interest-pill" aria-pressed="false">Kerajinan</button>
+        <button class="interest-pill" aria-pressed="false">Fashion</button>
+        <button class="interest-pill" aria-pressed="false">Digital Marketing</button>
+        <button class="interest-pill" aria-pressed="false">Edukasi</button>
+        <button class="interest-pill" aria-pressed="false">Lingkungan</button>
+      </div>
+
+      <!-- Hint -->
+      <p class="sm-hint">Pilih minimal 2 minat untuk rekomendasi yang lebih akurat</p>
+
+      <!-- CTAs -->
+      <button class="sm-btn-primary" id="skill-btn-save">Update &amp; Simpan</button>
+      <button class="sm-btn-skip" id="skill-btn-skip">Lewati untuk nanti</button>
+
+    </div><!-- /step-2 -->
+
+  </div><!-- /sm-modal -->
+  <!-- /SKILL MODAL -->
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/profile-modal.js"></script>
+  <script src="js/skill-modal.js"></script>
+  <script>
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 10);
+    });
+  </script>
+</body>
+</html>
+

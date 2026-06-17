@@ -42,7 +42,7 @@
 
     if (email === VALID_EMAIL && password === VALID_PASSWORD) {
       // ✅ Correct credentials — redirect
-      window.location.href = 'index.html';
+      window.location.href = 'marketplace.html';
     } else {
       // ❌ Wrong credentials — shake inputs & alert
       emailInput.classList.add('error');

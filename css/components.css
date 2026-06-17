@@ -732,3 +732,393 @@
   font-size: var(--fs-sm);
   color: var(--color-text-muted);
 }
+
+/* -----------------------------------------------------------
+   Profile Modal — css/components.css (appended)
+   ----------------------------------------------------------- */
+
+.user-pill-wrap { position: relative; }
+.user-pill { cursor: pointer; user-select: none; }
+
+/* Modal card */
+.profile-modal {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  width: 340px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.12), 0 6px 20px rgba(0,0,0,0.07);
+  z-index: 2000;
+  overflow: hidden;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  opacity: 0;
+  transform: translateY(-8px) scale(0.97);
+  transition: opacity 0.22s ease, transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+.profile-modal[hidden] { display: none; }
+.profile-modal.pm-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+.profile-modal::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  right: 20px;
+  width: 12px;
+  height: 12px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-bottom: none;
+  border-right: none;
+  transform: rotate(45deg);
+}
+
+/* Header */
+.pm-header {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--color-border);
+}
+.pm-avatar {
+  width: 48px; height: 48px; border-radius: 50%;
+  background: var(--color-primary); color: #fff;
+  font-size: 1rem; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 3px var(--color-primary-lt);
+}
+.pm-info { display: flex; flex-direction: column; gap: 0.18rem; min-width: 0; }
+.pm-name { font-size: 0.95rem; font-weight: 700; color: var(--color-text-h); letter-spacing: -0.02em; line-height: 1.2; }
+.pm-email { font-size: 0.75rem; color: var(--color-text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pm-join {
+  display: flex; align-items: center; gap: 0.3rem;
+  font-size: 0.72rem; color: var(--color-text-muted); font-weight: 500; margin-top: 0.1rem;
+}
+.pm-join svg { width: 12px; height: 12px; flex-shrink: 0; color: var(--color-primary); display: inline-block; }
+
+/* Sections */
+.pm-section { display: flex; flex-direction: column; gap: 0.5rem; }
+.pm-section-title {
+  display: flex; align-items: center; gap: 0.35rem;
+  font-size: 0.68rem; font-weight: 700; color: var(--color-text-muted);
+  text-transform: uppercase; letter-spacing: 0.07em;
+}
+.pm-section-title svg { width: 13px; height: 13px; flex-shrink: 0; color: var(--color-primary); display: inline-block; }
+
+/* Pills */
+.pm-pills { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.pm-pills span {
+  display: inline-flex; align-items: center;
+  padding: 3px 10px; border-radius: 9999px;
+  font-size: 0.72rem; font-weight: 600;
+  transition: transform 0.15s ease;
+}
+.pm-pills span:hover { transform: translateY(-1px); }
+.pm-pills--green span { background: var(--color-primary-lt); color: var(--color-primary-dk); }
+.pm-pills--amber span { background: #FEF3C7; color: #92400E; }
+
+/* Stats */
+.pm-stats-row { display: flex; gap: 0.5rem; }
+.pm-stat-card {
+  flex: 1; background: #F7F7F2; border: 1px solid var(--color-border);
+  border-radius: var(--radius-md); padding: 0.6rem 0.5rem;
+  display: flex; flex-direction: column; align-items: center; gap: 0.2rem;
+  text-align: center; transition: background 0.2s ease;
+}
+.pm-stat-card:hover { background: var(--color-primary-lt); }
+.pm-stat-val { font-size: 1rem; font-weight: 800; color: var(--color-text-h); letter-spacing: -0.02em; line-height: 1; }
+.pm-stat-lbl { font-size: 0.62rem; color: var(--color-text-muted); font-weight: 500; line-height: 1.3; }
+
+/* Action buttons */
+.pm-actions {
+  display: flex; flex-direction: column; gap: 0.45rem;
+  padding-top: 0.875rem; border-top: 1px solid var(--color-border);
+}
+.pm-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.45rem;
+  width: 100%; padding: 9px 16px; border-radius: var(--radius-md);
+  font-family: var(--font-family); font-size: 0.82rem; font-weight: 600;
+  cursor: pointer; border: 1.5px solid transparent;
+  transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+}
+.pm-btn svg { width: 14px; height: 14px; flex-shrink: 0; display: block; }
+.pm-btn:hover  { transform: translateY(-1px); }
+.pm-btn:active { transform: translateY(0); }
+
+.pm-btn--primary { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
+.pm-btn--primary:hover { background: var(--color-primary-dk); border-color: var(--color-primary-dk); box-shadow: var(--shadow-green); }
+
+.pm-btn--outline { background: transparent; color: var(--color-primary); border-color: var(--color-primary); }
+.pm-btn--outline:hover { background: var(--color-primary-lt); }
+
+.pm-btn--danger { background: #DC2626; color: #fff; border-color: #DC2626; }
+.pm-btn--danger:hover { background: #B91C1C; border-color: #B91C1C; box-shadow: 0 4px 16px rgba(220,38,38,0.30); }
+
+/* Responsive */
+@media (max-width: 420px) {
+  .profile-modal { width: calc(100vw - 2rem); right: -0.5rem; }
+}
+
+/* -----------------------------------------------------------
+   Skill & Minat Update Modal  (sm-*)
+   Strictly monochromatic: #2D6A4F green + neutral grays only
+   ----------------------------------------------------------- */
+
+/* -- Backdrop ---------------------------------------------- */
+.sm-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 20, 15, 0.55);
+  backdrop-filter: blur(3px);
+  z-index: 3000;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.sm-backdrop[hidden] { display: none; }
+.sm-backdrop.sm-visible { opacity: 1; }
+
+/* -- Modal Container --------------------------------------- */
+.sm-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -44%) scale(0.97);
+  width: min(480px, calc(100vw - 2rem));
+  max-height: calc(100vh - 4rem);
+  overflow-y: auto;
+  background: #FFFFFF;
+  border-radius: 20px;
+  padding: 2rem 2rem 1.75rem;
+  z-index: 3001;
+  box-shadow: 0 24px 72px rgba(0,0,0,0.16), 0 8px 24px rgba(0,0,0,0.08);
+  opacity: 0;
+  transition: opacity 0.25s ease, transform 0.28s cubic-bezier(0.22,1,0.36,1);
+}
+.sm-modal[hidden] { display: none; }
+.sm-modal.sm-visible {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* -- Progress area ----------------------------------------- */
+.sm-progress-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-bottom: 1.5rem;
+}
+
+.sm-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  background: #D8EDDF;        /* --color-primary-lt */
+  color: #1B4332;              /* --color-primary-dk */
+  border-radius: 9999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  width: fit-content;
+}
+
+.sm-progress-bar {
+  height: 6px;
+  border-radius: 9999px;
+  background: #EAE8E0;         /* muted beige track */
+  overflow: hidden;
+}
+
+.sm-progress-fill {
+  height: 100%;
+  border-radius: 9999px;
+  background: #2D6A4F;         /* --color-primary */
+  transition: width 0.4s cubic-bezier(0.4,0,0.2,1);
+}
+
+/* -- Header ----------------------------------------------- */
+.sm-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.sm-header-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: #D8EDDF;
+  color: #2D6A4F;
+  flex-shrink: 0;
+}
+
+.sm-header-icon svg {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+.sm-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #1A1A1A;
+  letter-spacing: -0.025em;
+  line-height: 1.25;
+}
+
+/* -- Pill Grid --------------------------------------------- */
+.sm-pill-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+/* Shared base for all pills in the grid */
+.skill-pill,
+.interest-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 16px;
+  border-radius: 9999px;
+  font-family: var(--font-family, 'Inter', sans-serif);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  border: 1.5px solid #D4D4C8;
+  background: #FAFAF8;
+  color: #444444;
+  transition: background 0.18s ease, color 0.18s ease,
+              border-color 0.18s ease, transform 0.14s ease,
+              box-shadow 0.18s ease;
+  line-height: 1;
+}
+
+.skill-pill:hover,
+.interest-pill:hover {
+  border-color: #2D6A4F;
+  color: #2D6A4F;
+  transform: translateY(-1px);
+}
+
+/* -- Skill active state — Forest Green ------------------- */
+.skill-pill--active {
+  background: #2D6A4F;
+  color: #ffffff;
+  border-color: #2D6A4F;
+  box-shadow: 0 2px 8px rgba(45,106,79,0.25);
+}
+
+.skill-pill--active:hover {
+  background: #1B4332;
+  border-color: #1B4332;
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+/* -- Interest active state — Earthy Ochre --------------- */
+.interest-pill--active {
+  background: #B5835A;
+  color: #ffffff;
+  border-color: #B5835A;
+  box-shadow: 0 2px 8px rgba(181,131,90,0.25);
+}
+
+.interest-pill--active:hover {
+  background: #9A6E49;
+  border-color: #9A6E49;
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+/* -- Hint text --------------------------------------------- */
+.sm-hint {
+  font-size: 0.78rem;
+  color: #888888;
+  font-weight: 400;
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+/* -- Primary CTA button ------------------------------------ */
+.sm-btn-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 13px 24px;
+  background: #2D6A4F;
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  font-family: var(--font-family, 'Inter', sans-serif);
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+  margin-bottom: 0;
+}
+
+.sm-btn-primary svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  display: block;
+}
+
+.sm-btn-primary:hover {
+  background: #1B4332;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(45,106,79,0.30);
+}
+
+.sm-btn-primary:active { transform: translateY(0); }
+
+/* -- Skip link --------------------------------------------- */
+.sm-btn-skip {
+  display: block;
+  width: 100%;
+  margin-top: 0.875rem;
+  padding: 8px;
+  background: none;
+  border: none;
+  font-family: var(--font-family, 'Inter', sans-serif);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #888888;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.18s ease;
+}
+
+.sm-btn-skip:hover { color: #2D6A4F; }
+
+/* -- Scrollbar inside modal -------------------------------- */
+.sm-modal::-webkit-scrollbar { width: 5px; }
+.sm-modal::-webkit-scrollbar-track { background: transparent; }
+.sm-modal::-webkit-scrollbar-thumb { background: #E5E5DC; border-radius: 3px; }
+
+/* -- Responsive -------------------------------------------- */
+@media (max-width: 520px) {
+  .sm-modal { padding: 1.5rem 1.25rem 1.5rem; border-radius: 16px; }
+  .sm-title { font-size: 1rem; }
+}

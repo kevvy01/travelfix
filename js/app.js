@@ -4,10 +4,9 @@
 
 document.addEventListener("DOMContentLoaded", () => {
   highlightActiveNav();
-  const path = window.location.pathname;
-  const page = path.split("/").pop() || "index.html";
+  const page = window.location.pathname.split("/").pop() || "";
 
-  if (page === "index.html" || page === "" || page === "/") {
+  if (page === "marketplace.html" || page === "index.html" || page === "") {
     renderMarketplace();
   } else if (page === "ai-match.html") {
     renderAIMatch();
@@ -20,11 +19,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // ─── Active Nav Highlight ─────────────────────────────────
 function highlightActiveNav() {
-  const path = window.location.pathname.split("/").pop() || "index.html";
+  const path = window.location.pathname.split("/").pop() || "";
   const links = document.querySelectorAll(".nav-tab");
   links.forEach((link) => {
     const href = link.getAttribute("href").split("/").pop();
-    if (href === path || (path === "" && href === "index.html")) {
+    const isMarket = (href === "marketplace.html") && (path === "marketplace.html" || path === "" || path === "index.html");
+    if (href === path || isMarket) {
       link.classList.add("active");
     }
   });
