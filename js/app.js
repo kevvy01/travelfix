@@ -11,6 +11,7 @@ if (savedTheme) {
 document.addEventListener("DOMContentLoaded", () => {
   initThemeToggle();
   highlightActiveNav();
+  initSkillModal();
   const page = window.location.pathname.split("/").pop() || "";
 
   if (page === "marketplace.html") {
@@ -313,3 +314,94 @@ function portfolioCard(p) {
     </div>
   </article>`;
 }
+
+// ─── Global: Skill & Minat Modal Logic ──────────────────
+function initSkillModal() {
+  const modal = document.getElementById('skill-modal');
+  const backdrop = document.getElementById('skill-modal-backdrop');
+
+  // Guard: if the modal HTML doesn't exist on this page, exit cleanly without error
+  if (!modal || !backdrop) return;
+
+  const step1     = document.getElementById('skill-step-1');
+  const step2     = document.getElementById('skill-step-2');
+  const btnNext   = document.getElementById('skill-btn-next');
+  const btnSave   = document.getElementById('skill-btn-save');
+  const btnSkip   = document.getElementById('skill-btn-skip');
+
+  function openModal() {
+    backdrop.hidden = false;
+    modal.hidden    = false;
+    document.body.style.overflow = 'hidden';
+    
+    // small delay so CSS transition fires
+    requestAnimationFrame(() => {
+      backdrop.classList.add('sm-visible');
+      modal.classList.add('sm-visible');
+    });
+    showStep(1);
+  }
+
+  function closeModal() {
+    backdrop.classList.remove('sm-visible');
+    modal.classList.remove('sm-visible');
+    document.body.style.overflow = '';
+    
+    modal.addEventListener('transitionend', function handler() {
+      modal.hidden    = true;
+      backdrop.hidden = true;
+      modal.removeEventListener('transitionend', handler);
+    });
+  }
+
+  function showStep(n) {
+    if (step1) step1.hidden = (n !== 1);
+    if (step2) step2.hidden = (n !== 2);
+  }
+
+  // Handle open event triggered from profile-modal.js
+  document.addEventListener('open-skill-modal', openModal);
+
+  // Directly bind update button if available
+  const pmUpdateBtn = document.getElementById('pm-update-skill');
+  if (pmUpdateBtn) {
+    pmUpdateBtn.addEventListener('click', openModal);
+  }
+
+  // Close when clicking the backdrop
+  backdrop.addEventListener('click', closeModal);
+
+  // Bind navigation / action buttons inside modal
+  if (btnNext) btnNext.addEventListener('click', () => showStep(2));
+  if (btnSave) btnSave.addEventListener('click', closeModal);
+  if (btnSkip) btnSkip.addEventListener('click', closeModal);
+
+  // Escape key closes modal
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && !modal.hidden) closeModal();
+  });
+
+  // Safe Pill Click event delegation inside grids (prevents errors and runs cleanly)
+  const skillGrid = document.getElementById('skill-pill-grid');
+  if (skillGrid) {
+    skillGrid.addEventListener('click', (e) => {
+      const pill = e.target.closest('.skill-pill');
+      if (pill) {
+        pill.classList.toggle('skill-pill--active');
+        pill.setAttribute('aria-pressed', pill.classList.contains('skill-pill--active'));
+      }
+    });
+  }
+
+  const interestGrid = document.getElementById('interest-pill-grid');
+  if (interestGrid) {
+    interestGrid.addEventListener('click', (e) => {
+      const pill = e.target.closest('.interest-pill');
+      if (pill) {
+        pill.classList.toggle('interest-pill--active');
+        pill.setAttribute('aria-pressed', pill.classList.contains('interest-pill--active'));
+      }
+    });
+  }
+}
+
