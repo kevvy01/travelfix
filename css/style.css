@@ -631,31 +631,61 @@ p {
 }
 
 @media (max-width: 768px) {
-  :root { --nav-height: 60px; }
+  :root { --nav-height: 110px; }
 
-  .nav-logo-text { display: none; }
+  .navbar {
+    height: auto;
+    padding: var(--space-3) 0;
+  }
+
+  .nav-inner {
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+
+  .nav-logo {
+    order: 1;
+  }
+
+  .nav-right {
+    order: 2;
+  }
+
   .nav-tabs {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    border-radius: 0;
-    border-top: 1px solid var(--border-color);
-    border-bottom: none;
-    padding: var(--space-2) var(--space-2);
-    justify-content: space-around;
-    background: var(--bg-primary);
-    z-index: 999;
+    order: 3;
+    width: max-content;
+    max-width: 100%;
+    margin: 0 auto;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    justify-content: flex-start;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
   }
+
+  .nav-tabs::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
+
   .nav-tab {
-    flex-direction: column;
-    gap: 2px;
-    font-size: 0.68rem;
-    padding: 6px 10px;
+    flex-shrink: 0;
+    font-size: 0.78rem;
+    padding: 6px 12px;
   }
-  .page-wrapper {
-    padding-bottom: calc(var(--space-16) + 70px);
+
+  .nav-logo-text {
+    display: flex;
   }
+
+  .nav-logo-text .brand-name {
+    font-size: 0.7rem;
+  }
+
+  .nav-logo-text .brand-sub {
+    font-size: 0.55rem;
+  }
+
   h1 { font-size: var(--fs-2xl); }
   h2 { font-size: var(--fs-xl); }
 }
