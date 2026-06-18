@@ -74,7 +74,7 @@
 
   if (btnLogout) {
     btnLogout.addEventListener('click', function () {
-      window.location.href = 'index.html';   // index.html = login page
+      window.location.href = 'login.html';   // login.html = login page
     });
   }
 

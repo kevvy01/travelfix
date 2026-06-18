@@ -2,11 +2,18 @@
 // js/app.js — DOM Rendering Logic
 // ============================================================
 
+// ─── Theme Initialization ─────────────────────────────────
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme) {
+  document.documentElement.setAttribute('data-theme', savedTheme);
+}
+
 document.addEventListener("DOMContentLoaded", () => {
+  initThemeToggle();
   highlightActiveNav();
   const page = window.location.pathname.split("/").pop() || "";
 
-  if (page === "marketplace.html" || page === "index.html" || page === "") {
+  if (page === "marketplace.html") {
     renderMarketplace();
   } else if (page === "ai-match.html") {
     renderAIMatch();
@@ -17,13 +24,27 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
+// ─── Theme Toggle Logic ───────────────────────────────────
+function initThemeToggle() {
+  const toggleBtns = document.querySelectorAll('.theme-toggle-btn');
+  toggleBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+  });
+}
+
 // ─── Active Nav Highlight ─────────────────────────────────
 function highlightActiveNav() {
   const path = window.location.pathname.split("/").pop() || "";
   const links = document.querySelectorAll(".nav-tab");
   links.forEach((link) => {
     const href = link.getAttribute("href").split("/").pop();
-    const isMarket = (href === "marketplace.html") && (path === "marketplace.html" || path === "" || path === "index.html");
+    const isMarket = (href === "marketplace.html") && (path === "marketplace.html");
     if (href === path || isMarket) {
       link.classList.add("active");
     }

@@ -6,16 +6,16 @@
 
 /* ─── CSS Variables ─────────────────────────────────────── */
 :root {
-  --color-primary:     #2D6A4F;
-  --color-primary-dk:  #1B4332;
-  --color-primary-mid: #52B788;
-  --color-primary-lt:  #D8EDDF;
-  --color-bg:          #F7F5EF;
-  --color-surface:     #FFFFFF;
-  --color-text-h:      #1A1A1A;
-  --color-text-body:   #444444;
-  --color-text-muted:  #888888;
-  --color-border:      #E5E5DC;
+  --accent-green:     #2D6A4F;
+  --accent-green-dk:  #1B4332;
+  --accent-green-mid: #52B788;
+  --accent-green-lt:  #D8EDDF;
+  --bg-primary:          #F7F5EF;
+  --bg-surface:     #FFFFFF;
+  --text-main:      #1A1A1A;
+  --text-main:   #444444;
+  --text-muted:  #888888;
+  --border-color:      #E5E5DC;
   --font-family:       'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --radius-sm:  6px;
   --radius-md:  12px;
@@ -39,8 +39,8 @@ html { scroll-behavior: smooth; font-size: 16px; }
 
 body {
   font-family: var(--font-family);
-  background-color: var(--color-bg);
-  color: var(--color-text-body);
+  background-color: var(--bg-primary);
+  color: var(--text-main);
   line-height: 1.65;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
@@ -118,7 +118,7 @@ input { font-family: inherit; }
 
 /* ─── Left Panel (Branding) ─────────────────────────────── */
 .login-left {
-  background: var(--color-primary);
+  background: var(--accent-green);
   color: #ffffff;
   padding: 2.75rem 2.5rem;
   display: flex;
@@ -252,7 +252,7 @@ input { font-family: inherit; }
 
 /* ─── Right Panel (Form) ────────────────────────────────── */
 .login-right {
-  background: var(--color-surface);
+  background: var(--bg-surface);
   padding: 2.75rem 2.5rem;
   display: flex;
   flex-direction: column;
@@ -267,7 +267,7 @@ input { font-family: inherit; }
 .form-title {
   font-size: 1.65rem;
   font-weight: 800;
-  color: var(--color-text-h);
+  color: var(--text-main);
   letter-spacing: -0.03em;
   line-height: 1.2;
   margin-bottom: 0.4rem;
@@ -275,7 +275,7 @@ input { font-family: inherit; }
 
 .form-subtitle {
   font-size: 0.875rem;
-  color: var(--color-text-muted);
+  color: var(--text-muted);
   font-weight: 400;
 }
 
@@ -288,7 +288,7 @@ input { font-family: inherit; }
   display: block;
   font-size: 0.82rem;
   font-weight: 600;
-  color: var(--color-text-h);
+  color: var(--text-main);
   margin-bottom: 0.45rem;
   letter-spacing: -0.01em;
 }
@@ -305,7 +305,7 @@ input { font-family: inherit; }
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-text-muted);
+  color: var(--text-muted);
   pointer-events: none;
   transition: color var(--trans-base);
 }
@@ -332,11 +332,11 @@ input { font-family: inherit; }
 .form-input {
   width: 100%;
   padding: 12px 14px 12px 42px;
-  border: 1.5px solid var(--color-border);
+  border: 1.5px solid var(--border-color);
   border-radius: var(--radius-md);
   background: #FAFAF8;
   font-size: 0.9rem;
-  color: var(--color-text-h);
+  color: var(--text-main);
   outline: none;
   transition: border-color var(--trans-base), box-shadow var(--trans-base), background var(--trans-base);
 }
@@ -351,18 +351,18 @@ input { font-family: inherit; }
 }
 
 .form-input:focus {
-  border-color: var(--color-primary-mid);
+  border-color: var(--accent-green-mid);
   background: #ffffff;
   box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.10);
 }
 
 .form-input:focus + .input-icon-left,
 .input-wrap:focus-within .input-icon-left {
-  color: var(--color-primary);
+  color: var(--accent-green);
 }
 
 .input-icon-right:hover {
-  color: var(--color-primary);
+  color: var(--accent-green);
   background: rgba(45, 106, 79, 0.06);
 }
 
@@ -381,7 +381,7 @@ input { font-family: inherit; }
   gap: 0.5rem;
   cursor: pointer;
   font-size: 0.82rem;
-  color: var(--color-text-body);
+  color: var(--text-main);
   font-weight: 500;
   user-select: none;
 }
@@ -389,7 +389,7 @@ input { font-family: inherit; }
 .checkbox-label input[type="checkbox"] {
   width: 16px;
   height: 16px;
-  accent-color: var(--color-primary);
+  accent-color: var(--accent-green);
   cursor: pointer;
   flex-shrink: 0;
   border-radius: 4px;
@@ -397,7 +397,7 @@ input { font-family: inherit; }
 
 .forgot-link {
   font-size: 0.82rem;
-  color: var(--color-primary);
+  color: var(--accent-green);
   font-weight: 600;
   letter-spacing: -0.01em;
   transition: color var(--trans-base);
@@ -405,7 +405,7 @@ input { font-family: inherit; }
 }
 
 .forgot-link:hover {
-  color: var(--color-primary-dk);
+  color: var(--accent-green-dk);
   text-decoration: underline;
 }
 
@@ -417,7 +417,7 @@ input { font-family: inherit; }
   justify-content: center;
   gap: 0.5rem;
   padding: 14px 24px;
-  background: var(--color-primary);
+  background: var(--accent-green);
   color: #ffffff;
   border: none;
   border-radius: var(--radius-md);
@@ -439,7 +439,7 @@ input { font-family: inherit; }
 }
 
 .btn-submit:hover {
-  background: var(--color-primary-dk);
+  background: var(--accent-green-dk);
   box-shadow: var(--shadow-green);
   transform: translateY(-1px);
 }
@@ -469,12 +469,12 @@ input { font-family: inherit; }
   content: '';
   flex: 1;
   height: 1px;
-  background: var(--color-border);
+  background: var(--border-color);
 }
 
 .divider-text {
   font-size: 0.78rem;
-  color: var(--color-text-muted);
+  color: var(--text-muted);
   font-weight: 500;
   letter-spacing: 0.02em;
 }
@@ -483,17 +483,17 @@ input { font-family: inherit; }
 .form-footer {
   text-align: center;
   font-size: 0.82rem;
-  color: var(--color-text-muted);
+  color: var(--text-muted);
 }
 
 .form-footer a {
-  color: var(--color-primary);
+  color: var(--accent-green);
   font-weight: 700;
   transition: color var(--trans-base);
 }
 
 .form-footer a:hover {
-  color: var(--color-primary-dk);
+  color: var(--accent-green-dk);
   text-decoration: underline;
 }
 
