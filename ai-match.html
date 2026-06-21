@@ -232,22 +232,42 @@
     </div>
   </div>
 
-  <!-- ══ PORTFOLIO DETAIL MODAL ═══════════════════════════ -->
+  <!-- ══ PORTFOLIO DETAIL MODAL ═════════════════════════════ -->
   <div class="detail-backdrop" id="portfolio-detail-backdrop" hidden aria-modal="true" role="dialog" aria-labelledby="pfdm-title">
     <div class="detail-modal">
       <div class="dm-header">
-        <div class="dm-header-info"><h2 class="dm-title" id="pfdm-title">Judul Proyek</h2><div class="dm-subtitle" id="pfdm-subtitle">Freelancer · Tanggal</div></div>
-        <button class="dm-close-btn" aria-label="Tutup modal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        <div class="dm-header-info">
+          <h2 class="dm-title" id="pfdm-title">Judul Proyek</h2>
+          <div class="dm-subtitle" id="pfdm-subtitle">Freelancer · Tanggal</div>
+        </div>
+        <button class="dm-close-btn" aria-label="Tutup modal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
       </div>
       <div class="dm-body">
-        <div class="dm-section"><span class="dm-section-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Detail Pekerjaan</span><p class="dm-section-text" id="pfdm-description">—</p></div>
-        <div class="dm-impact-box"><div class="dm-impact-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>Dampak Nyata</div><p class="dm-section-text" id="pfdm-impact-text" style="margin-bottom:0.75rem;color:var(--accent-green-dk)">—</p><div class="dm-impact-metrics" id="pfdm-metrics"></div></div>
+        <div class="dm-section">
+          <span class="dm-section-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Detail Pekerjaan
+          </span>
+          <p class="dm-section-text" id="pfdm-description">—</p>
+        </div>
+        <div class="dm-impact-box">
+          <div class="dm-impact-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+            Dampak Nyata
+          </div>
+          <p class="dm-section-text" id="pfdm-impact-text" style="margin-bottom:0.75rem; color: var(--accent-green-dk);">—</p>
+          <div class="dm-impact-metrics" id="pfdm-metrics"></div>
+        </div>
       </div>
-      <div class="dm-footer"><button class="dm-btn-outline dm-close-footer-btn">Tutup</button></div>
+      <div class="dm-footer">
+        <button class="dm-btn-outline dm-close-footer-btn">Tutup</button>
+      </div>
     </div>
-  </div>
+  </div><!-- /portfolio-detail-modal -->
 
-
+  <div class="sm-backdrop" id="skill-modal-backdrop" hidden aria-hidden="true"></div>
 
   <div class="sm-modal" id="skill-modal" role="dialog" aria-modal="true"
        aria-labelledby="sm-modal-title" hidden>
@@ -355,6 +375,7 @@
     </div><!-- /step-2 -->
 
   </div><!-- /sm-modal -->
+  <!-- /SKILL MODAL -->
 
 
   <script src="js/data.js"></script>
