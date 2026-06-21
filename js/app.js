@@ -12,6 +12,8 @@ document.addEventListener("DOMContentLoaded", () => {
   initThemeToggle();
   highlightActiveNav();
   initSkillModal();
+  initDetailModals();
+  initNotificationDropdown();
   const page = window.location.pathname.split("/").pop() || "";
 
   if (page === "marketplace.html") {
@@ -138,7 +140,7 @@ function marketplaceCard(p) {
   const statusClass = p.status === "Open" ? "badge-open" : p.status === "In Review" ? "badge-review" : "badge-closed";
   const tags = p.categories.map((c) => `<span class="tag">${c}</span>`).join("");
   return `
-  <article class="card card-marketplace">
+  <article class="card card-marketplace" data-id="${p.id}" role="listitem">
     <div class="card-top">
       <div class="card-icon-wrap">${getIcon(p.icon)}</div>
       <span class="badge ${statusClass}">${p.status}</span>
@@ -156,7 +158,6 @@ function marketplaceCard(p) {
         <span>${p.deadline}</span>
         <span class="prize-label">${p.prize}</span>
       </div>
-      <button class="btn btn-primary btn-sm">Apply</button>
     </div>
   </article>`;
 }
@@ -174,7 +175,7 @@ function aiMatchCard(p) {
     .join("");
   const matchClass = p.matchPercent >= 85 ? "match-high" : p.matchPercent >= 75 ? "match-mid" : "match-low";
   return `
-  <article class="card card-horizontal card-aimatch">
+  <article class="card card-horizontal card-aimatch" data-id="${p.id}" role="listitem">
     <div class="card-h-left">
       <div class="card-icon-wrap large">${getIcon("puzzle")}</div>
     </div>
@@ -197,7 +198,6 @@ function aiMatchCard(p) {
           <span class="meta-item">${getIcon("calendar", "icon-sm")} ${p.deadline}</span>
           <span class="badge badge-open">${p.status}</span>
         </div>
-        <button class="btn btn-primary btn-sm">Ambil Proyek</button>
       </div>
     </div>
   </article>`;
@@ -288,7 +288,7 @@ function portfolioCard(p) {
     .join("");
 
   return `
-  <article class="card card-horizontal card-portfolio">
+  <article class="card card-horizontal card-portfolio" data-id="${p.id}" role="listitem">
     <div class="card-h-left">
       <div class="card-icon-wrap large">${getIcon(p.icon)}</div>
       <span class="category-tag">${p.category}</span>
@@ -309,7 +309,6 @@ function portfolioCard(p) {
       <div class="metrics-row">${metrics}</div>
       <div class="card-footer-h">
         <span class="meta-item">${getIcon("calendar", "icon-sm")} ${p.date}</span>
-        <button class="btn btn-outline btn-sm">Lihat Detail</button>
       </div>
     </div>
   </article>`;
@@ -401,6 +400,236 @@ function initSkillModal() {
         pill.classList.toggle('interest-pill--active');
         pill.setAttribute('aria-pressed', pill.classList.contains('interest-pill--active'));
       }
+    });
+  }
+}
+
+
+// ─── Detail Modals ───────────────────────────────────────
+function initDetailModals() {
+  // ── Helper: open a backdrop+modal ──
+  function openModal(backdropEl) {
+    if (!backdropEl) return;
+    backdropEl.hidden = false;
+    document.body.style.overflow = 'hidden';
+    requestAnimationFrame(() => backdropEl.classList.add('dm-visible'));
+  }
+
+  function closeModal(backdropEl) {
+    if (!backdropEl) return;
+    backdropEl.classList.remove('dm-visible');
+    document.body.style.overflow = '';
+    backdropEl.addEventListener('transitionend', function handler() {
+      backdropEl.hidden = true;
+      backdropEl.removeEventListener('transitionend', handler);
+    });
+  }
+
+  // ── Close buttons inside each modal footer ──
+  document.querySelectorAll('.dm-close-btn, .dm-close-footer-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const backdrop = btn.closest('.detail-backdrop');
+      closeModal(backdrop);
+    });
+  });
+
+  // ── Close on backdrop click (outside the modal box) ──
+  document.querySelectorAll('.detail-backdrop').forEach(backdrop => {
+    backdrop.addEventListener('click', (e) => {
+      if (e.target === backdrop) closeModal(backdrop);
+    });
+  });
+
+  // ── Escape key ──
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Escape') return;
+    document.querySelectorAll('.detail-backdrop.dm-visible').forEach(b => closeModal(b));
+  });
+
+  // ── Action: Ambil Proyek Button ──
+  document.body.addEventListener('click', (e) => {
+    const ambilBtn = e.target.closest('#btn-ambil-proyek');
+    if (ambilBtn) {
+      const backdrop = ambilBtn.closest('.detail-backdrop');
+      if (backdrop) {
+        closeModal(backdrop);
+        setTimeout(() => {
+          alert('Proyek berhasil diambil.');
+        }, 300);
+      }
+    }
+  });
+
+  // ── Global Event Delegation — card clicks ──
+  document.body.addEventListener('click', (e) => {
+    // Don't fire if clicking a button/link inside the card
+    if (e.target.closest('button') || e.target.closest('a')) return;
+
+    // Project cards: Marketplace & AI Match
+    const projectCard = e.target.closest('.card-marketplace, .card-aimatch');
+    if (projectCard) {
+      const id = parseInt(projectCard.dataset.id, 10);
+      const data = (projectCard.classList.contains('card-marketplace') ? marketplaceProjects : aiMatchProjects)
+                    .find(p => p.id === id);
+      if (data) populateAndOpenProjectModal(data, openModal);
+      return;
+    }
+
+    // Trail Map location cards
+    const trailCard = e.target.closest('.card-trail');
+    if (trailCard) {
+      const id = parseInt(trailCard.id.replace('trail-card-', ''), 10);
+      const data = trailLocations.find(l => l.id === id);
+      if (data) populateAndOpenLocationModal(data, openModal);
+      return;
+    }
+
+    // Portfolio cards
+    const portfolioCard = e.target.closest('.card-portfolio');
+    if (portfolioCard) {
+      const id = parseInt(portfolioCard.dataset.id, 10);
+      const data = portfolioProjects.find(p => p.id === id);
+      if (data) populateAndOpenPortfolioModal(data, openModal);
+      return;
+    }
+  });
+}
+
+function populateAndOpenProjectModal(p, openModal) {
+  const backdrop = document.getElementById('project-detail-backdrop');
+  if (!backdrop) return;
+
+  // Detect which dataset this project is from
+  const isAiMatch = typeof p.matchPercent !== 'undefined';
+
+  backdrop.querySelector('#pdm-title').textContent = p.title;
+  backdrop.querySelector('#pdm-subtitle').textContent = isAiMatch
+    ? `${p.location} · ${p.applicants} pelamar · Deadline: ${p.deadline}`
+    : `${p.location} · Deadline: ${p.deadline}`;
+
+  backdrop.querySelector('#pdm-description').textContent = p.description || '—';
+  
+  const reqEl = backdrop.querySelector('#pdm-requirements');
+  if (reqEl) {
+    // Preserve line breaks if provided
+    reqEl.innerHTML = p.requirements ? p.requirements.replace(/\n/g, '<br>') : 'Freelancer wajib memiliki portofolio relevan. Pembayaran 50% di muka, 50% setelah selesai.';
+  }
+
+  // Skills or Categories as pills
+  const pillContainer = backdrop.querySelector('#pdm-skills');
+  const skillsArray = p.skills || p.categories || [];
+  pillContainer.innerHTML = skillsArray.map(s => `<span class="dm-pill">${s}</span>`).join('');
+
+  // Price
+  backdrop.querySelector('#pdm-price').textContent = p.prize
+    ? `${p.prize}`
+    : '—';
+
+  openModal(backdrop);
+}
+
+function populateAndOpenLocationModal(loc, openModal) {
+  const backdrop = document.getElementById('location-detail-backdrop');
+  if (!backdrop) return;
+
+  backdrop.querySelector('#ldm-title').textContent = loc.name;
+  backdrop.querySelector('#ldm-client').textContent = `${loc.tag} · ${loc.projects} proyek aktif`;
+  backdrop.querySelector('#ldm-description').textContent = loc.description;
+  backdrop.querySelector('#ldm-address').textContent = `Kawasan ${loc.tag}, Kabupaten Bantul, DI Yogyakarta`;
+  backdrop.querySelector('#ldm-contact').textContent = `wa.me/628100000${loc.id} · info@bantulcreative.id`;
+
+  const tagContainer = backdrop.querySelector('#ldm-tags');
+  tagContainer.innerHTML = loc.categories.map(c => `<span class="dm-pill">${c}</span>`).join('');
+
+  openModal(backdrop);
+}
+
+function populateAndOpenPortfolioModal(p, openModal) {
+  const backdrop = document.getElementById('portfolio-detail-backdrop');
+  if (!backdrop) return;
+
+  backdrop.querySelector('#pfdm-title').textContent = p.title;
+  backdrop.querySelector('#pfdm-subtitle').textContent = `oleh ${p.freelancer} · ${p.date}`;
+  backdrop.querySelector('#pfdm-description').textContent = p.description;
+  backdrop.querySelector('#pfdm-impact-text').textContent = p.impact;
+
+  const metricsContainer = backdrop.querySelector('#pfdm-metrics');
+  metricsContainer.innerHTML = p.metrics.map(m => `
+    <span class="dm-metric-badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+      ${m.label}
+    </span>`).join('');
+
+  openModal(backdrop);
+}
+
+
+// ─── Notification Dropdown ───────────────────────────────
+function initNotificationDropdown() {
+  const notifWrap = document.querySelector('.notif-btn-wrap');
+  const notifBtn  = document.querySelector('.notif-btn');
+  const dropdown  = document.getElementById('notif-dropdown');
+
+  if (!notifWrap || !notifBtn || !dropdown) return;
+
+  let isOpen = false;
+
+  function openDropdown() {
+    dropdown.hidden = false;
+    requestAnimationFrame(() => dropdown.classList.add('nd-visible'));
+    isOpen = true;
+  }
+
+  function closeDropdown() {
+    dropdown.classList.remove('nd-visible');
+    dropdown.addEventListener('transitionend', function handler() {
+      dropdown.hidden = true;
+      dropdown.removeEventListener('transitionend', handler);
+    });
+    isOpen = false;
+  }
+
+  notifBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    isOpen ? closeDropdown() : openDropdown();
+  });
+
+  // Close on outside click
+  document.addEventListener('click', (e) => {
+    if (isOpen && !notifWrap.contains(e.target)) closeDropdown();
+  });
+
+  // Escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && isOpen) closeDropdown();
+  });
+
+  // Tab switching
+  const tabs = dropdown.querySelectorAll('.nd-tab');
+  const panels = dropdown.querySelectorAll('.nd-panel');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('nd-tab--active'));
+      panels.forEach(p => p.classList.remove('nd-panel--active'));
+      tab.classList.add('nd-tab--active');
+      const target = dropdown.querySelector(`#${tab.dataset.target}`);
+      if (target) target.classList.add('nd-panel--active');
+    });
+  });
+
+  // Mark all as read
+  const markAllBtn = dropdown.querySelector('.nd-mark-all');
+  if (markAllBtn) {
+    markAllBtn.addEventListener('click', () => {
+      dropdown.querySelectorAll('.nd-item.nd-unread').forEach(item => {
+        item.classList.remove('nd-unread');
+        const dot = item.querySelector('.nd-item-dot');
+        if (dot) dot.style.visibility = 'hidden';
+      });
+      // Reset badge count
+      const badge = document.querySelector('.notif-badge');
+      if (badge) badge.textContent = '0';
     });
   }
 }

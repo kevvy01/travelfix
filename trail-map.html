@@ -51,12 +51,33 @@
             <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
           </svg>
         </button>
-        <button class="notif-btn" aria-label="Notifikasi">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-          </svg>
-          <span class="notif-badge" aria-label="3 notifikasi">3</span>
-        </button>
+        <div class="notif-btn-wrap">
+          <button class="notif-btn" id="notif-btn" aria-label="Notifikasi" aria-expanded="false">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            </svg>
+            <span class="notif-badge" aria-label="3 notifikasi">3</span>
+          </button>
+          <div class="notif-dropdown" id="notif-dropdown" role="dialog" aria-label="Notifikasi" hidden>
+            <div class="nd-header"><span class="nd-title">Notifikasi</span><button class="nd-mark-all">Tandai sudah dibaca</button></div>
+            <div class="nd-tabs" role="tablist">
+              <button class="nd-tab nd-tab--active" role="tab" data-target="nd-panel-sistem">Sistem</button>
+              <button class="nd-tab" role="tab" data-target="nd-panel-pesan">Pesan Klien</button>
+            </div>
+            <div class="nd-panel nd-panel--active" id="nd-panel-sistem" role="tabpanel">
+              <div class="nd-list">
+                <div class="nd-item nd-unread"><div class="nd-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div><div class="nd-item-body"><p class="nd-item-text">Ada 2 proyek baru di Kasongan yang cocok!</p><span class="nd-item-time">5 menit lalu</span></div><div class="nd-item-dot"></div></div>
+                <div class="nd-item nd-unread"><div class="nd-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><div class="nd-item-body"><p class="nd-item-text">Proyek "Desain Poster Festival" telah disetujui.</p><span class="nd-item-time">1 jam lalu</span></div><div class="nd-item-dot"></div></div>
+              </div>
+            </div>
+            <div class="nd-panel" id="nd-panel-pesan" role="tabpanel">
+              <div class="nd-list">
+                <div class="nd-item nd-unread"><div class="nd-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><div class="nd-item-body"><p class="nd-item-text">Bu Sari: "Apakah desain logo sudah bisa direview?"</p><span class="nd-item-time">30 menit lalu</span></div><div class="nd-item-dot"></div></div>
+              </div>
+            </div>
+            <div class="nd-footer"><a href="#">Lihat semua notifikasi</a></div>
+          </div><!-- /notif-dropdown -->
+        </div><!-- /notif-btn-wrap -->
         <div class="user-pill-wrap">
           <div class="user-pill" id="user-pill" aria-label="Buka profil pengguna admin" role="button" tabindex="0">
             <div class="user-avatar">U</div>
@@ -137,8 +158,45 @@
     </div>
   </main>
 
-  <!-- ══ SKILL & MINAT MODAL ══════════════════════════════ -->
-  <div class="sm-backdrop" id="skill-modal-backdrop" hidden aria-hidden="true"></div>
+  <!-- ══ PROJECT DETAIL MODAL ═════════════════════════ -->
+  <div class="detail-backdrop" id="project-detail-backdrop" hidden aria-modal="true" role="dialog" aria-labelledby="pdm-title">
+    <div class="detail-modal">
+      <div class="dm-header"><div class="dm-header-info"><h2 class="dm-title" id="pdm-title">Judul Proyek</h2><div class="dm-subtitle" id="pdm-subtitle">Lokasi · Info</div></div><button class="dm-close-btn" aria-label="Tutup modal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+      <div class="dm-body">
+        <div class="dm-section"><span class="dm-section-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Keterangan Proyek</span><p class="dm-section-text" id="pdm-description">—</p></div>
+        <div class="dm-section"><span class="dm-section-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Syarat &amp; Ketentuan</span><p class="dm-section-text" id="pdm-requirements">—</p></div>
+        <div class="dm-section"><span class="dm-section-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.46 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.96-4.67A2.5 2.5 0 0 1 9.5 2Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.46 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.96-4.67A2.5 2.5 0 0 0 14.5 2Z"/></svg>Skill yang Dibutuhkan</span><div class="dm-pills" id="pdm-skills"></div></div>
+        <div class="dm-section"><span class="dm-section-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Range Harga</span><div class="dm-price-block"><span class="dm-price-val" id="pdm-price">Rp —</span></div></div>
+      </div>
+      <div class="dm-footer dm-footer-aligned"><button class="dm-btn-primary dm-btn-action" id="btn-ambil-proyek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Ambil Proyek</button></div>
+    </div>
+  </div>
+  <!-- ══ LOCATION DETAIL MODAL ═══════════════════════════ -->
+  <div class="detail-backdrop" id="location-detail-backdrop" hidden aria-modal="true" role="dialog" aria-labelledby="ldm-title">
+    <div class="detail-modal">
+      <div class="dm-header"><div class="dm-header-info"><h2 class="dm-title" id="ldm-title">Nama Lokasi</h2><div class="dm-subtitle" id="ldm-client">Klien · Proyek</div></div><button class="dm-close-btn" aria-label="Tutup modal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+      <div class="dm-body">
+        <div class="dm-section"><span class="dm-section-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Keterangan UMKM / Perusahaan</span><p class="dm-section-text" id="ldm-description">—</p></div>
+        <div class="dm-section"><span class="dm-section-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Alamat Lengkap</span><p class="dm-section-text" id="ldm-address">—</p></div>
+        <div class="dm-section"><span class="dm-section-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.18h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.69 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.18 6.18l1.91-1.91a2 2 0 0 1 2.11-.45c.91.33 1.85.56 2.81.69A2 2 0 0 1 22 16.92z"/></svg>Nomor Kontak</span><p class="dm-section-text" id="ldm-contact">—</p></div>
+        <div class="dm-section"><span class="dm-section-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/></svg>Kategori</span><div class="dm-pills" id="ldm-tags"></div></div>
+      </div>
+      <div class="dm-footer"><button class="dm-btn-outline dm-close-footer-btn">Tutup</button></div>
+    </div>
+  </div>
+  <!-- ══ PORTFOLIO DETAIL MODAL ═══════════════════════════ -->
+  <div class="detail-backdrop" id="portfolio-detail-backdrop" hidden aria-modal="true" role="dialog" aria-labelledby="pfdm-title">
+    <div class="detail-modal">
+      <div class="dm-header"><div class="dm-header-info"><h2 class="dm-title" id="pfdm-title">Judul Proyek</h2><div class="dm-subtitle" id="pfdm-subtitle">Freelancer · Tanggal</div></div><button class="dm-close-btn" aria-label="Tutup modal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+      <div class="dm-body">
+        <div class="dm-section"><span class="dm-section-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Detail Pekerjaan</span><p class="dm-section-text" id="pfdm-description">—</p></div>
+        <div class="dm-impact-box"><div class="dm-impact-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>Dampak Nyata</div><p class="dm-section-text" id="pfdm-impact-text" style="margin-bottom:0.75rem;color:var(--accent-green-dk)">—</p><div class="dm-impact-metrics" id="pfdm-metrics"></div></div>
+      </div>
+      <div class="dm-footer"><button class="dm-btn-outline dm-close-footer-btn">Tutup</button></div>
+    </div>
+  </div>
+
+
 
   <div class="sm-modal" id="skill-modal" role="dialog" aria-modal="true"
        aria-labelledby="sm-modal-title" hidden>
