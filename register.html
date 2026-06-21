@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Masuk — Bantul Creative Village Freelancer Trail</title>
-  <meta name="description" content="Masuk ke platform Bantul Creative Village. Temukan proyek lokal, kembangkan portfolio, dan berdampak nyata bagi budaya daerah." />
+  <title>Daftar — Bantul Creative Village Freelancer Trail</title>
+  <meta name="description" content="Daftar ke platform Bantul Creative Village. Temukan proyek lokal, kembangkan portfolio, dan berdampak nyata bagi budaya daerah." />
   <link rel="stylesheet" href="css/login.css" />
 </head>
 <body>
@@ -74,32 +74,49 @@
     </aside>
 
     <!-- ── RIGHT PANEL (Form) ─────────────────────────────── -->
-    <section class="login-right" aria-label="Form masuk">
+    <section class="login-right" aria-label="Form pendaftaran">
 
       <!-- Header -->
       <div class="form-header">
-        <h2 class="form-title">Selamat Datang!</h2>
-        <p class="form-subtitle">Masuk ke akun Bantul Creative Anda</p>
+        <h2 class="form-title">Daftar Akun Baru</h2>
+        <p class="form-subtitle">Bergabunglah dengan komunitas Bantul Creative.</p>
       </div>
 
       <!-- Form -->
-      <form id="login-form" novalidate>
+      <form id="register-form" novalidate>
+
+        <!-- Nama Lengkap -->
+        <div class="form-group">
+          <label for="reg-name" class="form-label">Nama Lengkap</label>
+          <div class="input-wrap">
+            <span class="input-icon-left" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </span>
+            <input
+              type="text"
+              id="reg-name"
+              name="name"
+              class="form-input"
+              placeholder="Nama Lengkap Anda"
+              required
+              aria-label="Nama Lengkap"
+            />
+          </div>
+        </div>
 
         <!-- Email -->
         <div class="form-group">
-          <label for="email" class="form-label">Alamat Email</label>
+          <label for="reg-email" class="form-label">Alamat Email</label>
           <div class="input-wrap">
             <span class="input-icon-left" aria-hidden="true">
-              <!-- Mail icon -->
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                   stroke-linecap="round" stroke-linejoin="round">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="2" y="4" width="20" height="16" rx="2"/>
                 <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
               </svg>
             </span>
             <input
               type="email"
-              id="email"
+              id="reg-email"
               name="email"
               class="form-input"
               placeholder="nama@contoh.com"
@@ -112,64 +129,51 @@
 
         <!-- Password -->
         <div class="form-group">
-          <label for="password" class="form-label">Password</label>
+          <label for="reg-password" class="form-label">Password</label>
           <div class="input-wrap">
             <span class="input-icon-left" aria-hidden="true">
-              <!-- Lock icon -->
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                   stroke-linecap="round" stroke-linejoin="round">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
                 <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
               </svg>
             </span>
             <input
               type="password"
-              id="password"
+              id="reg-password"
               name="password"
-              class="form-input has-right-icon"
-              placeholder="Masukkan password Anda"
-              autocomplete="current-password"
+              class="form-input"
+              placeholder="Buat password baru"
               required
               aria-label="Password"
             />
-            <!-- Eye toggle button -->
-            <button
-              type="button"
-              id="eye-toggle"
-              class="input-icon-right"
-              aria-label="Tampilkan atau sembunyikan password"
-              tabindex="0"
-            >
-              <!-- Eye icon (default: visible = password hidden) -->
-              <svg id="icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                <circle cx="12" cy="12" r="3"/>
-              </svg>
-              <!-- Eye-off icon (hidden by default) -->
-              <svg id="icon-eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                   style="display:none;">
-                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
-                <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
-                <line x1="1" y1="1" x2="23" y2="23"/>
-              </svg>
-            </button>
           </div>
         </div>
 
-        <!-- Options row -->
-        <div class="form-options">
-          <label class="checkbox-label" for="remember">
-            <input type="checkbox" id="remember" name="remember" />
-            Ingat saya
-          </label>
-          <a href="#" class="forgot-link" id="forgot-link">Lupa password?</a>
+        <!-- Konfirmasi Password -->
+        <div class="form-group">
+          <label for="reg-confirm" class="form-label">Konfirmasi Password</label>
+          <div class="input-wrap">
+            <span class="input-icon-left" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+            </span>
+            <input
+              type="password"
+              id="reg-confirm"
+              name="confirmPassword"
+              class="form-input"
+              placeholder="Ulangi password Anda"
+              required
+              aria-label="Konfirmasi Password"
+            />
+          </div>
         </div>
 
         <!-- Submit -->
-        <button type="submit" id="btn-submit" class="btn-submit">
-          Masuk
+        <button type="submit" id="btn-submit-reg" class="btn-submit" style="margin-top: var(--space-3);">
+          Daftar Sekarang
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M5 12h14M12 5l7 7-7 7"/>
@@ -181,10 +185,10 @@
           <span class="divider-text">atau</span>
         </div>
 
-        <!-- Sign-up footer -->
+        <!-- Login footer -->
         <p class="form-footer">
-          Belum punya akun?
-          <a href="register.html" id="register-link">Daftar di sini</a>
+          Sudah punya akun?
+          <a href="login.html" id="login-link">Masuk di sini</a>
         </p>
 
       </form>

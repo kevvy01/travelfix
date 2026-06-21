@@ -634,3 +634,44 @@ function initNotificationDropdown() {
   }
 }
 
+// ============================================================
+// PROFILE UPDATE LOGIC
+// ============================================================
+function updateProfileUI() {
+  const userJson = localStorage.getItem('currentUser');
+  if (!userJson) {
+    // Optional: redirect to login if no user is found
+    // window.location.href = 'login.html';
+    return;
+  }
+  
+  const user = JSON.parse(userJson);
+  
+  // 1. Update text content
+  const navName = document.getElementById('nav-user-name');
+  const dropdownName = document.getElementById('dropdown-user-name');
+  const dropdownEmail = document.getElementById('dropdown-user-email');
+  
+  // Display only first name in navbar to save space
+  if (navName) navName.textContent = user.name.split(' ')[0]; 
+  if (dropdownName) dropdownName.textContent = user.name;
+  if (dropdownEmail) dropdownEmail.textContent = user.email;
+  
+  // 2. Avatar Initials Logic
+  // Split name by spaces, take first letter of each word, max 2 chars
+  const initials = user.name
+    .split(' ')
+    .map(word => word[0])
+    .join('')
+    .substring(0, 2)
+    .toUpperCase();
+    
+  const navAvatar = document.getElementById('nav-user-avatar');
+  const dropdownAvatar = document.getElementById('dropdown-user-avatar');
+  
+  if (navAvatar) navAvatar.textContent = initials;
+  if (dropdownAvatar) dropdownAvatar.textContent = initials;
+}
+
+// Run the profile update as soon as the DOM is ready
+document.addEventListener('DOMContentLoaded', updateProfileUI);
