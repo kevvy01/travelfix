@@ -47,11 +47,47 @@
     }
   }
 
+  // Task: Update User Profile
+  function updateUserProfile(currentEmail, newName, newEmail, newPassword, newSkills, newInterests) {
+    const users = JSON.parse(localStorage.getItem(DB_KEY)) || [];
+    const userIndex = users.findIndex(u => u.email === currentEmail);
+
+    if (userIndex === -1) {
+      return { success: false, message: 'User tidak ditemukan.' };
+    }
+
+    // Update name & email
+    users[userIndex].name  = newName;
+    users[userIndex].email = newEmail;
+
+    // Only update password if a new one was provided
+    if (newPassword && newPassword.trim() !== '') {
+      users[userIndex].password = newPassword;
+    }
+
+    // Update skills & interests arrays
+    users[userIndex].skills    = newSkills;
+    users[userIndex].interests = newInterests;
+
+    // Persist the updated users array
+    localStorage.setItem(DB_KEY, JSON.stringify(users));
+
+    // Sync the live session so the page reflects changes immediately
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (currentUser && currentUser.email === currentEmail) {
+      const updatedSession = { ...currentUser, ...users[userIndex] };
+      localStorage.setItem('currentUser', JSON.stringify(updatedSession));
+    }
+
+    return { success: true };
+  }
+
   // Expose to global window object
   global.db = {
     initDB,
     registerUser,
-    loginUser
+    loginUser,
+    updateUserProfile
   };
 
   // Auto-init on load
