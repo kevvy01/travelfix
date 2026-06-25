@@ -1,318 +1,276 @@
-<div align="center">
+# 🌿 Bantul Creative — Village Freelancer Trail
 
-# 🌏 Bantul Creative — Village Freelancer Trail
-
-**Platform Digital Jembatan Freelancer Kreatif & Ekosistem UMKM Desa Wisata Bantul**
-
-[![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/HTML)
-[![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/CSS)
-[![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
-[![localStorage](https://img.shields.io/badge/Mock_DB-localStorage-brightgreen?style=for-the-badge)](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage)
-
----
-
-> _Prototype platform digital yang dirancang untuk menjembatani talenta freelancer lokal Gen-Z dengan UMKM kreatif berwarisan budaya dan desa wisata di Kabupaten Bantul, Daerah Istimewa Yogyakarta._
-
-</div>
+> **Prototipe Platform Digital** yang menghubungkan talenta kreatif lokal dengan UMKM warisan budaya dan desa wisata di Kabupaten Bantul, Daerah Istimewa Yogyakarta.
 
 ---
 
 ## 📋 Deskripsi Proyek
 
-**Bantul Creative — Village Freelancer Trail** adalah sebuah prototipe platform web yang dikembangkan sebagai solusi inovatif untuk menjawab kesenjangan antara ekosistem talenta digital muda dengan pelaku Usaha Mikro, Kecil, dan Menengah (UMKM) berbasis warisan budaya serta desa-desa wisata di Kabupaten Bantul, Daerah Istimewa Yogyakarta.
+**Bantul Creative — Village Freelancer Trail** adalah sebuah prototipe platform digital berbasis web yang dirancang dan dikembangkan sebagai solusi terhadap kesenjangan ekosistem antara **freelancer kreatif lokal** dengan **pelaku Usaha Mikro, Kecil, dan Menengah (UMKM) berbasis warisan budaya** serta **desa-desa wisata** di Kabupaten Bantul.
 
-Platform ini berperan sebagai **ekosistem digital terintegrasi** yang mempertemukan dua kelompok aktor utama:
+Platform ini memvisualisasikan sebuah *marketplace* freelance yang kontekstual secara geografis dan kultural — di mana UMKM pengrajin gerabah Kasongan, perajin batik tulis Imogiri, sentra kulit Manding, dan komunitas seni desa Dlingo dapat memposting kebutuhan proyek kreatif mereka; sementara para freelancer lokal dapat menemukan, melamar, dan mengambil proyek-proyek tersebut berdasarkan keahlian dan kecocokan profil mereka.
 
-1. **Freelancer Kreatif Gen-Z** — individu berbakat di bidang desain grafis, fotografi, pengembangan web, pemasaran digital, dan seni pertunjukan yang membutuhkan akses ke proyek bermakna guna membangun portofolio profesional.
-2. **UMKM & Desa Wisata Bantul** — entitas ekonomi kreatif lokal seperti sentra kerajinan gerabah Kasongan, perajin batik tulis Imogiri, pusat kerajinan kulit Manding, dan komunitas seni Dlingo yang membutuhkan dukungan digital untuk bersaing di pasar modern dan internasional.
+Dalam konteks **portofolio akademik Teknik Informatika**, proyek ini mendemonstrasikan kemampuan implementasi:
 
-Dengan menggabungkan konsep _challenge marketplace_, pemetaan kreatif berbasis lokasi (_trail map_), pencocokan berbasis AI (_AI talent matching_), dan dokumentasi dampak nyata (_impact portfolio_), platform ini bertujuan mengakselerasi pertumbuhan ekonomi kreatif berbasis kearifan lokal secara berkelanjutan.
-
-> **Konteks Akademis:** Proyek ini dikembangkan sebagai portofolio teknis dalam lingkup mata kuliah Rekayasa Perangkat Lunak / Pemrograman Web pada Program Studi Teknik Informatika, sebagai demonstrasi implementasi konsep-konsep arsitektur frontend modern tanpa ketergantungan terhadap backend server.
-
----
-
-## 🏗️ Arsitektur & Teknologi (Tech Stack)
-
-Seluruh sistem dibangun secara murni pada lapisan _frontend_, tanpa server-side rendering maupun komunikasi dengan API eksternal. Berikut adalah tumpukan teknologi yang digunakan:
-
-### Frontend Core
-
-| Teknologi      | Versi / Standar                                                               | Peran                                                         |
-| -------------- | ----------------------------------------------------------------------------- | ------------------------------------------------------------- |
-| **HTML5**      | Semantik penuh (`<article>`, `<section>`, `<nav>`, `<footer>`)                | Struktur markup dan aksesibilitas (WAI-ARIA)                  |
-| **CSS3**       | Custom Properties, Grid, Flexbox, Transitions                                 | Sistem desain visual, responsivitas, dan animasi              |
-| **JavaScript** | ES6+ (Arrow Functions, Destructuring, Template Literals, IIFE, `const`/`let`) | Logika interaktivitas, rendering dinamis, dan manajemen state |
-
-### Mock Database Layer
-
-Sebagai pengganti backend server dan basis data relasional, sistem ini mengimplementasikan **Data Access Layer (DAL)** yang dibungkus di atas API bawaan browser:
-
-- **`window.localStorage`** — Digunakan sebagai mekanisme penyimpanan data persisten antar sesi browser. Semua data pengguna (akun, sesi aktif, preferensi tema) disimpan dalam format JSON yang di-serialisasi.
-- **`js/db.js`** — Modul yang mengenkapsulasi seluruh operasi CRUD (Create, Read, Update) terhadap `localStorage`, mengekspos antarmuka publik `window.db` yang dapat dipanggil oleh modul lain. Pendekatan ini mensimulasikan pola _Repository Pattern_ yang lazim digunakan pada sistem berbasis database nyata.
-- **`js/data.js`** — Modul yang berisi seluruh data statis (_seed data_) dalam bentuk konstanta array JavaScript, mencakup data proyek marketplace, proyek AI Match, lokasi trail map, dan entri portofolio. Modul ini berfungsi layaknya _fixture_ atau _seed file_ pada kerangka kerja ORM modern.
-
-### Prinsip Arsitektur Utama
-
-- **Separation of Concerns** — Logika autentikasi, rendering UI, dan data dipisahkan ke dalam modul-modul JavaScript yang independen.
-- **Progressive Enhancement** — Fitur seperti `IntersectionObserver` untuk animasi scroll-reveal dilengkapi dengan _fallback_ agar kompatibel dengan browser yang lebih lama.
-- **Event Delegation** — Satu _event listener_ tunggal pada elemen induk (`document.body`) menangani interaksi pada semua elemen anak yang dirender secara dinamis, menghindari _memory leak_ dan konflik listener.
-- **IIFE (Immediately Invoked Function Expression)** — Digunakan secara konsisten untuk menghindari polusi _global scope_ dan menciptakan enkapsulasi modul yang bersih.
+- Arsitektur aplikasi web multi-halaman (*Multi-Page Application* / MPA) yang terstruktur dan modular
+- Simulasi sistem autentikasi berbasis peran (*Role-Based Access Control* / RBAC) tanpa ketergantungan server
+- Pengelolaan *state* dan *session* pengguna menggunakan mekanisme *Data Access Layer* di atas `localStorage`
+- Teknik interaktivitas DOM modern menggunakan *Event Delegation* untuk efisiensi dan keandalan lintas halaman
+- Desain antarmuka yang responsif, estetis, dan aksesibel mengikuti prinsip-prinsip *Human-Computer Interaction* (HCI)
 
 ---
 
-## 📁 Struktur Folder (Project Tree)
+## 🏗️ Arsitektur & Teknologi
+
+### Frontend Stack
+
+| Lapisan | Teknologi | Keterangan |
+|---|---|---|
+| **Struktur** | HTML5 Semantik | Menggunakan elemen semantik (`<article>`, `<section>`, `<nav>`) untuk aksesibilitas dan SEO |
+| **Presentasi** | CSS3 Murni | Custom Properties (CSS Variables), CSS Grid, Flexbox, Transisi & Animasi CSS |
+| **Perilaku** | Vanilla JavaScript ES6+ | IIFE, Arrow Functions, Template Literals, Destructuring, `Array.prototype` |
+| **Persistensi Data** | Browser `localStorage` | Dibungkus dalam *Data Access Layer* di `js/db.js` untuk simulasi operasi CRUD |
+| **Ikon** | SVG Inline | Seluruh ikon dirender secara dinamis dari pustaka SVG bawaan di `js/app.js` |
+
+### Keputusan Arsitektur Kunci
+
+Proyek ini **secara sengaja tidak menggunakan framework atau library eksternal** (seperti React, Vue, Bootstrap, atau jQuery). Keputusan ini diambil untuk mendemonstrasi pemahaman fundamental terhadap mekanisme platform web secara menyeluruh (*low-level web platform APIs*), yang merupakan kompetensi inti dalam disiplin Teknik Informatika.
+
+Simulasi backend dilakukan sepenuhnya di sisi klien melalui `localStorage`, yang berperan sebagai *persistent store* untuk data sesi pengguna dan registrasi akun baru.
+
+---
+
+## 📁 Struktur Folder
 
 ```
 Travelfix/                          ← Root direktori proyek
 │
-├── index.html                      ← Landing Page (Halaman publik utama)
-├── login.html                      ← Halaman autentikasi pengguna
-├── register.html                   ← Halaman pendaftaran akun baru
-├── marketplace.html                ← Halaman Challenge Marketplace (Freelancer)
-├── ai-match.html                   ← Halaman AI Talent Match (Freelancer)
-├── trail-map.html                  ← Halaman Creative Trail Map (Freelancer)
-├── portfolio.html                  ← Halaman Impact Portfolio (Freelancer)
-├── admin-dashboard.html            ← Halaman Dasbor Manajemen (Admin)
+├── index.html                      ← Halaman Landing Page publik (pintu masuk utama)
+├── login.html                      ← Halaman autentikasi pengguna (form login + toggle password)
+├── register.html                   ← Halaman registrasi akun freelancer baru
+├── marketplace.html                ← Halaman utama daftar proyek kreatif (post-login, role: freelancer)
+├── ai-match.html                   ← Halaman rekomendasi proyek berbasis persentase kecocokan AI
+├── trail-map.html                  ← Halaman peta interaktif lokasi-lokasi UMKM & desa wisata
+├── portfolio.html                  ← Halaman showcase dampak/impact proyek yang telah selesai
+├── admin-dashboard.html            ← Halaman dasbor administrasi (post-login, role: admin)
 │
-├── css/                            ← Direktori seluruh lembar gaya (stylesheet)
-│   ├── style.css                   ← Global stylesheet: CSS Variables, typography, komponen universal
-│   ├── landing.css                 ← Gaya eksklusif untuk index.html (hero, features, CTA)
-│   ├── components.css              ← Gaya komponen reusable: card, modal, badge, filter, notifikasi
-│   ├── login.css                   ← Gaya eksklusif untuk halaman login & register
-│   └── admin.css                   ← Gaya eksklusif untuk halaman admin-dashboard.html
+├── css/
+│   ├── style.css                   ← Stylesheet global: Design tokens, CSS variables, layout dasar
+│   ├── landing.css                 ← Gaya khusus untuk Landing Page (index.html)
+│   ├── login.css                   ← Gaya khusus untuk halaman Login & Register
+│   ├── components.css              ← Komponen UI yang dapat digunakan ulang: kartu, modal, badge, pil
+│   └── admin.css                   ← Gaya khusus untuk Admin Dashboard
 │
-└── js/                             ← Direktori seluruh modul JavaScript
-    ├── db.js                       ← Data Access Layer: simulasi DB berbasis localStorage
-    ├── data.js                     ← Mock data statis: proyek, lokasi trail, portofolio
-    ├── auth.js                     ← Handler form registrasi dan login (memanggil db.js)
-    ├── login.js                    ← Logika autentikasi & RBAC untuk halaman login
-    ├── app.js                      ← Orchestrator utama: routing halaman, rendering dinamis,
-    │                                  event delegation global, manajemen modal & notifikasi
-    ├── edit-profile-modal.js       ← Logika penuh modal Edit Profil (baca/tulis localStorage)
-    ├── profile-modal.js            ← Logika modal tampilan profil pengguna (read-only view)
-    └── skill-modal.js              ← Modul pemilihan skill & minat (multi-step modal)
+└── js/
+    ├── db.js                       ← Data Access Layer: Simulasi database CRUD di atas localStorage
+    ├── auth.js                     ← Handler form registrasi & login dengan validasi client-side
+    ├── login.js                    ← Logika autentikasi hardcoded (RBAC) untuk halaman login.html
+    ├── data.js                     ← Sumber data statis: dataset proyek marketplace, AI match, trail & portofolio
+    ├── app.js                      ← Controller utama: rendering DOM, event delegation, manajemen modal
+    ├── profile-modal.js            ← Modul khusus untuk toggle & aksi dropdown profil pengguna
+    └── skill-modal.js              ← Berkas legacy (no-op); logika skill modal telah dipindahkan ke app.js
 ```
 
-### Penjelasan File Kunci
+### Penjelasan Peran Setiap File Inti
 
-| File                       | Peran Spesifik dalam Arsitektur Sistem                                                                                                                                                                                               |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `index.html`               | Landing page publik berisi hero banner, grid fitur, split-screen value proposition, dan CTA final. Menggunakan inline `<script>` untuk navbar scroll behavior dan `IntersectionObserver` untuk scroll-reveal animation.              |
-| `marketplace.html`         | Halaman utama freelancer. Menampilkan grid kartu proyek yang dirender secara dinamis dari `data.js`, dilengkapi fitur pencarian real-time dan filter multi-kriteria (status & kategori).                                             |
-| `admin-dashboard.html`     | Halaman khusus administrator. Hanya dapat diakses setelah login dengan kredensial admin. Menampilkan statistik platform dan manajemen proyek.                                                                                        |
-| `css/style.css`            | Mendefinisikan seluruh token desain global melalui CSS Custom Properties (`--color-*`, `--font-*`, `--radius-*`), termasuk dukungan tema gelap (_dark mode_) via `[data-theme="dark"]`.                                              |
-| `css/components.css`       | Berisi kelas komponen yang paling kaya: `.card`, `.badge`, `.modal`, `.detail-backdrop`, `.epm-*` (edit profile modal), `.nd-*` (notification dropdown), dan `.dm-*` (detail modals).                                                |
-| `js/db.js`                 | Inti dari simulasi backend. Mengekspos `window.db` dengan metode `initDB()`, `registerUser()`, `loginUser()`, dan `updateUserProfile()`. Auto-inisialisasi saat dimuat, menyuntikkan akun _seed_ default.                            |
-| `js/app.js`                | File JavaScript terbesar dan terpenting. Mengorkestrasi seluruh inisialisasi halaman, routing berbasis `pathname`, rendering kartu dinamis, sistem modal bertingkat, toggle tema, dan pembaruan UI profil.                           |
-| `js/edit-profile-modal.js` | Mengelola siklus hidup penuh modal edit profil: membuka, mengisi otomatis dari `localStorage`, menangani toggle pill skill/minat via _event delegation_, menyimpan perubahan melalui `window.db`, dan memperbarui UI secara reaktif. |
-| `js/data.js`               | Sumber data tunggal (_single source of truth_) untuk semua konten halaman freelancer. Mendefinisikan `marketplaceProjects`, `aiMatchProjects`, `trailLocations`, dan `portfolioProjects` sebagai konstanta global.                   |
+#### `index.html` — Landing Page
+Halaman publik yang berfungsi sebagai *entry point* utama. Menampilkan proposisi nilai platform, fitur unggulan, dan *call-to-action* menuju halaman login dan registrasi. Tidak memerlukan autentikasi untuk diakses.
+
+#### `login.html` & `register.html` — Autentikasi
+Halaman formulir autentikasi. `login.html` memuat `js/db.js` dan `js/auth.js` (atau `js/login.js`) untuk memvalidasi kredensial dan mengarahkan pengguna ke halaman yang sesuai berdasarkan perannya. `register.html` menyediakan formulir pendaftaran akun freelancer baru yang datanya langsung disimpan ke `localStorage`.
+
+#### `marketplace.html` — Pasar Proyek
+Halaman inti pasca-login untuk peran *freelancer*. Menampilkan daftar proyek kreatif dari UMKM dan desa wisata dalam format kartu dinamis yang di-render oleh `js/app.js`. Dilengkapi filter pencarian berdasarkan kata kunci, status proyek (*Open/In Review/Closed*), dan kategori keahlian.
+
+#### `ai-match.html` — Rekomendasi Proyek
+Menampilkan daftar proyek yang diurutkan dan diberi label persentase *kecocokan* (match score) berdasarkan profil keahlian pengguna yang tersimpan. Persentase tertinggi (≥85%) ditampilkan dengan badge hijau (*high match*), 75–84% dengan badge kuning (*mid match*), dan di bawah 75% dengan badge merah (*low match*).
+
+#### `trail-map.html` — Peta Wisata Kreatif
+Menampilkan peta visual interaktif lokasi-lokasi UMKM dan desa wisata di Bantul. Setiap pin pada peta dapat diklik untuk menyoroti (*highlight*) kartu lokasi yang bersangkutan di panel bawah dengan efek *smooth scroll*.
+
+#### `portfolio.html` — Dampak & Portofolio
+Menampilkan showcase proyek-proyek yang telah berhasil diselesaikan, lengkap dengan metrik dampak nyata (peningkatan engagement, pendapatan, jumlah unduhan), nama freelancer, dan rating. Berfungsi sebagai *social proof* dan bukti nilai platform.
+
+#### `admin-dashboard.html` — Dasbor Administrasi
+Halaman eksklusif yang hanya dapat diakses oleh pengguna dengan peran `admin`. Menyediakan antarmuka untuk pemantauan statistik platform secara keseluruhan.
 
 ---
 
-## 🔍 Penjelasan Modul & Cara Kerja Kode
+## ⚙️ Penjelasan Modul & Cara Kerja Kode
 
 ### 1. Autentikasi & RBAC (Role-Based Access Control)
 
-Sistem autentikasi diimplementasikan melalui kolaborasi tiga modul utama: `js/db.js`, `js/login.js`, dan `js/auth.js`.
+Sistem autentikasi diimplementasikan melalui dua lapisan yang bekerja secara bersama:
 
-**Mekanisme Kerja `js/db.js`:**
-
-Saat modul pertama kali dimuat oleh browser, fungsi `initDB()` dipanggil secara otomatis. Fungsi ini memeriksa apakah kunci `bantul_users` sudah ada di `localStorage`. Jika belum (pertama kali diakses), sistem menyuntikkan dua akun _seed_ default:
-
-```javascript
-// Akun Freelancer (User Reguler)
-{ name: "User Reguler", email: "user123@gmail.com", password: "user123", role: "freelancer" }
-
-// Akun Administrator
-{ name: "Admin System", email: "admin123@gmail.com", password: "admin123", role: "admin" }
-```
-
-Saat pengguna mencoba masuk, fungsi `loginUser(email, password)` memvalidasi kredensial dengan mencari kecocokan pada array pengguna yang tersimpan. Jika cocok, objek pengguna tersebut disimpan ke kunci `currentUser` di `localStorage` (sebagai penanda sesi aktif), dan fungsi mengembalikan objek `{ success: true, role: user.role }`.
-
-**Mekanisme Routing RBAC di `js/auth.js`:**
-
-Berdasarkan nilai `role` yang dikembalikan oleh `db.loginUser()`, `auth.js` mengarahkan pengguna ke halaman yang sesuai:
-
-```
-email: user123@gmail.com  →  role: "freelancer"  →  redirect: marketplace.html
-email: admin123@gmail.com →  role: "admin"        →  redirect: admin-dashboard.html
-```
-
-Apabila kredensial tidak valid, input form diberi kelas CSS `.error` (menampilkan efek visual _shake_), nilai field password dikosongkan, dan pesan kesalahan ditampilkan kepada pengguna.
-
----
-
-### 2. Manajemen Sesi & Profil (Edit Profile Modal)
-
-Seluruh logika pengelolaan profil pengguna terenkapsulasi dalam `js/edit-profile-modal.js` menggunakan pola IIFE dengan `'use strict'`.
-
-**Alur Buka Modal & Pre-populasi Data:**
-
-Ketika pengguna mengklik tombol "Edit Profil", fungsi `openModal()` dipanggil. Fungsi ini:
-
-1. Membaca data pengguna saat ini dari `localStorage.getItem('currentUser')`.
-2. Mengisi otomatis field `Nama`, `Email` pada form (field password selalu dikosongkan demi keamanan).
-3. Melakukan iterasi pada seluruh pill skill dan minat (`data-skill` / `data-interest`), membandingkannya dengan array yang tersimpan di profil pengguna, dan menandai pill yang sesuai dengan kelas `.selected`.
-
-**Alur Simpan Perubahan:**
-
-Fungsi `handleSave()` mengeksekusi urutan operasi berikut:
-
-1. Mengumpulkan nilai terbaru dari field nama, email, dan password.
-2. Melakukan validasi dasar: nama dan email tidak boleh kosong.
-3. Mengumpulkan semua pill dengan kelas `.selected` untuk mendapatkan array skill dan minat baru.
-4. Memanggil `window.db.updateUserProfile()` yang secara atomik memperbarui record pengguna di array `bantul_users` pada `localStorage` **sekaligus** memperbarui objek sesi `currentUser` agar perubahan langsung tercermin tanpa perlu login ulang.
-5. Memanggil `updateProfileUI()` (dari `app.js`) untuk memperbarui tampilan nama dan avatar di navbar secara reaktif.
-6. Memanggil `renderDropdownPills()` untuk memperbarui tampilan pill skill dan minat di dropdown profil.
-
-**Persistensi Antar Akun yang Terisolasi:**
-
-Setiap pengguna memiliki identitas yang sepenuhnya terisolasi dalam `localStorage`. Sistem menggunakan `email` lama sebagai kunci pencarian (_lookup key_) saat memperbarui profil, sehingga perubahan email pun dapat ditangani dengan benar tanpa data lintas pengguna.
-
----
-
-### 3. Interaktivitas Halaman via Event Delegation (js/app.js)
-
-Fungsi `initDetailModals()` dalam `app.js` mengimplementasikan pola _event delegation_ yang robust untuk menangani seluruh interaksi kartu di semua halaman.
-
-**Masalah yang Dipecahkan:**
-
-Karena kartu-kartu proyek, trail, dan portofolio dirender secara dinamis ke dalam DOM oleh JavaScript (bukan ditulis statis di HTML), pendekatan konvensional dengan `element.addEventListener()` per-kartu akan gagal — elemen tersebut belum ada saat `DOMContentLoaded` pertama kali terpicu.
-
-**Solusi Event Delegation:**
-
-Satu _event listener_ tunggal dipasang pada `document.body`:
+**Lapisan 1 — `js/db.js` (Data Access Layer):**
+`db.js` dibungkus dalam sebuah *Immediately Invoked Function Expression* (IIFE) dengan referensi ke objek `window` sebagai parameter, sehingga API-nya terekspos secara global melalui `window.db`. Saat halaman pertama kali dimuat, fungsi `initDB()` dipanggil secara otomatis untuk memeriksa keberadaan data di `localStorage`. Jika belum ada, ia melakukan *seeding* dua akun bawaan:
 
 ```javascript
+// Dieksekusi otomatis saat skrip dimuat (auto-init)
+users = [
+  { name: "User Reguler",  email: "user123@gmail.com",  password: "user123",  role: "freelancer" },
+  { name: "Admin System",  email: "admin123@gmail.com", password: "admin123", role: "admin" }
+];
+localStorage.setItem('bantul_users', JSON.stringify(users));
+```
+
+Fungsi `loginUser(email, password)` kemudian membandingkan kredensial yang dimasukkan dengan seluruh data pengguna yang tersimpan. Jika cocok, objek pengguna yang berhasil diautentikasi disimpan ke `localStorage` dengan kunci `currentUser` untuk manajemen sesi berikutnya.
+
+**Lapisan 2 — `js/login.js` (Routing Berbasis Peran):**
+Setelah validasi berhasil, logika RBAC diimplementasikan dengan pemeriksaan properti `role` pada data pengguna. Routing dilakukan secara deterministic:
+
+```javascript
+// Routing berdasarkan peran (role)
+if (email === ROLES.admin.email && password === ROLES.admin.pass) {
+    window.location.href = 'admin-dashboard.html'; // → Dasbor Admin
+} else {
+    window.location.href = 'marketplace.html';     // → Marketplace Freelancer
+}
+```
+
+| Kredensial | Peran | Halaman Tujuan |
+|---|---|---|
+| `user123@gmail.com` / `user123` | `freelancer` | `marketplace.html` |
+| `admin123@gmail.com` / `admin123` | `admin` | `admin-dashboard.html` |
+
+### 2. Manajemen Sesi & Profil Dinamis
+
+Setelah autentikasi berhasil, objek pengguna aktif dipersistensikan di `localStorage['currentUser']`. Fungsi `updateProfileUI()` dalam `js/app.js` kemudian membaca data ini setiap kali halaman dimuat untuk menyinkronkan tampilan antarmuka secara dinamis.
+
+```javascript
+function updateProfileUI() {
+  const user = JSON.parse(localStorage.getItem('currentUser'));
+  // Memperbarui nama di navbar, dropdown, dan avatar dengan inisial
+  const initials = user.name.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+  document.getElementById('nav-user-avatar').textContent = initials;
+}
+document.addEventListener('DOMContentLoaded', updateProfileUI);
+```
+
+Mekanisme ini memastikan bahwa setiap halaman selalu menampilkan informasi pengguna yang sedang aktif secara konsisten tanpa perlu *round-trip* ke server.
+
+Untuk pembaruan profil, **Edit Profile Modal** (Skill & Minat) dikelola melalui sistem *Custom Event* antar modul. Tombol "Perbarui Skill" di dalam `profile-modal.js` mendispatch event `open-skill-modal` ke `document`, yang kemudian ditangkap oleh listener di `initSkillModal()` dalam `app.js`:
+
+```javascript
+// Di profile-modal.js — mengirim sinyal
+document.dispatchEvent(new CustomEvent('open-skill-modal'));
+
+// Di app.js — menerima sinyal
+document.addEventListener('open-skill-modal', openModal);
+```
+
+Pola *Custom Event Bus* ini memungkinkan komunikasi antar modul tanpa ketergantungan langsung (*loose coupling*), menjaga kode tetap bersih dan *maintainable*.
+
+### 3. Interaktivitas Halaman: Event Delegation
+
+Alih-alih memasang event listener pada setiap kartu secara individual (yang akan menghasilkan ratusan listener dan rentan terhadap kesalahan ketika kartu di-render ulang secara dinamis), seluruh logika klik kartu diimplementasikan menggunakan **Event Delegation** pada elemen `document.body`:
+
+```javascript
+// Satu listener tunggal menangani klik untuk SEMUA jenis kartu
 document.body.addEventListener('click', (e) => {
-    // Klik pada kartu Marketplace atau AI Match
-    const projectCard = e.target.closest('.card-marketplace, .card-aimatch');
-    if (projectCard) { ... populateAndOpenProjectModal(data, openModal); return; }
+  // Cegah aksi jika yang diklik adalah tombol atau tautan di dalam kartu
+  if (e.target.closest('button') || e.target.closest('a')) return;
 
-    // Klik pada kartu Trail Map
-    const trailCard = e.target.closest('.card-trail');
-    if (trailCard) { ... populateAndOpenLocationModal(data, openModal); return; }
+  // Deteksi jenis kartu berdasarkan kelas CSS
+  const projectCard = e.target.closest('.card-marketplace, .card-aimatch');
+  if (projectCard) { /* → Buka modal detail proyek */ return; }
 
-    // Klik pada kartu Portfolio
-    const portfolioCard = e.target.closest('.card-portfolio');
-    if (portfolioCard) { ... populateAndOpenPortfolioModal(data, openModal); return; }
+  const trailCard = e.target.closest('.card-trail');
+  if (trailCard) { /* → Buka modal detail lokasi */ return; }
+
+  const portfolioCard = e.target.closest('.card-portfolio');
+  if (portfolioCard) { /* → Buka modal detail portofolio */ return; }
 });
 ```
 
-Metode `e.target.closest()` digunakan untuk menemukan elemen kartu terdekat dari titik klik, bahkan jika pengguna mengklik elemen anak di dalam kartu (misalnya ikon atau teks). Sebelum mencari kartu, sistem terlebih dahulu memeriksa apakah klik berasal dari `<button>` atau `<a>` untuk mencegah konflik aksi.
+Keunggulan pendekatan ini:
+- **Efisiensi Memori:** Hanya satu event listener yang terdaftar di DOM, bukan N listener untuk N kartu.
+- **Keandalan Lintas Halaman:** Tidak ada risiko *null reference error* karena kartu tidak ada di halaman tertentu.
+- **Mendukung Konten Dinamis:** Kartu yang di-render ulang secara dinamis (misalnya setelah filter diterapkan) tetap dapat diklik tanpa perlu *re-binding* listener.
 
-**Aksi "Ambil Proyek":**
+Untuk aksi **"Ambil Proyek"**, pola yang sama diterapkan:
 
-Tombol `#btn-ambil-proyek` di dalam modal detail juga ditangani melalui _event delegation_ pada `document.body`. Saat diklik, modal ditutup terlebih dahulu dengan efek transisi CSS, lalu setelah 300ms jeda (menunggu animasi selesai), notifikasi konfirmasi ditampilkan — mencegah tampilan modal dan dialog bertabrakan.
-
----
+```javascript
+document.body.addEventListener('click', (e) => {
+  const ambilBtn = e.target.closest('#btn-ambil-proyek');
+  if (ambilBtn) {
+    closeModal(backdrop);
+    setTimeout(() => alert('Proyek berhasil diambil.'), 300);
+  }
+});
+```
 
 ### 4. Sistem Notifikasi Toast Global
 
-> **Catatan Arsitektur:** Berdasarkan analisis kode sumber, sistem validasi saat ini menggunakan `window.alert()` bawaan browser untuk menampilkan pesan kesalahan (misalnya, field kosong atau format email tidak valid). Ini adalah implementasi yang sederhana dan efektif untuk tahap prototipe.
+Meskipun implementasi saat ini menggunakan dialog `alert()` bawaan browser untuk notifikasi validasi sederhana, sistem validasi terpusat diterapkan di `js/auth.js` dengan mekanisme umpan balik visual (*visual feedback*) yang ketat pada elemen formulir.
 
-Validasi form yang diimplementasikan mencakup:
+Setiap kali validasi gagal (misalnya: kolom kosong, format email tidak mengandung karakter `@`, atau password tidak cocok), sistem secara otomatis:
+1. Menambahkan kelas CSS `.error` pada elemen input yang bermasalah untuk menampilkan garis tepi merah.
+2. Menghapus kelas `.error` tersebut segera saat pengguna mulai mengetik kembali pada input tersebut (*real-time error clearing*).
 
-- **`js/auth.js` — Validasi Registrasi:** Memeriksa kesamaan password dengan konfirmasi password, serta delegasi pengecekan email duplikat ke `db.registerUser()`.
-- **`js/edit-profile-modal.js` — Validasi Edit Profil:** Memastikan field Nama dan Email tidak dibiarkan kosong sebelum data disimpan ke `localStorage`.
-- **Umpan Balik Visual:** Input yang gagal validasi mendapatkan kelas CSS `.error` yang memberikan umpan balik visual langsung (misalnya, border merah) kepada pengguna, sementara `alert()` memberikan pesan deskriptif yang jelas.
-
-Sistem notifikasi visual berbasis _toast_ (yang menyuntikkan elemen ke DOM dan _self-dismiss_ setelah beberapa detik) merupakan arah pengembangan natural berikutnya untuk menggantikan `alert()` pada iterasi produksi.
-
----
-
-### 5. Fitur Tambahan: Toggle Tema & Scroll Reveal
-
-**Dark Mode / Light Mode (`js/app.js` + `css/style.css`):**
-
-Preferensi tema pengguna disimpan secara persisten di `localStorage` dengan kunci `'theme'`. Fungsi `initThemeToggle()` mengambil nilai ini saat halaman dimuat dan menerapkannya sebagai atribut `data-theme` pada elemen `<html>`. Seluruh perubahan warna dikendalikan oleh CSS Custom Properties yang terdefinisi di `style.css`:
-
-```css
-:root {
-  --bg-primary: #ffffff;
-  --text-primary: #1a1a2e;
+```javascript
+// Validasi registrasi: password tidak cocok
+if (password !== confirmPassword) {
+  passInput.classList.add('error');    // → Sorot input merah
+  confirmInput.classList.add('error'); // → Sorot input merah
+  return; // → Hentikan proses submit
 }
-[data-theme="dark"] {
-  --bg-primary: #0d0f1a;
-  --text-primary: #e8e8f0;
-}
+
+// Pembersihan error secara real-time saat pengguna mengetik
+emailInput.addEventListener('input', () => clearError(emailInput));
+passInput.addEventListener('input',  () => clearError(passInput));
 ```
 
-**Scroll Reveal Animation (`index.html`):**
-
-Halaman landing menggunakan `IntersectionObserver` API untuk mendeteksi kapan elemen dengan atribut `data-reveal` memasuki _viewport_. Saat terdeteksi, kelas CSS `revealed` ditambahkan, memicu transisi animasi `opacity` dan `transform` yang didefinisikan di `landing.css`. Dukungan _fallback_ melalui blok `else` memastikan konten tetap terlihat di browser tanpa dukungan `IntersectionObserver`.
+Sistem notifikasi berbasis *toast* yang ter-inject langsung ke DOM (tanpa `alert()`) merupakan item yang siap dikembangkan dalam iterasi berikutnya dari proyek ini, dengan arsitektur yang sudah dipersiapkan melalui pemisahan modul yang jelas.
 
 ---
 
-## 📄 Deskripsi Halaman Aplikasi
+## 🔑 Akun Demo (Default Credentials)
 
-| Halaman                | Peran & Aksesibilitas                                                                                             |
-| ---------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| `index.html`           | Landing page publik. Dapat diakses tanpa login. Berisi hero, grid fitur, value proposition, dan CTA pendaftaran.  |
-| `login.html`           | Form autentikasi. Mendukung toggle visibilitas password. Mengarahkan ke halaman yang sesuai berdasarkan peran.    |
-| `register.html`        | Form pendaftaran akun baru. Validasi kecocokan password dan pengecekan email duplikat via `db.js`.                |
-| `marketplace.html`     | **[Freelancer]** Daftar proyek terbuka dari UMKM. Mendukung pencarian real-time dan filter status/kategori.       |
-| `ai-match.html`        | **[Freelancer]** Daftar proyek terurut berdasarkan persentase kecocokan (_match score_) dengan profil pengguna.   |
-| `trail-map.html`       | **[Freelancer]** Peta visual desa kreatif di Bantul dengan pin interaktif dan kartu lokasi yang dapat diklik.     |
-| `portfolio.html`       | **[Freelancer]** Galeri proyek yang telah diselesaikan, menampilkan metrik dampak nyata, rating, dan kontributor. |
-| `admin-dashboard.html` | **[Admin Only]** Dasbor manajemen platform. Hanya dapat diakses dengan akun berperan `admin`.                     |
+> Gunakan kredensial di bawah ini untuk mengeksplorasi seluruh fitur platform.
+
+| Role | Email | Password | Akses |
+|---|---|---|---|
+| 👤 **Freelancer** | `user123@gmail.com` | `user123` | Marketplace, AI Match, Trail Map, Portofolio |
+| 🛡️ **Admin** | `admin123@gmail.com` | `admin123` | Admin Dashboard |
 
 ---
 
 ## 🚀 Panduan Menjalankan Proyek
 
-Proyek ini adalah aplikasi web murni berbasis HTML/CSS/JS yang tidak memerlukan proses _build_, instalasi paket `npm`, atau konfigurasi server. Berikut adalah dua metode yang direkomendasikan:
+Proyek ini merupakan aplikasi web statis murni (*pure static web app*) yang **tidak memerlukan proses instalasi, build, atau server backend**. Cukup ikuti salah satu dari dua metode berikut:
 
-### Metode 1: VS Code Live Server _(Direkomendasikan)_
+### Metode 1: VS Code dengan Ekstensi Live Server *(Direkomendasikan)*
 
-Pendekatan ini memastikan modul JavaScript dimuat dengan benar melalui protokol `http://`, menghindari pembatasan keamanan browser terkait protokol `file://`.
+Live Server memberikan pengalaman pengembangan terbaik dengan fitur *hot-reload* otomatis dan menghindari masalah *CORS policy* pada beberapa browser.
 
-1. Buka folder proyek (`Travelfix/`) di **Visual Studio Code**.
-2. Pastikan ekstensi **Live Server** (oleh Ritwick Dey) telah terpasang. Jika belum, instal dari _Extensions Marketplace_ (`Ctrl + Shift + X`).
-3. Klik kanan pada file `index.html` di _Explorer_ panel, lalu pilih **"Open with Live Server"**.
-4. Browser akan terbuka secara otomatis menuju `http://127.0.0.1:5500/index.html`.
-5. Setiap perubahan yang disimpan pada file HTML, CSS, atau JS akan me-reload halaman secara otomatis (_hot reload_).
+**Langkah-langkah:**
+
+1. Pastikan **Visual Studio Code** sudah terpasang di komputer Anda.
+2. Buka VS Code, lalu buka folder proyek:
+   ```
+   File → Open Folder → [Pilih folder root proyek ini]
+   ```
+3. Buka panel **Extensions** (`Ctrl + Shift + X`), cari **"Live Server"** oleh *Ritwick Dey*, lalu klik **Install**.
+4. Setelah ekstensi terpasang, klik kanan pada file `index.html` di panel **Explorer**.
+5. Pilih opsi **"Open with Live Server"**.
+6. Browser Anda akan terbuka secara otomatis dan menampilkan halaman utama platform di alamat `http://127.0.0.1:5500/` (atau port yang tersedia).
 
 ### Metode 2: Buka Langsung di Browser
 
-Untuk penggunaan sederhana tanpa instalasi ekstensi apapun:
+1. Buka **File Explorer** Windows dan navigasikan ke folder root proyek ini.
+2. Klik dua kali pada file **`index.html`**.
+3. File akan terbuka di browser default Anda.
+4. Navigasikan ke **halaman Login** melalui tombol yang tersedia, lalu masukkan salah satu dari akun demo di atas.
 
-1. Navigasikan ke folder `Travelfix/` menggunakan File Explorer (Windows).
-2. Klik dua kali pada file `index.html`.
-3. Halaman akan terbuka langsung di browser default melalui protokol `file://`.
-
-> **Catatan:** Fungsionalitas utama (localStorage, JavaScript) berjalan normal pada protokol `file://`. Namun, beberapa fitur terkait kebijakan CORS atau modul ES6 mungkin memerlukan protokol `http://` (Metode 1).
-
-### Akun Uji Coba Bawaan
-
-Sistem dilengkapi dengan dua akun yang telah di-_seed_ secara otomatis. Gunakan kredensial berikut untuk menguji:
-
-| Peran             | Email                | Password   | Halaman Tujuan         |
-| ----------------- | -------------------- | ---------- | ---------------------- |
-| **Freelancer**    | `user123@gmail.com`  | `user123`  | `marketplace.html`     |
-| **Administrator** | `admin123@gmail.com` | `admin123` | `admin-dashboard.html` |
-
-> **Perhatian:** Karena seluruh data menggunakan `localStorage`, setiap perubahan (edit profil, registrasi akun baru) hanya bersifat lokal pada browser yang digunakan. Membersihkan data browser (_clear site data_) akan mereset semua data ke kondisi awal.
+> **Catatan:** Metode ini berfungsi penuh untuk seluruh fitur. Data yang Anda masukkan (registrasi, sesi) akan tersimpan di `localStorage` browser Anda dan akan tetap ada di antara sesi, kecuali jika Anda menghapus data browser secara manual.
 
 ---
 
-## 👥 Kontributor
+## 📄 Lisensi & Konteks Akademik
 
-Proyek ini dikembangkan sebagai karya portofolio akademis dalam Program Studi Teknik Informatika.
-
----
-
-## 📜 Lisensi
-
-Proyek ini dikembangkan untuk tujuan pendidikan dan demonstrasi portofolio akademis. Seluruh aset, konten, dan kode sumber bersifat _open for review_ dalam konteks penilaian akademis.
+Proyek ini dikembangkan sebagai **karya portofolio akademik** dalam rangka pemenuhan tugas mata kuliah pengembangan web di program studi **Teknik Informatika**. Seluruh data proyek, nama lokasi, dan metrik dampak yang ditampilkan adalah **data simulasi (dummy data)** yang dibuat semata-mata untuk keperluan demonstrasi fungsionalitas platform.
 
 ---
 
-<div align="center">
-
-**© 2026 Bantul Creative — Village Freelancer Trail**
-
-_Dibangun dengan ❤️ untuk ekosistem kreatif Kabupaten Bantul, DI Yogyakarta._
-
-</div>
+*Dikembangkan dengan ❤️ untuk mendukung ekosistem kreatif lokal Kabupaten Bantul, DI Yogyakarta.*
