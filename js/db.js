@@ -15,6 +15,16 @@
       ];
       localStorage.setItem(DB_KEY, JSON.stringify(users));
     }
+
+    if (!localStorage.getItem('bantul_projects') && typeof marketplaceProjects !== 'undefined') {
+      localStorage.setItem('bantul_projects', JSON.stringify(marketplaceProjects));
+    }
+    if (!localStorage.getItem('bantul_portfolio') && typeof portfolioProjects !== 'undefined') {
+      localStorage.setItem('bantul_portfolio', JSON.stringify(portfolioProjects));
+    }
+    if (!localStorage.getItem('bantul_villages') && typeof trailLocations !== 'undefined') {
+      localStorage.setItem('bantul_villages', JSON.stringify(trailLocations));
+    }
   }
 
   // Task 2.2: Register User
@@ -47,11 +57,52 @@
     }
   }
 
+  // New Data Access Layer API
+  function getUsers() {
+    return JSON.parse(localStorage.getItem(DB_KEY)) || [];
+  }
+
+  function getProjects() {
+    return JSON.parse(localStorage.getItem('bantul_projects')) || [];
+  }
+
+  function getPortfolio() {
+    return JSON.parse(localStorage.getItem('bantul_portfolio')) || [];
+  }
+
+  function getVillages() {
+    return JSON.parse(localStorage.getItem('bantul_villages')) || [];
+  }
+
+  function getCurrentUser() {
+    return JSON.parse(localStorage.getItem('currentUser')) || null;
+  }
+
+  function saveUsers(users) {
+    localStorage.setItem(DB_KEY, JSON.stringify(users));
+  }
+
+  function saveProjects(projects) {
+    localStorage.setItem('bantul_projects', JSON.stringify(projects));
+  }
+
+  function logout() {
+    localStorage.removeItem('currentUser');
+  }
+
   // Expose to global window object
   global.db = {
     initDB,
     registerUser,
-    loginUser
+    loginUser,
+    getUsers,
+    getProjects,
+    getPortfolio,
+    getVillages,
+    getCurrentUser,
+    saveUsers,
+    saveProjects,
+    logout
   };
 
   // Auto-init on load
