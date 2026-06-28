@@ -63,7 +63,14 @@
   }
 
   function getProjects() {
-    return JSON.parse(localStorage.getItem('bantul_projects')) || [];
+    const projects = JSON.parse(localStorage.getItem('bantul_projects')) || [];
+    return projects.map(p => {
+      if (!p.applicants) p.applicants = [];
+      if (typeof p.assignedTo === 'undefined') p.assignedTo = null;
+      if (!p.createdAt) p.createdAt = new Date().toISOString();
+      if (!p.updatedAt) p.updatedAt = new Date().toISOString();
+      return p;
+    });
   }
 
   function getPortfolio() {
@@ -148,6 +155,62 @@
     return false;
   }
 
+  // --- Workflow Engine API ---
+
+  function applyProject(projectId, freelancerId) {
+    const project = getProjectById(projectId);
+    if (!project || project.status !== "Open") return null;
+    
+    if (project.applicants.includes(freelancerId)) {
+      return null;
+    }
+
+    const updates = {
+      applicants: [...project.applicants, freelancerId],
+      updatedAt: new Date().toISOString()
+    };
+    return updateProject(projectId, updates);
+  }
+
+  function approveApplicant(projectId, freelancerId) {
+    const project = getProjectById(projectId);
+    if (!project) return null;
+    
+    if (!project.applicants.includes(freelancerId)) {
+      return null;
+    }
+
+    const updates = {
+      assignedTo: freelancerId,
+      status: "In Progress",
+      updatedAt: new Date().toISOString()
+    };
+    return updateProject(projectId, updates);
+  }
+
+  function finishProject(projectId) {
+    const project = getProjectById(projectId);
+    if (!project || project.status !== "In Progress") return null;
+
+    const updates = {
+      status: "Done",
+      updatedAt: new Date().toISOString()
+    };
+    return updateProject(projectId, updates);
+  }
+
+  function getProjectsByCreator(userId) {
+    return getProjects().filter(p => String(p.creatorId) === String(userId) || String(p.creator) === String(userId));
+  }
+
+  function getAppliedProjects(freelancerId) {
+    return getProjects().filter(p => p.applicants.includes(freelancerId));
+  }
+
+  function getAssignedProjects(freelancerId) {
+    return getProjects().filter(p => String(p.assignedTo) === String(freelancerId));
+  }
+
   // Expose to global window object
   global.db = {
     initDB,
@@ -166,7 +229,13 @@
     getProjectById,
     createProject,
     updateProject,
-    deleteProject
+    deleteProject,
+    applyProject,
+    approveApplicant,
+    finishProject,
+    getProjectsByCreator,
+    getAppliedProjects,
+    getAssignedProjects
   };
 
   // Auto-init on load
