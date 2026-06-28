@@ -90,6 +90,64 @@
     localStorage.removeItem('currentUser');
   }
 
+  // --- CRUD API ---
+
+  // User CRUD
+  function getUserById(id) {
+    const users = getUsers();
+    const user = users.find(u => String(u.id) === String(id));
+    return user || null;
+  }
+
+  function updateUser(id, updates) {
+    const users = getUsers();
+    const index = users.findIndex(u => String(u.id) === String(id));
+    if (index !== -1) {
+      users[index] = { ...users[index], ...updates };
+      saveUsers(users);
+      return users[index];
+    }
+    return null;
+  }
+
+  // Project CRUD
+  function getProjectById(id) {
+    const projects = getProjects();
+    const project = projects.find(p => String(p.id) === String(id));
+    return project || null;
+  }
+
+  function createProject(project) {
+    const projects = getProjects();
+    const newId = projects.length > 0 ? Math.max(...projects.map(p => Number(p.id) || 0)) + 1 : 1;
+    const newProject = { id: newId, ...project };
+    projects.push(newProject);
+    saveProjects(projects);
+    return newProject;
+  }
+
+  function updateProject(id, updates) {
+    const projects = getProjects();
+    const index = projects.findIndex(p => String(p.id) === String(id));
+    if (index !== -1) {
+      projects[index] = { ...projects[index], ...updates };
+      saveProjects(projects);
+      return projects[index];
+    }
+    return null;
+  }
+
+  function deleteProject(id) {
+    const projects = getProjects();
+    const index = projects.findIndex(p => String(p.id) === String(id));
+    if (index !== -1) {
+      projects.splice(index, 1);
+      saveProjects(projects);
+      return true;
+    }
+    return false;
+  }
+
   // Expose to global window object
   global.db = {
     initDB,
@@ -102,7 +160,13 @@
     getCurrentUser,
     saveUsers,
     saveProjects,
-    logout
+    logout,
+    getUserById,
+    updateUser,
+    getProjectById,
+    createProject,
+    updateProject,
+    deleteProject
   };
 
   // Auto-init on load
