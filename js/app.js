@@ -117,7 +117,7 @@ function renderMarketplace() {
     const status = statusFilter ? statusFilter.value : "";
     const category = categoryFilter ? categoryFilter.value : "";
 
-    let filtered = marketplaceProjects.filter((p) => {
+    let filtered = db.getProjects().filter((p) => {
       const matchQ = p.title.toLowerCase().includes(query) || p.description.toLowerCase().includes(query);
       const matchS = !status || p.status === status;
       const matchC = !category || p.categories.includes(category);
@@ -469,8 +469,8 @@ function initDetailModals() {
     const projectCard = e.target.closest('.card-marketplace, .card-aimatch');
     if (projectCard) {
       const id = parseInt(projectCard.dataset.id, 10);
-      const data = (projectCard.classList.contains('card-marketplace') ? marketplaceProjects : aiMatchProjects)
-                    .find(p => p.id === id);
+      const data = (projectCard.classList.contains('card-marketplace') ? db.getProjects() : aiMatchProjects)
+                    .find(p => String(p.id) === String(id));
       if (data) populateAndOpenProjectModal(data, openModal);
       return;
     }
@@ -524,6 +524,56 @@ function populateAndOpenProjectModal(p, openModal) {
   backdrop.querySelector('#pdm-price').textContent = p.prize
     ? `${p.prize}`
     : '—';
+
+  // Apply Button Integration
+  const applyBtn = backdrop.querySelector('#btn-ambil-proyek');
+  if (applyBtn) {
+    const currentUser = window.db ? db.getCurrentUser() : null;
+    const currentProject = window.db ? (db.getProjectById(p.id) || p) : p;
+    
+    // Always compute state explicitly to prevent leaking state between cards
+    if (currentProject.status !== 'Open') {
+      applyBtn.textContent = 'Closed';
+      applyBtn.disabled = true;
+    } else if (currentUser && currentProject.applicants && currentProject.applicants.includes(currentUser.id)) {
+      applyBtn.textContent = 'Applied';
+      applyBtn.disabled = true;
+    } else {
+      applyBtn.textContent = 'Apply';
+      applyBtn.disabled = false;
+    }
+
+    // Replace the button to strip any old event listeners
+    const newApplyBtn = applyBtn.cloneNode(true);
+    applyBtn.parentNode.replaceChild(newApplyBtn, applyBtn);
+
+    newApplyBtn.addEventListener('click', () => {
+      if (!currentUser) {
+        alert('You must be logged in to apply.');
+        return;
+      }
+      
+      const res = db.applyProject(currentProject.id, currentUser.id);
+      if (res) {
+        // Show success toast
+        const toast = document.createElement('div');
+        toast.textContent = 'Successfully applied to the project!';
+        Object.assign(toast.style, {
+          position: 'fixed', bottom: '20px', right: '20px', background: '#28a745', 
+          color: '#fff', padding: '12px 24px', borderRadius: '4px', zIndex: '9999',
+          boxShadow: '0 4px 6px rgba(0,0,0,0.1)', fontFamily: 'sans-serif'
+        });
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+
+        // Update ONLY this specific modal's button state
+        newApplyBtn.textContent = 'Applied';
+        newApplyBtn.disabled = true;
+      } else {
+        alert('Failed to apply. The project might be closed or you have already applied.');
+      }
+    });
+  }
 
   openModal(backdrop);
 }

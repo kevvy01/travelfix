@@ -4,6 +4,85 @@
 
   const DB_KEY = 'bantul_users';
 
+  // --- Database Migration Helpers ---
+  function migrateUsers() {
+    const users = JSON.parse(localStorage.getItem(DB_KEY));
+    if (!users) return;
+
+    let maxId = users.reduce((max, u) => Math.max(max, Number(u.id) || 0), 0);
+    let updated = false;
+
+    users.forEach(u => {
+      if (!u.id) {
+        maxId++;
+        u.id = maxId;
+        updated = true;
+      }
+      if (!u.createdAt) {
+        u.createdAt = new Date().toISOString();
+        updated = true;
+      }
+    });
+
+    if (updated) {
+      localStorage.setItem(DB_KEY, JSON.stringify(users));
+    }
+  }
+
+  function migrateCurrentUser() {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (currentUser && !currentUser.id) {
+      const users = JSON.parse(localStorage.getItem(DB_KEY)) || [];
+      const match = users.find(u => u.email === currentUser.email);
+      if (match && match.id) {
+        currentUser.id = match.id;
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+      }
+    }
+  }
+
+  function migrateProjects() {
+    const projects = JSON.parse(localStorage.getItem('bantul_projects'));
+    if (!projects) return;
+
+    let updated = false;
+
+    projects.forEach(p => {
+      if (p.createdBy === undefined) {
+        p.createdBy = null;
+        updated = true;
+      }
+      if (!p.applicants) {
+        p.applicants = [];
+        updated = true;
+      }
+      if (p.assignedTo === undefined) {
+        p.assignedTo = null;
+        updated = true;
+      }
+      if (!p.createdAt) {
+        p.createdAt = new Date().toISOString();
+        updated = true;
+      }
+      if (!p.updatedAt) {
+        p.updatedAt = p.createdAt;
+        updated = true;
+      }
+      
+      if (p.categories === null || p.categories === undefined) {
+        p.categories = [];
+        updated = true;
+      } else if (typeof p.categories === 'string') {
+        p.categories = [p.categories];
+        updated = true;
+      }
+    });
+
+    if (updated) {
+      localStorage.setItem('bantul_projects', JSON.stringify(projects));
+    }
+  }
+
   // Task 2.1: Initialization (initDB)
   function initDB() {
     let users = JSON.parse(localStorage.getItem(DB_KEY));
@@ -25,6 +104,11 @@
     if (!localStorage.getItem('bantul_villages') && typeof trailLocations !== 'undefined') {
       localStorage.setItem('bantul_villages', JSON.stringify(trailLocations));
     }
+
+    // Run migrations
+    migrateUsers();
+    migrateCurrentUser();
+    migrateProjects();
   }
 
   // Task 2.2: Register User
@@ -37,8 +121,18 @@
       return { success: false, message: "Email sudah terdaftar!" };
     }
 
+    // Generate unique incremental id
+    const newId = users.length > 0 ? Math.max(...users.map(u => Number(u.id) || 0)) + 1 : 1;
+
     // Push new user
-    users.push({ name, email, password, role: "freelancer" });
+    users.push({ 
+      id: newId,
+      name, 
+      email, 
+      password, 
+      role: "freelancer",
+      createdAt: new Date().toISOString()
+    });
     localStorage.setItem(DB_KEY, JSON.stringify(users));
     return { success: true };
   }
@@ -63,14 +157,7 @@
   }
 
   function getProjects() {
-    const projects = JSON.parse(localStorage.getItem('bantul_projects')) || [];
-    return projects.map(p => {
-      if (!p.applicants) p.applicants = [];
-      if (typeof p.assignedTo === 'undefined') p.assignedTo = null;
-      if (!p.createdAt) p.createdAt = new Date().toISOString();
-      if (!p.updatedAt) p.updatedAt = new Date().toISOString();
-      return p;
-    });
+    return JSON.parse(localStorage.getItem('bantul_projects')) || [];
   }
 
   function getPortfolio() {
@@ -125,9 +212,30 @@
   }
 
   function createProject(project) {
+    const currentUser = getCurrentUser();
+    if (!currentUser) return null;
+
     const projects = getProjects();
     const newId = projects.length > 0 ? Math.max(...projects.map(p => Number(p.id) || 0)) + 1 : 1;
-    const newProject = { id: newId, ...project };
+    const now = new Date().toISOString();
+
+    let safeCategories = [];
+    if (project.categories) {
+      safeCategories = Array.isArray(project.categories) 
+        ? project.categories 
+        : (typeof project.categories === 'string' ? [project.categories] : []);
+    }
+
+    const newProject = { 
+      id: newId, 
+      createdBy: currentUser.id,
+      applicants: [],
+      assignedTo: null,
+      createdAt: now,
+      updatedAt: now,
+      ...project,
+      categories: safeCategories
+    };
     projects.push(newProject);
     saveProjects(projects);
     return newProject;
@@ -200,7 +308,7 @@
   }
 
   function getProjectsByCreator(userId) {
-    return getProjects().filter(p => String(p.creatorId) === String(userId) || String(p.creator) === String(userId));
+    return getProjects().filter(p => String(p.createdBy) === String(userId));
   }
 
   function getAppliedProjects(freelancerId) {
