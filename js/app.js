@@ -24,6 +24,10 @@ document.addEventListener("DOMContentLoaded", () => {
     renderTrailMap();
   } else if (page === "portfolio.html") {
     renderPortfolio();
+  } else if (page === "umkm-dashboard.html") {
+    renderUMKMDashboard();
+  } else if (page === "umkm-projects.html") {
+    renderUMKMProjects();
   }
 });
 
@@ -150,6 +154,249 @@ function marketplaceCard(p) {
     <div class="card-meta">
       ${getIcon("pin", "icon-sm")}
       <span>${p.location}</span>
+    </div>
+    <div class="card-tags">${tags}</div>
+    <div class="card-footer">
+      <div class="card-footer-info">
+        ${getIcon("calendar", "icon-sm")}
+        <span>${p.deadline}</span>
+        <span class="prize-label">${p.prize}</span>
+      </div>
+    </div>
+  </article>`;
+}
+
+// ─── Page: Freelancer Projects (freelancer-projects.html) ──────────────
+function renderMyProjects() {
+  const grid = document.getElementById("my-projects-grid");
+  const countEl = document.getElementById("my-projects-count");
+  if (!grid) return;
+
+  const searchInput = document.getElementById("search-input");
+  const statusFilter = document.getElementById("status-filter");
+  const categoryFilter = document.getElementById("category-filter");
+  const currentUser = window.db ? db.getCurrentUser() : null;
+
+  if (!currentUser) {
+    grid.innerHTML = `<div class="empty-state"><p>Silakan login terlebih dahulu.</p></div>`;
+    if (countEl) countEl.textContent = `0 proyek dilamar`;
+    return;
+  }
+
+  function mapStatusForFreelancer(status) {
+    switch(status) {
+      case 'Open': return 'In Review';
+      case 'In Progress': return 'Approved';
+      case 'Done': return 'Completed';
+      case 'Closed': return 'Rejected';
+      default: return status;
+    }
+  }
+
+  function doRender() {
+    const query = searchInput ? searchInput.value.toLowerCase() : "";
+    const status = statusFilter ? statusFilter.value : "";
+    const category = categoryFilter ? categoryFilter.value : "";
+
+    const appliedProjects = db.getAppliedProjects(currentUser.id);
+
+    let filtered = appliedProjects.filter((p) => {
+      const mappedStatus = mapStatusForFreelancer(p.status);
+      const matchQ = p.title.toLowerCase().includes(query) || p.description.toLowerCase().includes(query);
+      const matchS = !status || mappedStatus === status;
+      const matchC = !category || p.categories.includes(category);
+      return matchQ && matchS && matchC;
+    });
+
+    if (countEl) countEl.textContent = `${filtered.length} proyek dilamar`;
+
+    grid.innerHTML = filtered.length
+      ? filtered.map((p) => marketplaceCard({ ...p, status: mapStatusForFreelancer(p.status) })).join("")
+      : `<div class="empty-state">
+           <p>Belum ada proyek yang sesuai atau dilamar.</p>
+           <button class="dm-btn-primary" onclick="window.location.href='marketplace.html'" style="margin-top: 15px;">Browse Marketplace</button>
+         </div>`;
+  }
+
+  if (searchInput) searchInput.addEventListener("input", doRender);
+  if (statusFilter) statusFilter.addEventListener("change", doRender);
+  if (categoryFilter) categoryFilter.addEventListener("change", doRender);
+
+  doRender();
+}
+
+// ─── Page: UMKM Dashboard (umkm-dashboard.html) ───────────────────
+function renderUMKMDashboard() {
+  const currentUser = window.db ? db.getCurrentUser() : null;
+  if (!currentUser) return;
+
+  const nameEl = document.getElementById("umkm-user-name");
+  if (nameEl) nameEl.textContent = currentUser.name;
+
+  const projects = window.db ? db.getProjects().filter(p => p.createdBy === currentUser.id) : [];
+
+  const statTotal = document.getElementById("stat-total");
+  const statOpen = document.getElementById("stat-open");
+  const statInProgress = document.getElementById("stat-inprogress");
+  const statCompleted = document.getElementById("stat-completed");
+
+  if (statTotal) statTotal.textContent = projects.length;
+  if (statOpen) statOpen.textContent = projects.filter(p => p.status === "Open").length;
+  if (statInProgress) statInProgress.textContent = projects.filter(p => p.status === "In Progress" || p.status === "In Review").length;
+  if (statCompleted) statCompleted.textContent = projects.filter(p => p.status === "Completed" || p.status === "Done" || p.status === "Closed").length;
+
+  const recentGrid = document.getElementById("umkm-recent-projects");
+  if (!recentGrid) return;
+
+  if (projects.length === 0) {
+    recentGrid.innerHTML = `
+      <div class="empty-state" style="grid-column: 1 / -1; padding: var(--space-8); text-align: center;">
+        <p style="margin-bottom: var(--space-4);">You don't have any projects yet.</p>
+        <button type="button" class="btn btn-primary btn-md btn-open-create-project" id="create-project-btn-empty">Create Project</button>
+      </div>
+    `;
+    initCreateProjectModal();
+    return;
+  }
+
+  // Sort by updatedAt descending
+  projects.sort((a, b) => new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0));
+
+  const recentProjects = projects.slice(0, 5);
+  recentGrid.innerHTML = recentProjects.map(p => marketplaceCard(p)).join("");
+
+  initCreateProjectModal();
+}
+
+function initCreateProjectModal() {
+  const modal = document.getElementById("create-project-modal");
+  if (!modal) return;
+
+  const openBtns = document.querySelectorAll(".btn-open-create-project, #create-project-btn");
+  const closeBtn = document.getElementById("btn-close-create-project");
+  const cancelBtn = document.getElementById("btn-cancel-create-project");
+  const submitBtn = document.getElementById("btn-submit-create-project");
+  const errorSpan = document.getElementById("cp-error");
+  const form = document.getElementById("create-project-form");
+
+  function openModal() {
+    modal.removeAttribute("hidden");
+
+    requestAnimationFrame(() => {
+      modal.classList.add("dm-visible");
+    });
+
+    if (errorSpan) errorSpan.style.display = "none";
+    if (form) form.reset();
+  }
+
+  function closeModal() {
+    modal.classList.remove("dm-visible");
+
+    setTimeout(() => {
+      modal.setAttribute("hidden", "");
+    }, 280); // sesuaikan dengan durasi transition CSS
+  }
+
+  openBtns.forEach(btn => btn.addEventListener("click", openModal));
+  if (closeBtn) closeBtn.addEventListener("click", closeModal);
+  if (cancelBtn) cancelBtn.addEventListener("click", closeModal);
+
+  if (submitBtn) {
+    submitBtn.addEventListener("click", function (e) {
+      e.preventDefault();
+      
+      const title = document.getElementById("cp-title").value.trim();
+      const categorySelect = document.getElementById("cp-category");
+      const location = document.getElementById("cp-location").value.trim();
+      const budget = document.getElementById("cp-budget").value.trim();
+      const deadline = document.getElementById("cp-deadline").value.trim();
+      const description = document.getElementById("cp-description").value.trim();
+      const requirements = document.getElementById("cp-requirements").value.trim();
+      const icon = document.getElementById("cp-icon").value;
+
+      const categories = Array.from(categorySelect.selectedOptions).map(opt => opt.value);
+
+      if (!title || categories.length === 0 || !location || !budget || !deadline || !description || !requirements) {
+        errorSpan.style.display = "block";
+        return;
+      }
+
+      errorSpan.style.display = "none";
+
+      const projectData = {
+        title,
+        categories,
+        location,
+        prize: budget,
+        deadline,
+        description,
+        requirements,
+        icon: icon || "puzzle"
+      };
+
+      if (window.db && typeof window.db.createProject === "function") {
+        window.db.createProject(projectData);
+        closeModal();
+        if (document.getElementById("stat-total")) renderUMKMDashboard();
+        if (document.getElementById("mp-stat-total")) renderUMKMProjects();
+      }
+    });
+  }
+}
+
+// ─── Page: UMKM Projects (umkm-projects.html) ───────────────────
+function renderUMKMProjects() {
+  const currentUser = window.db ? db.getCurrentUser() : null;
+  if (!currentUser) return;
+
+  const projects = window.db.getProjects().filter(p => p.createdBy === currentUser.id);
+
+  // Update stats
+  const statTotal = document.getElementById("mp-stat-total");
+  const statOpen = document.getElementById("mp-stat-open");
+  const statReview = document.getElementById("mp-stat-review");
+  const statClosed = document.getElementById("mp-stat-closed");
+
+  if (statTotal) statTotal.textContent = projects.length;
+  if (statOpen) statOpen.textContent = projects.filter(p => p.status === "Open").length;
+  if (statReview) statReview.textContent = projects.filter(p => p.status === "In Review").length;
+  if (statClosed) statClosed.textContent = projects.filter(p => p.status === "Closed" || p.status === "Done" || p.status === "Completed").length;
+
+  const grid = document.getElementById("umkm-projects-grid");
+  if (!grid) return;
+
+  if (projects.length === 0) {
+    grid.innerHTML = `
+      <div class="empty-state" style="grid-column: 1 / -1; padding: var(--space-8); text-align: center;">
+        <p style="margin-bottom: var(--space-4);">You don't have any projects yet.</p>
+        <button type="button" class="btn btn-primary btn-md btn-open-create-project" id="create-project-btn-empty">Create Project</button>
+      </div>
+    `;
+    initCreateProjectModal();
+    return;
+  }
+
+  projects.sort((a, b) => new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0));
+  grid.innerHTML = projects.map(p => umkmProjectCard(p)).join("");
+  initCreateProjectModal();
+}
+
+function umkmProjectCard(p) {
+  const statusClass = p.status === "Open" ? "badge-open" : p.status === "In Review" ? "badge-review" : "badge-closed";
+  const tags = p.categories && p.categories.length ? p.categories.map((c) => `<span class="tag">${c}</span>`).join("") : "";
+  const applicantsCount = Array.isArray(p.applicants) ? p.applicants.length : (p.applicants || 0);
+  
+  return `
+  <article class="card card-marketplace" data-id="${p.id}" role="listitem">
+    <div class="card-top">
+      <div class="card-icon-wrap">${getIcon(p.icon)}</div>
+      <span class="badge ${statusClass}">${p.status}</span>
+    </div>
+    <h3 class="card-title">${p.title}</h3>
+    <div class="card-meta">
+      ${getIcon("users", "icon-sm")}
+      <span>${applicantsCount} Pelamar</span>
     </div>
     <div class="card-tags">${tags}</div>
     <div class="card-footer">
@@ -501,11 +748,25 @@ function populateAndOpenProjectModal(p, openModal) {
 
   // Detect which dataset this project is from
   const isAiMatch = typeof p.matchPercent !== 'undefined';
+  const isUMKMProjectsPage = document.getElementById("umkm-projects-grid") !== null;
 
   backdrop.querySelector('#pdm-title').textContent = p.title;
-  backdrop.querySelector('#pdm-subtitle').textContent = isAiMatch
-    ? `${p.location} · ${p.applicants} pelamar · Deadline: ${p.deadline}`
-    : `${p.location} · Deadline: ${p.deadline}`;
+
+  const statusBadge = backdrop.querySelector('#pdm-status');
+  if (statusBadge) {
+    statusBadge.textContent = p.status;
+    statusBadge.className = `badge ${p.status === "Open" ? "badge-open" : p.status === "In Review" ? "badge-review" : "badge-closed"}`;
+  }
+
+  const applicantsCount = Array.isArray(p.applicants) ? p.applicants.length : (p.applicants || 0);
+
+  if (isUMKMProjectsPage) {
+    backdrop.querySelector('#pdm-subtitle').textContent = `${p.location} · ${applicantsCount} pelamar · Deadline: ${p.deadline}`;
+  } else {
+    backdrop.querySelector('#pdm-subtitle').textContent = isAiMatch
+      ? `${p.location} · ${p.applicants} pelamar · Deadline: ${p.deadline}`
+      : `${p.location} · Deadline: ${p.deadline}`;
+  }
 
   backdrop.querySelector('#pdm-description').textContent = p.description || '—';
   
@@ -531,48 +792,80 @@ function populateAndOpenProjectModal(p, openModal) {
     const currentUser = window.db ? db.getCurrentUser() : null;
     const currentProject = window.db ? (db.getProjectById(p.id) || p) : p;
     
-    // Always compute state explicitly to prevent leaking state between cards
-    if (currentProject.status !== 'Open') {
-      applyBtn.textContent = 'Closed';
-      applyBtn.disabled = true;
-    } else if (currentUser && currentProject.applicants && currentProject.applicants.includes(currentUser.id)) {
-      applyBtn.textContent = 'Applied';
-      applyBtn.disabled = true;
-    } else {
-      applyBtn.textContent = 'Apply';
+    if (currentProject.status === 'In Progress' && currentUser && currentProject.assignedTo === currentUser.id) {
+      applyBtn.textContent = 'Finish Project';
       applyBtn.disabled = false;
-    }
-
-    // Replace the button to strip any old event listeners
-    const newApplyBtn = applyBtn.cloneNode(true);
-    applyBtn.parentNode.replaceChild(newApplyBtn, applyBtn);
-
-    newApplyBtn.addEventListener('click', () => {
-      if (!currentUser) {
-        alert('You must be logged in to apply.');
-        return;
-      }
       
-      const res = db.applyProject(currentProject.id, currentUser.id);
-      if (res) {
-        // Show success toast
-        const toast = document.createElement('div');
-        toast.textContent = 'Successfully applied to the project!';
-        Object.assign(toast.style, {
-          position: 'fixed', bottom: '20px', right: '20px', background: '#28a745', 
-          color: '#fff', padding: '12px 24px', borderRadius: '4px', zIndex: '9999',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.1)', fontFamily: 'sans-serif'
-        });
-        document.body.appendChild(toast);
-        setTimeout(() => toast.remove(), 3000);
+      const newApplyBtn = applyBtn.cloneNode(true);
+      applyBtn.parentNode.replaceChild(newApplyBtn, applyBtn);
 
-        // Update ONLY this specific modal's button state
-        newApplyBtn.textContent = 'Applied';
-        newApplyBtn.disabled = true;
+      newApplyBtn.addEventListener('click', () => {
+        const res = db.finishProject(currentProject.id);
+        if (res) {
+          const toast = document.createElement('div');
+          toast.textContent = 'Successfully finished the project!';
+          Object.assign(toast.style, {
+            position: 'fixed', bottom: '20px', right: '20px', background: '#28a745', 
+            color: '#fff', padding: '12px 24px', borderRadius: '4px', zIndex: '9999',
+            boxShadow: '0 4px 6px rgba(0,0,0,0.1)', fontFamily: 'sans-serif'
+          });
+          document.body.appendChild(toast);
+          setTimeout(() => toast.remove(), 3000);
+
+          newApplyBtn.textContent = 'Completed';
+          newApplyBtn.disabled = true;
+
+          if (typeof renderMyProjects === 'function' && document.getElementById('my-projects-grid')) {
+            renderMyProjects();
+          }
+        } else {
+          alert('Failed to finish project.');
+        }
+      });
+    } else {
+      // Always compute state explicitly to prevent leaking state between cards
+      if (currentProject.status !== 'Open') {
+        applyBtn.textContent = 'Closed';
+        applyBtn.disabled = true;
+      } else if (currentUser && currentProject.applicants && currentProject.applicants.includes(currentUser.id)) {
+        applyBtn.textContent = 'Applied';
+        applyBtn.disabled = true;
       } else {
-        alert('Failed to apply. The project might be closed or you have already applied.');
+        applyBtn.textContent = 'Apply';
+        applyBtn.disabled = false;
       }
-    });
+
+      // Replace the button to strip any old event listeners
+      const newApplyBtn = applyBtn.cloneNode(true);
+      applyBtn.parentNode.replaceChild(newApplyBtn, applyBtn);
+
+      newApplyBtn.addEventListener('click', () => {
+        if (!currentUser) {
+          alert('You must be logged in to apply.');
+          return;
+        }
+        
+        const res = db.applyProject(currentProject.id, currentUser.id);
+        if (res) {
+          // Show success toast
+          const toast = document.createElement('div');
+          toast.textContent = 'Successfully applied to the project!';
+          Object.assign(toast.style, {
+            position: 'fixed', bottom: '20px', right: '20px', background: '#28a745', 
+            color: '#fff', padding: '12px 24px', borderRadius: '4px', zIndex: '9999',
+            boxShadow: '0 4px 6px rgba(0,0,0,0.1)', fontFamily: 'sans-serif'
+          });
+          document.body.appendChild(toast);
+          setTimeout(() => toast.remove(), 3000);
+
+          // Update ONLY this specific modal's button state
+          newApplyBtn.textContent = 'Applied';
+          newApplyBtn.disabled = true;
+        } else {
+          alert('Failed to apply. The project might be closed or you have already applied.');
+        }
+      });
+    }
   }
 
   openModal(backdrop);

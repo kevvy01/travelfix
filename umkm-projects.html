@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kelola Proyek — Bantul Creative Village</title>
+  <meta name="description" content="Manajemen semua proyek UMKM di Bantul Creative Village." />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/components.css" />
+</head>
+<body>
+
+  <!-- ══ NAVIGATION ════════════════════════════════════════ -->
+  <div id="navbar"></div>
+
+  <!-- ══ PAGE ══════════════════════════════════════════════ -->
+  <main class="page-wrapper">
+    <div class="container">
+
+      <!-- Section 1: Welcome -->
+      <section class="subheader" aria-label="Header Kelola Proyek">
+        <div class="subheader-row">
+          <div>
+            <h1>Kelola Proyek</h1>
+            <p>Manajemen semua proyek yang Anda buat.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 2: Summary Cards -->
+      <section class="pm-section" aria-label="Summary Statistics" style="margin-bottom: 2rem;">
+        <div class="pm-stats-row">
+          <div class="pm-stat-card">
+            <span class="pm-stat-val" id="mp-stat-total">0</span>
+            <span class="pm-stat-lbl">Total Proyek</span>
+          </div>
+          <div class="pm-stat-card">
+            <span class="pm-stat-val" id="mp-stat-open">0</span>
+            <span class="pm-stat-lbl">Open</span>
+          </div>
+          <div class="pm-stat-card">
+            <span class="pm-stat-val" id="mp-stat-review">0</span>
+            <span class="pm-stat-lbl">In Review</span>
+          </div>
+          <div class="pm-stat-card">
+            <span class="pm-stat-val" id="mp-stat-closed">0</span>
+            <span class="pm-stat-lbl">Closed</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 3: Project List -->
+      <section aria-label="Daftar Proyek">
+        <div class="marketplace-grid" id="umkm-projects-grid" role="list">
+          <!-- Rendered by app.js -->
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ══ CREATE PROJECT MODAL ════════════════════════════════════════ -->
+  <div class="detail-backdrop" id="create-project-modal" hidden aria-modal="true" role="dialog" aria-labelledby="cpm-title">
+    <div class="detail-modal" style="max-height: 90vh; overflow-y: auto;">
+      <div class="dm-header">
+        <div class="dm-header-info">
+          <h2 class="dm-title" id="cpm-title">Buat Proyek Baru</h2>
+          <div class="dm-subtitle">Isi detail proyek untuk mencari talenta</div>
+        </div>
+        <button type="button" class="dm-close-btn" id="btn-close-create-project" aria-label="Tutup modal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="dm-body">
+        <span class="form-error" id="cp-error" style="color: red; display: none; margin-bottom: var(--space-4); font-size: var(--fs-sm); font-weight: 600;">Semua kolom wajib diisi.</span>
+        
+        <form id="create-project-form">
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label class="form-label" style="display:block; margin-bottom: 0.5rem; font-weight: 600;">Judul Proyek</label>
+            <input type="text" id="cp-title" class="form-input" required placeholder="Contoh: Desain Logo Kasongan" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+          </div>
+          
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label class="form-label" style="display:block; margin-bottom: 0.5rem; font-weight: 600;">Kategori (Tahan Ctrl/Cmd untuk lebih dari satu)</label>
+            <select id="cp-category" class="form-input" multiple required style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+              <option value="Desain Grafis">Desain Grafis</option>
+              <option value="Branding">Branding</option>
+              <option value="Fotografi">Fotografi</option>
+              <option value="Videografi">Videografi</option>
+              <option value="Web Dev">Web Dev</option>
+              <option value="UI/UX">UI/UX</option>
+              <option value="Digital Marketing">Digital Marketing</option>
+              <option value="Konten">Konten</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label class="form-label" style="display:block; margin-bottom: 0.5rem; font-weight: 600;">Lokasi</label>
+            <input type="text" id="cp-location" class="form-input" required placeholder="Contoh: Kasongan, Bantul" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label class="form-label" style="display:block; margin-bottom: 0.5rem; font-weight: 600;">Budget / Hadiah</label>
+            <input type="text" id="cp-budget" class="form-input" required placeholder="Contoh: Rp 2.000.000" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label class="form-label" style="display:block; margin-bottom: 0.5rem; font-weight: 600;">Deadline</label>
+            <input type="text" id="cp-deadline" class="form-input" required placeholder="Contoh: 15 Okt 2026" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label class="form-label" style="display:block; margin-bottom: 0.5rem; font-weight: 600;">Deskripsi</label>
+            <textarea id="cp-description" class="form-input" required rows="3" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);"></textarea>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label class="form-label" style="display:block; margin-bottom: 0.5rem; font-weight: 600;">Syarat & Ketentuan</label>
+            <textarea id="cp-requirements" class="form-input" required rows="3" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);"></textarea>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label class="form-label" style="display:block; margin-bottom: 0.5rem; font-weight: 600;">Ikon (Opsional)</label>
+            <select id="cp-icon" class="form-input" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+              <option value="puzzle">Puzzle</option>
+              <option value="camera">Camera</option>
+              <option value="globe">Globe</option>
+              <option value="palette">Palette</option>
+              <option value="music">Music</option>
+              <option value="map-pin">Map Pin</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="dm-footer dm-footer-aligned">
+        <button type="button" class="btn btn-outline" id="btn-cancel-create-project" style="margin-right: auto;">Batal</button>
+        <button type="button" class="dm-btn-primary dm-btn-action" id="btn-submit-create-project">Buat Proyek</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PROJECT DETAIL MODAL ════════════════════════════ -->
+  <div class="detail-backdrop" id="project-detail-backdrop" hidden aria-modal="true" role="dialog" aria-labelledby="pdm-title">
+    <div class="detail-modal">
+      <div class="dm-header">
+        <div class="dm-header-info">
+          <div style="display:flex; align-items:center; gap: 8px;">
+            <h2 class="dm-title" id="pdm-title">Judul Proyek</h2>
+            <span class="badge" id="pdm-status" style="font-size: 0.75rem;"></span>
+          </div>
+          <div class="dm-subtitle" id="pdm-subtitle">Lokasi · Info</div>
+        </div>
+        <button class="dm-close-btn" aria-label="Tutup modal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="dm-body">
+        <div class="dm-section">
+          <span class="dm-section-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Keterangan Proyek
+          </span>
+          <p class="dm-section-text" id="pdm-description">—</p>
+        </div>
+        <div class="dm-section">
+          <span class="dm-section-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            Syarat &amp; Ketentuan
+          </span>
+          <p class="dm-section-text" id="pdm-requirements">—</p>
+        </div>
+        <div class="dm-section">
+          <span class="dm-section-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.46 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.96-4.67A2.5 2.5 0 0 1 9.5 2Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.46 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.96-4.67A2.5 2.5 0 0 0 14.5 2Z"/></svg>
+            Skill yang Dibutuhkan
+          </span>
+          <div class="dm-pills" id="pdm-skills"></div>
+        </div>
+        <div class="dm-section">
+          <span class="dm-section-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            Range Harga
+          </span>
+          <div class="dm-price-block">
+            <span class="dm-price-val" id="pdm-price">Rp —</span>
+          </div>
+        </div>
+      </div>
+      <!-- Footer omitted for UMKM Projects so "Ambil Proyek" is not available -->
+    </div>
+  </div><!-- /project-detail-modal -->
+
+  <script src="js/db.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/components.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/profile-modal.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // Re-initialize dynamic components if needed
+      if (typeof renderUMKMProjects === "function") renderUMKMProjects();
+    });
+  </script>
+</body>
+</html>

@@ -17,6 +17,8 @@
       const email = emailInput.value.trim();
       const password = passInput.value;
       const confirmPassword = confirmInput.value;
+      const roleInput = document.getElementById('reg-role');
+      const role = roleInput ? roleInput.value : 'freelancer';
 
       // Reset errors
       [nameInput, emailInput, passInput, confirmInput].forEach(el => el.classList.remove('error'));
@@ -29,7 +31,7 @@
       }
 
       // Call simulated database
-      const result = window.db.registerUser(name, email, password);
+      const result = window.db.registerUser(name, email, password, role);
 
       if (result.success) {
         alert("Registrasi berhasil! Silakan login.");
@@ -76,6 +78,8 @@
       if (result.success) {
         if (result.role === 'admin') {
           window.location.href = 'admin-dashboard.html';
+        } else if (result.role === 'umkm') {
+          window.location.href = 'umkm-dashboard.html';
         } else {
           window.location.href = 'marketplace.html';
         }

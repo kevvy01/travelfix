@@ -3,6 +3,7 @@
   'use strict';
 
   const DB_KEY = 'bantul_users';
+  let dbInitialized = false;
 
   // --- Database Migration Helpers ---
   function migrateUsers() {
@@ -85,12 +86,15 @@
 
   // Task 2.1: Initialization (initDB)
   function initDB() {
+    if (dbInitialized) return;
+
     let users = JSON.parse(localStorage.getItem(DB_KEY));
     if (!users) {
       // Seed default accounts
       users = [
         { name: "User Reguler", email: "user123@gmail.com", password: "user123", role: "freelancer" },
-        { name: "Admin System", email: "admin123@gmail.com", password: "admin123", role: "admin" }
+        { name: "Admin System", email: "admin123@gmail.com", password: "admin123", role: "admin" },
+        { name: "UMKM Kasongan", email: "umkm123@gmail.com", password: "umkm123", role: "umkm" }
       ];
       localStorage.setItem(DB_KEY, JSON.stringify(users));
     }
@@ -109,10 +113,12 @@
     migrateUsers();
     migrateCurrentUser();
     migrateProjects();
+
+    dbInitialized = true;
   }
 
   // Task 2.2: Register User
-  function registerUser(name, email, password) {
+  function registerUser(name, email, password, role = "freelancer") {
     const users = JSON.parse(localStorage.getItem(DB_KEY)) || [];
     
     // Check if email exists
@@ -130,7 +136,7 @@
       name, 
       email, 
       password, 
-      role: "freelancer",
+      role: role,
       createdAt: new Date().toISOString()
     });
     localStorage.setItem(DB_KEY, JSON.stringify(users));
@@ -153,18 +159,22 @@
 
   // New Data Access Layer API
   function getUsers() {
+    initDB();
     return JSON.parse(localStorage.getItem(DB_KEY)) || [];
   }
 
   function getProjects() {
+    initDB();
     return JSON.parse(localStorage.getItem('bantul_projects')) || [];
   }
 
   function getPortfolio() {
+    initDB();
     return JSON.parse(localStorage.getItem('bantul_portfolio')) || [];
   }
 
   function getVillages() {
+    initDB();
     return JSON.parse(localStorage.getItem('bantul_villages')) || [];
   }
 
@@ -234,6 +244,8 @@
       createdAt: now,
       updatedAt: now,
       ...project,
+      status: project.status || "Open",
+      icon: project.icon || "puzzle",
       categories: safeCategories
     };
     projects.push(newProject);
@@ -346,7 +358,7 @@
     getAssignedProjects
   };
 
-  // Auto-init on load
-  initDB();
+  // Auto-init on DOMContentLoaded to guarantee data.js is parsed
+  document.addEventListener("DOMContentLoaded", initDB);
 
 })(window);

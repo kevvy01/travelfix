@@ -3,26 +3,26 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Challenge Marketplace — Bantul Creative Village</title>
-  <meta name="description" content="Jelajahi ratusan tantangan kreatif dari UMKM dan komunitas Bantul. Temukan proyek sesuai keahlianmu dan mulai berkarya." />
+  <title>Proyek Saya — Bantul Creative Village</title>
+  <meta name="description" content="Kelola semua proyek yang kamu lamar dan kerjakan di Bantul Creative Village." />
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="css/components.css" />
 </head>
 <body>
 
-  <!-- ══ NAVIGATION ════════════════════════════════════════ -->
+  <!-- â• â•  NAVIGATION â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â•  -->
   <div id="navbar"></div>
 
-  <!-- ══ PAGE ══════════════════════════════════════════════ -->
+  <!-- â• â•  PAGE â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â•  -->
   <main class="page-wrapper">
     <div class="container">
 
       <!-- Sub-header -->
-      <section class="subheader" aria-label="Marketplace Header">
+      <section class="subheader" aria-label="My Projects Header">
         <div class="subheader-row">
           <div>
-            <h1>Challenge Marketplace</h1>
-            <p>Temukan tantangan kreatif dari UMKM dan komunitas Bantul yang menunggumu.</p>
+            <h1>Proyek Saya</h1>
+            <p>Pantau status proyek yang telah kamu lamar dan kerjakan.</p>
           </div>
         </div>
         <div class="filter-row">
@@ -40,9 +40,10 @@
           </div>
           <select id="status-filter" class="select-filter" aria-label="Filter status">
             <option value="">Semua Status</option>
-            <option value="Open">Open</option>
             <option value="In Review">In Review</option>
-            <option value="Closed">Closed</option>
+            <option value="Approved">Approved</option>
+            <option value="Completed">Completed</option>
+            <option value="Rejected">Rejected</option>
           </select>
           <select id="category-filter" class="select-filter" aria-label="Filter kategori">
             <option value="">Semua Kategori</option>
@@ -64,24 +65,24 @@
 
       <!-- Projects Grid -->
       <div class="section-title-row">
-        <h2 class="section-title">Semua Proyek</h2>
-        <span class="section-count">6 proyek tersedia</span>
+        <h2 class="section-title">Daftar Proyek</h2>
+        <span class="section-count" id="my-projects-count">0 proyek dilamar</span>
       </div>
 
-      <div class="marketplace-grid" id="marketplace-grid" role="list" aria-label="Daftar proyek marketplace">
+      <div class="marketplace-grid" id="my-projects-grid" role="list" aria-label="Daftar proyek saya">
         <!-- Rendered by app.js -->
       </div>
 
     </div>
   </main>
 
-  <!-- ══ PROJECT DETAIL MODAL ════════════════════════════ -->
+  <!-- â• â•  PROJECT DETAIL MODAL â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â•  -->
   <div class="detail-backdrop" id="project-detail-backdrop" hidden aria-modal="true" role="dialog" aria-labelledby="pdm-title">
     <div class="detail-modal">
       <div class="dm-header">
         <div class="dm-header-info">
           <h2 class="dm-title" id="pdm-title">Judul Proyek</h2>
-          <div class="dm-subtitle" id="pdm-subtitle">Lokasi · Info</div>
+          <div class="dm-subtitle" id="pdm-subtitle">Lokasi Â· Info</div>
         </div>
         <button class="dm-close-btn" aria-label="Tutup modal">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -93,14 +94,14 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
             Keterangan Proyek
           </span>
-          <p class="dm-section-text" id="pdm-description">—</p>
+          <p class="dm-section-text" id="pdm-description">â€”</p>
         </div>
         <div class="dm-section">
           <span class="dm-section-label">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
             Syarat &amp; Ketentuan
           </span>
-          <p class="dm-section-text" id="pdm-requirements">—</p>
+          <p class="dm-section-text" id="pdm-requirements">â€”</p>
         </div>
         <div class="dm-section">
           <span class="dm-section-label">
@@ -115,7 +116,7 @@
             Range Harga
           </span>
           <div class="dm-price-block">
-            <span class="dm-price-val" id="pdm-price">Rp —</span>
+            <span class="dm-price-val" id="pdm-price">Rp â€”</span>
           </div>
         </div>
       </div>
@@ -127,13 +128,13 @@
     </div>
   </div><!-- /project-detail-modal -->
 
-  <!-- ══ LOCATION DETAIL MODAL ══════════════════════════════ -->
+  <!-- â• â•  LOCATION DETAIL MODAL â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â•  -->
   <div class="detail-backdrop" id="location-detail-backdrop" hidden aria-modal="true" role="dialog" aria-labelledby="ldm-title">
     <div class="detail-modal">
       <div class="dm-header">
         <div class="dm-header-info">
           <h2 class="dm-title" id="ldm-title">Nama Lokasi</h2>
-          <div class="dm-subtitle" id="ldm-client">Klien · Proyek</div>
+          <div class="dm-subtitle" id="ldm-client">Klien Â· Proyek</div>
         </div>
         <button class="dm-close-btn" aria-label="Tutup modal">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -145,21 +146,21 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
             Keterangan UMKM / Perusahaan
           </span>
-          <p class="dm-section-text" id="ldm-description">—</p>
+          <p class="dm-section-text" id="ldm-description">â€”</p>
         </div>
         <div class="dm-section">
           <span class="dm-section-label">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
             Alamat Lengkap
           </span>
-          <p class="dm-section-text" id="ldm-address">—</p>
+          <p class="dm-section-text" id="ldm-address">â€”</p>
         </div>
         <div class="dm-section">
           <span class="dm-section-label">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.18h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.69 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.18 6.18l1.91-1.91a2 2 0 0 1 2.11-.45c.91.33 1.85.56 2.81.69A2 2 0 0 1 22 16.92z"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13A19.79 19.79 0 0 1 3.07-8.67A2 2 0 0 1 3.6 2.18h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.69 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.18 6.18l1.91-1.91a2 2 0 0 1 2.11-.45c.91.33 1.85.56 2.81.69A2 2 0 0 1 22 16.92z"/></svg>
             Nomor Kontak
           </span>
-          <p class="dm-section-text" id="ldm-contact">—</p>
+          <p class="dm-section-text" id="ldm-contact">â€”</p>
         </div>
         <div class="dm-section">
           <span class="dm-section-label">
@@ -175,13 +176,13 @@
     </div>
   </div><!-- /location-detail-modal -->
 
-  <!-- ══ PORTFOLIO DETAIL MODAL ═════════════════════════════ -->
+  <!-- â• â•  PORTFOLIO DETAIL MODAL â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â•  -->
   <div class="detail-backdrop" id="portfolio-detail-backdrop" hidden aria-modal="true" role="dialog" aria-labelledby="pfdm-title">
     <div class="detail-modal">
       <div class="dm-header">
         <div class="dm-header-info">
           <h2 class="dm-title" id="pfdm-title">Judul Proyek</h2>
-          <div class="dm-subtitle" id="pfdm-subtitle">Freelancer · Tanggal</div>
+          <div class="dm-subtitle" id="pfdm-subtitle">Freelancer Â· Tanggal</div>
         </div>
         <button class="dm-close-btn" aria-label="Tutup modal">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -193,14 +194,14 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
             Detail Pekerjaan
           </span>
-          <p class="dm-section-text" id="pfdm-description">—</p>
+          <p class="dm-section-text" id="pfdm-description">â€”</p>
         </div>
         <div class="dm-impact-box">
           <div class="dm-impact-title">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
             Dampak Nyata
           </div>
-          <p class="dm-section-text" id="pfdm-impact-text" style="margin-bottom:0.75rem; color: var(--accent-green-dk);">—</p>
+          <p class="dm-section-text" id="pfdm-impact-text" style="margin-bottom:0.75rem; color: var(--accent-green-dk);">â€”</p>
           <div class="dm-impact-metrics" id="pfdm-metrics"></div>
         </div>
       </div>
@@ -215,7 +216,7 @@
   <div class="sm-modal" id="skill-modal" role="dialog" aria-modal="true"
        aria-labelledby="sm-modal-title" hidden>
 
-    <!-- ── STEP 1: Skills ───────────────────────────────── -->
+    <!-- â”€â”€ STEP 1: Skills â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
     <div id="skill-step-1">
 
       <!-- Progress -->
@@ -271,7 +272,7 @@
 
     </div><!-- /step-1 -->
 
-    <!-- ── STEP 2: Interests ─────────────────────────────── -->
+    <!-- â”€â”€ STEP 2: Interests â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
     <div id="skill-step-2" hidden>
 
       <!-- Progress -->
@@ -381,16 +382,18 @@
   </footer>
 
   <script src="js/data.js"></script>
-  <script src="js/components.js"></script>
-  <script src="js/app.js"></script>
-  <script src="js/profile-modal.js"></script>
   <script src="js/db.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/components.js"></script>
+  <script src="js/profile-modal.js"></script>
+  <script src="js/app.js"></script>
   <script>
-    const navbar = document.getElementById('navbar');
-    window.addEventListener('scroll', () => {
-      navbar.classList.toggle('scrolled', window.scrollY > 10);
+    document.addEventListener("DOMContentLoaded", () => {
+      // Must re-initialize specific components after load.
+      if (typeof initThemeToggle === "function") initThemeToggle();
+      if (typeof initNotificationDropdown === "function") initNotificationDropdown();
+      if (typeof renderMyProjects === "function") renderMyProjects();
     });
   </script>
 </body>
 </html>
-

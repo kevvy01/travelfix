@@ -1,6 +1,6 @@
 // js/profile-modal.js — Profile Modal Toggle & Actions
 
-(function () {
+window.initProfileModal = function () {
   'use strict';
 
   const pill    = document.getElementById('user-pill');
@@ -70,7 +70,7 @@
   /* ── Action buttons ───────────────────────────────────── */
   const btnLogout  = document.getElementById('pm-logout');
   const btnAiRec   = document.getElementById('pm-ai-rec');
-  const btnUpdate  = document.getElementById('pm-update-skill');
+  const btnSettings  = document.getElementById('pm-settings') || document.getElementById('pm-update-skill');
 
   if (btnLogout) {
     btnLogout.addEventListener('click', function () {
@@ -84,12 +84,12 @@
     });
   }
 
-  if (btnUpdate) {
-    btnUpdate.addEventListener('click', function () {
+  if (btnSettings) {
+    btnSettings.addEventListener('click', function () {
       closeModal();
-      // Signal skill-modal.js to open
+      // Signal settings/skill modal to open
       document.dispatchEvent(new CustomEvent('open-skill-modal'));
     });
   }
 
-})();
+};
