@@ -18,8 +18,8 @@ function renderSharedNavbar() {
   // Route Guard Logic
   const role = user.role || 'freelancer';
   const allowedRoutes = {
-    freelancer: ['marketplace.html', 'ai-match.html', 'freelancer-projects.html', 'trail-map.html', 'portfolio.html'],
-    umkm: ['umkm-dashboard.html', 'marketplace.html', 'umkm-projects.html', 'talent-ai.html', 'profil-umkm.html'],
+    freelancer: ['marketplace.html', 'ai-match.html', 'freelancer-projects.html', 'trail-map.html', 'portfolio.html', 'profile.html'],
+    umkm: ['umkm-dashboard.html', 'marketplace.html', 'umkm-projects.html', 'talent-ai.html', 'profile.html'],
     admin: ['admin-dashboard.html', 'admin-users.html', 'admin-umkm.html', 'admin-projects.html']
   };
 
@@ -47,7 +47,7 @@ function renderSharedNavbar() {
         <a href="marketplace.html" class="nav-tab ${currentPath === 'marketplace.html' ? 'active' : ''}">Marketplace</a>
         <a href="umkm-projects.html" class="nav-tab ${currentPath === 'umkm-projects.html' ? 'active' : ''}">Kelola Proyek</a>
         <a href="talent-ai.html" class="nav-tab ${currentPath === 'talent-ai.html' ? 'active' : ''}">Talent AI</a>
-        <a href="profil-umkm.html" class="nav-tab ${currentPath === 'profil-umkm.html' ? 'active' : ''}">Profil UMKM</a>
+        <a href="profile.html" class="nav-tab ${currentPath === 'profile.html' ? 'active' : ''}">Profil UMKM</a>
     `;
   } else if (role === 'admin') {
     tabsHTML = `
@@ -181,29 +181,35 @@ function renderSharedNavbar() {
               </div>
             </div>
 
+            <!-- UMKM Section -->
+            <div class="pm-section" id="pm-section-umkm" style="display: none;">
+              <p class="pm-section-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                Detail Bisnis
+              </p>
+              <p style="font-size: var(--fs-sm); color: var(--text-color); margin-bottom: 0.5rem;"><strong style="color:var(--text-muted);">Kategori:</strong> <span id="pm-umkm-category">—</span></p>
+              <p style="font-size: var(--fs-sm); color: var(--text-color);"><strong style="color:var(--text-muted);">Lokasi:</strong> <span id="pm-umkm-location">—</span></p>
+            </div>
+
             <!-- Section 1 — Skills -->
-            <div class="pm-section">
+            <div class="pm-section" id="pm-section-skills">
               <p class="pm-section-title">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.46 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.96-4.67A2.5 2.5 0 0 1 9.5 2Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.46 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.96-4.67A2.5 2.5 0 0 0 14.5 2Z"/></svg>
                 Skill yang Dikuasai
               </p>
-              <div class="pm-pills pm-pills--green">
-                <span>Branding</span>
-                <span>Graphic Design</span>
-                <span>Video Editing</span>
+              <div class="pm-pills pm-pills--green" id="pm-skills-container">
+                <!-- Populated dynamically -->
               </div>
             </div>
 
             <!-- Section 2 — Interests -->
-            <div class="pm-section">
+            <div class="pm-section" id="pm-section-interests">
               <p class="pm-section-title">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
                 Minat &amp; Bidang
               </p>
-              <div class="pm-pills pm-pills--amber">
-                <span>Pariwisata</span>
-                <span>Budaya Lokal</span>
-                <span>Kuliner</span>
+              <div class="pm-pills pm-pills--amber" id="pm-interests-container">
+                <!-- Populated dynamically -->
               </div>
             </div>
 
@@ -227,6 +233,7 @@ function renderSharedNavbar() {
         </div><!-- /user-pill-wrap -->
       </div>
     </div>
+
   `;
 }
 

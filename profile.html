@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profil Saya — Bantul Creative Village</title>
+  <meta name="description" content="Kelola informasi profil Anda." />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/components.css" />
+</head>
+<body>
+
+  <!-- ══ NAVIGATION ════════════════════════════════════════ -->
+  <div id="navbar"></div>
+
+  <!-- ══ PAGE ══════════════════════════════════════════════ -->
+  <main class="page-wrapper">
+    <div class="container" style="max-width: 700px; margin: 0 auto;">
+
+      <!-- Welcome -->
+      <section class="subheader" aria-label="Profile Header">
+        <div class="subheader-row">
+          <div>
+            <h1>Profil Saya</h1>
+            <p>Kelola informasi dan portofolio Anda di sini.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Form -->
+      <section aria-label="Profile Form" style="margin-bottom: 3rem;">
+        <form id="profile-form" style="background: var(--card-bg); padding: 2rem; border-radius: var(--radius-lg); border: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 1.5rem;">
+          
+          <div class="form-group">
+            <label class="form-label" id="label-name" style="font-weight: 600; margin-bottom: 0.5rem; display: block;">Nama Lengkap</label>
+            <input type="text" id="prof-name" class="form-input" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+          </div>
+
+          <div class="form-group" id="group-category" style="display: none;">
+            <label class="form-label" style="font-weight: 600; margin-bottom: 0.5rem; display: block;">Kategori Bisnis</label>
+            <select id="prof-category" class="form-input" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+              <option value="">Pilih Kategori</option>
+              <option value="Kriya">Kriya</option>
+              <option value="Kuliner">Kuliner</option>
+              <option value="Fashion">Fashion</option>
+              <option value="Pariwisata">Pariwisata</option>
+              <option value="Jasa">Jasa</option>
+              <option value="Lainnya">Lainnya</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" id="label-bio" style="font-weight: 600; margin-bottom: 0.5rem; display: block;">Bio</label>
+            <textarea id="prof-bio" class="form-input" rows="4" placeholder="Ceritakan tentang Anda atau bisnis Anda..." style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" style="font-weight: 600; margin-bottom: 0.5rem; display: block;">Lokasi</label>
+            <input type="text" id="prof-location" class="form-input" placeholder="Contoh: Kasongan, Bantul" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+          </div>
+
+          <div class="form-group" id="group-skills" style="display: none;">
+            <label class="form-label" style="font-weight: 600; margin-bottom: 0.5rem; display: block;">Skill (Pilih yang relevan)</label>
+            <div id="prof-skills-container"></div>
+          </div>
+
+          <div class="form-group" id="group-interests" style="display: none;">
+            <label class="form-label" style="font-weight: 600; margin-bottom: 0.5rem; display: block;">Minat (Pilih yang relevan)</label>
+            <div id="prof-interests-container"></div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" id="label-portfolio" style="font-weight: 600; margin-bottom: 0.5rem; display: block;">Portfolio</label>
+            <input type="text" id="prof-portfolio" class="form-input" placeholder="Link portfolio atau website Anda" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+          </div>
+
+          <div class="form-group">
+            <h3 style="font-size: var(--fs-md); margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">Informasi Kontak</h3>
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
+              <div>
+                <label class="form-label" style="font-weight: 600; margin-bottom: 0.5rem; display: block;">Email Publik (Kontak)</label>
+                <input type="email" id="prof-contact-email" class="form-input" placeholder="contoh@email.com" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+              </div>
+              <div>
+                <label class="form-label" style="font-weight: 600; margin-bottom: 0.5rem; display: block;">WhatsApp</label>
+                <input type="text" id="prof-contact-whatsapp" class="form-input" placeholder="08123456789" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+              </div>
+              <div>
+                <label class="form-label" style="font-weight: 600; margin-bottom: 0.5rem; display: block;">Instagram</label>
+                <input type="text" id="prof-contact-instagram" class="form-input" placeholder="@username" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+              </div>
+              <div id="contact-freelancer-only" style="display: none;">
+                <label class="form-label" style="font-weight: 600; margin-bottom: 0.5rem; display: block;">LinkedIn</label>
+                <input type="text" id="prof-contact-linkedin" class="form-input" placeholder="URL Profil LinkedIn" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+              </div>
+              <div id="contact-umkm-only" style="display: none; flex-direction: column; gap: 1rem;">
+                <div>
+                  <label class="form-label" style="font-weight: 600; margin-bottom: 0.5rem; display: block;">Website</label>
+                  <input type="text" id="prof-contact-website" class="form-input" placeholder="https://websiteanda.com" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+                </div>
+                <div>
+                  <label class="form-label" style="font-weight: 600; margin-bottom: 0.5rem; display: block;">Alamat Lengkap</label>
+                  <textarea id="prof-contact-address" class="form-input" rows="2" placeholder="Alamat lengkap toko atau kantor" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);"></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem; padding: 12px 24px; font-size: 1rem; height: 48px;">Simpan Perubahan</button>
+        </form>
+      </section>
+
+      <!-- Security Section -->
+      <section aria-label="Account Security" style="margin-bottom: 3rem;">
+        <div style="background: var(--card-bg); padding: 2rem; border-radius: var(--radius-lg); border: 1px solid var(--border-color);">
+          <h2 style="font-size: var(--fs-lg); margin-bottom: 0.5rem;">Keamanan Akun</h2>
+          <p style="color: var(--text-muted); font-size: var(--fs-sm); margin-bottom: 1.5rem;">Kelola email login dan ubah password Anda di sini.</p>
+          
+          <div class="form-group" style="margin-bottom: 1.5rem;">
+            <label class="form-label" style="font-weight: 600; margin-bottom: 0.5rem; display: block;">Email Login (Hanya untuk otentikasi)</label>
+            <input type="email" id="prof-login-email" class="form-input" readonly style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: #f3f4f6; color: #6b7280; cursor: not-allowed;">
+          </div>
+
+          <form id="security-form" style="display: flex; flex-direction: column; gap: 1rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
+            <h3 style="font-size: var(--fs-md); margin-bottom: 0.5rem;">Ubah Password</h3>
+            <div id="security-msg" style="font-size: var(--fs-sm); display: none;"></div>
+            
+            <div class="form-group">
+              <label class="form-label" style="font-weight: 600; margin-bottom: 0.5rem; display: block;">Password Saat Ini</label>
+              <input type="password" id="prof-current-password" class="form-input" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+            </div>
+            <div class="form-group">
+              <label class="form-label" style="font-weight: 600; margin-bottom: 0.5rem; display: block;">Password Baru</label>
+              <input type="password" id="prof-new-password" class="form-input" required minlength="6" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+              <small style="color: var(--text-muted); font-size: 0.75rem; margin-top: 0.25rem; display: block;">Minimal 6 karakter.</small>
+            </div>
+            <div class="form-group">
+              <label class="form-label" style="font-weight: 600; margin-bottom: 0.5rem; display: block;">Konfirmasi Password Baru</label>
+              <input type="password" id="prof-confirm-password" class="form-input" required minlength="6" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+            </div>
+
+            <button type="submit" class="btn btn-outline" style="width: fit-content; margin-top: 0.5rem;">Update Password</button>
+          </form>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <script src="js/db.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/components.js"></script>
+  <script src="js/profile-modal.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const user = window.db ? db.getCurrentUser() : null;
+      if (!user) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      const form = document.getElementById('profile-form');
+      const role = user.role;
+
+      // Toggle labels/fields based on role
+      if (role === 'umkm') {
+        document.getElementById('label-name').textContent = 'Nama Bisnis';
+        document.getElementById('label-bio').textContent = 'Deskripsi Bisnis';
+        document.getElementById('label-portfolio').textContent = 'Website';
+        document.getElementById('group-category').style.display = 'block';
+      } else {
+        document.getElementById('label-name').textContent = 'Nama Lengkap';
+        document.getElementById('group-skills').style.display = 'block';
+        document.getElementById('group-interests').style.display = 'block';
+      }
+
+      // Populate current values
+      document.getElementById('prof-name').value = user.name || '';
+      document.getElementById('prof-bio').value = user.bio || '';
+      document.getElementById('prof-location').value = user.location || '';
+      document.getElementById('prof-portfolio').value = user.portfolio || '';
+      
+      const contactObj = user.contact || {};
+      document.getElementById('prof-contact-email').value = contactObj.email || user.email || '';
+      document.getElementById('prof-contact-whatsapp').value = contactObj.whatsapp || '';
+      document.getElementById('prof-contact-instagram').value = contactObj.instagram || '';
+      
+      let currentSkills = user.skills ? [...user.skills] : [];
+      let currentInterests = user.interests ? [...user.interests] : [];
+
+      function renderTagSelector(containerId, options, selectedValues, baseClass, activeClass) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        container.innerHTML = '';
+        container.className = 'sm-pill-grid';
+        
+        options.forEach(opt => {
+          const pill = document.createElement('div');
+          const isSelected = selectedValues.includes(opt);
+          pill.className = `${baseClass} ${isSelected ? activeClass : ''}`;
+          pill.textContent = opt;
+          
+          pill.addEventListener('click', () => {
+            if (selectedValues.includes(opt)) {
+              selectedValues.splice(selectedValues.indexOf(opt), 1);
+              pill.classList.remove(activeClass);
+            } else {
+              selectedValues.push(opt);
+              pill.classList.add(activeClass);
+            }
+          });
+          
+          container.appendChild(pill);
+        });
+      }
+
+      if (role === 'umkm') {
+        document.getElementById('prof-category').value = user.businessCategory || '';
+        document.getElementById('contact-umkm-only').style.display = 'flex';
+        document.getElementById('prof-contact-website').value = contactObj.website || '';
+        document.getElementById('prof-contact-address').value = contactObj.address || '';
+      } else {
+        document.getElementById('contact-freelancer-only').style.display = 'block';
+        document.getElementById('prof-contact-linkedin').value = contactObj.linkedin || '';
+        
+        const skillOptions = ["Branding", "Graphic Design", "Photography", "Videography", "Video Editing", "UI/UX Design", "Web Development", "Mobile Development", "Digital Marketing", "Content Writing", "Copywriting", "SEO", "Illustration", "Motion Graphic", "Social Media"];
+        const interestOptions = ["Pariwisata", "Kuliner", "Kriya", "Budaya Lokal", "Fashion", "Musik", "Pendidikan", "Teknologi", "Lingkungan", "Event Organizer", "Seni Pertunjukan"];
+        
+        renderTagSelector('prof-skills-container', skillOptions, currentSkills, 'skill-pill', 'skill-pill--active');
+        renderTagSelector('prof-interests-container', interestOptions, currentInterests, 'interest-pill', 'interest-pill--active');
+      }
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        const updates = {
+          name: document.getElementById('prof-name').value.trim(),
+          bio: document.getElementById('prof-bio').value.trim(),
+          location: document.getElementById('prof-location').value.trim(),
+          portfolio: document.getElementById('prof-portfolio').value.trim(),
+          contact: {
+            email: document.getElementById('prof-contact-email').value.trim(),
+            whatsapp: document.getElementById('prof-contact-whatsapp').value.trim(),
+            instagram: document.getElementById('prof-contact-instagram').value.trim(),
+            linkedin: document.getElementById('prof-contact-linkedin').value.trim(),
+            website: document.getElementById('prof-contact-website').value.trim(),
+            address: document.getElementById('prof-contact-address').value.trim(),
+          }
+        };
+
+        if (role === 'umkm') {
+          updates.businessCategory = document.getElementById('prof-category').value.trim();
+        } else {
+          updates.skills = [...currentSkills];
+          updates.interests = [...currentInterests];
+        }
+
+        const updatedUser = window.db.updateUser(user.id, updates);
+        if (updatedUser) {
+          // Force update local currentUser object in localStorage
+          localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+          
+          // Show quick success feedback
+          const toast = document.createElement('div');
+          toast.textContent = 'Profil berhasil diperbarui!';
+          Object.assign(toast.style, {
+            position: 'fixed', bottom: '20px', right: '20px', background: '#28a745', 
+            color: '#fff', padding: '12px 24px', borderRadius: '4px', zIndex: '9999',
+            boxShadow: '0 4px 6px rgba(0,0,0,0.1)', fontFamily: 'sans-serif'
+          });
+          document.body.appendChild(toast);
+          setTimeout(() => toast.remove(), 3000);
+          
+          if (typeof window.updateProfileUI === 'function') {
+            window.updateProfileUI();
+          }
+        } else {
+          alert('Gagal memperbarui profil.');
+        }
+      });
+
+      // Populate Login Email
+      document.getElementById('prof-login-email').value = user.email || '';
+
+      // Handle Security Form
+      const securityForm = document.getElementById('security-form');
+      const securityMsg = document.getElementById('security-msg');
+
+      securityForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        securityMsg.style.display = 'none';
+        
+        const currentPassword = document.getElementById('prof-current-password').value;
+        const newPassword = document.getElementById('prof-new-password').value;
+        const confirmPassword = document.getElementById('prof-confirm-password').value;
+
+        if (newPassword !== confirmPassword) {
+          securityMsg.textContent = 'Konfirmasi password tidak cocok!';
+          securityMsg.style.color = 'var(--danger-color, #dc3545)';
+          securityMsg.style.display = 'block';
+          return;
+        }
+
+        const res = window.db.changePassword(user.id, currentPassword, newPassword);
+        if (res.success) {
+          securityMsg.textContent = 'Password berhasil diubah.';
+          securityMsg.style.color = '#28a745';
+          securityMsg.style.display = 'block';
+          securityForm.reset();
+          
+          setTimeout(() => {
+            securityMsg.style.display = 'none';
+          }, 4000);
+        } else {
+          securityMsg.textContent = res.message || 'Gagal mengubah password.';
+          securityMsg.style.color = 'var(--danger-color, #dc3545)';
+          securityMsg.style.display = 'block';
+        }
+      });
+    });
+  </script>
+</body>
+</html>

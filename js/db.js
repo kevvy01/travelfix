@@ -23,6 +23,26 @@
         u.createdAt = new Date().toISOString();
         updated = true;
       }
+      if (u.bio === undefined) { u.bio = ""; updated = true; }
+      if (u.location === undefined) { u.location = ""; updated = true; }
+      if (u.portfolio === undefined) { u.portfolio = ""; updated = true; }
+      
+      if (u.contact === undefined || u.contact === null || typeof u.contact === "string") {
+        const oldContact = typeof u.contact === "string" ? u.contact : "";
+        u.contact = {
+          email: u.email || "",
+          whatsapp: oldContact,
+          instagram: "",
+          linkedin: "",
+          website: "",
+          address: ""
+        };
+        updated = true;
+      }
+
+      if (u.skills === undefined) { u.skills = []; updated = true; }
+      if (u.interests === undefined) { u.interests = []; updated = true; }
+      if (u.businessCategory === undefined) { u.businessCategory = ""; updated = true; }
     });
 
     if (updated) {
@@ -155,6 +175,29 @@
     } else {
       return { success: false, message: "Email atau password salah!" };
     }
+  }
+
+  // Task 6.3: Change Password
+  function changePassword(userId, currentPassword, newPassword) {
+    const users = JSON.parse(localStorage.getItem(DB_KEY)) || [];
+    const idx = users.findIndex(u => String(u.id) === String(userId));
+    if (idx === -1) return { success: false, message: "User tidak ditemukan" };
+    
+    if (users[idx].password !== currentPassword) {
+      return { success: false, message: "Password saat ini salah!" };
+    }
+    
+    users[idx].password = newPassword;
+    localStorage.setItem(DB_KEY, JSON.stringify(users));
+    
+    // update current session if it's the current user
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (currentUser && String(currentUser.id) === String(userId)) {
+      currentUser.password = newPassword;
+      localStorage.setItem('currentUser', JSON.stringify(currentUser));
+    }
+    
+    return { success: true };
   }
 
   // New Data Access Layer API
@@ -293,18 +336,22 @@
   }
 
   function approveApplicant(projectId, freelancerId) {
+    projectId = Number(projectId);
+    freelancerId = Number(freelancerId);
+
     const project = getProjectById(projectId);
     if (!project) return null;
-    
+
     if (!project.applicants.includes(freelancerId)) {
       return null;
     }
 
     const updates = {
       assignedTo: freelancerId,
-      status: "In Progress",
+      status: "In Review",
       updatedAt: new Date().toISOString()
     };
+
     return updateProject(projectId, updates);
   }
 
@@ -336,6 +383,7 @@
     initDB,
     registerUser,
     loginUser,
+    changePassword,
     getUsers,
     getProjects,
     getPortfolio,

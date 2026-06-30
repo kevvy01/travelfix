@@ -619,7 +619,30 @@ function initSkillModal() {
 
   // Bind navigation / action buttons inside modal
   if (btnNext) btnNext.addEventListener('click', () => showStep(2));
-  if (btnSave) btnSave.addEventListener('click', closeModal);
+  if (btnSave) {
+    btnSave.addEventListener('click', () => {
+      // Collect active skills and interests
+      const activeSkills = Array.from(document.querySelectorAll('#skill-pill-grid .skill-pill--active')).map(p => p.textContent.trim());
+      const activeInterests = Array.from(document.querySelectorAll('#interest-pill-grid .interest-pill--active')).map(p => p.textContent.trim());
+
+      // Update in DB and synchronize UI immediately
+      const userJson = localStorage.getItem('currentUser');
+      if (userJson && window.db) {
+        const currentUser = JSON.parse(userJson);
+        window.db.updateUser(currentUser.id, { skills: activeSkills, interests: activeInterests });
+        
+        // Update local session to persist on reload
+        const updatedUser = window.db.getUserById(currentUser.id);
+        localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+        
+        // Refresh the profile modal DOM dynamically
+        if (typeof updateProfileUI === 'function') {
+          updateProfileUI();
+        }
+      }
+      closeModal();
+    });
+  }
   if (btnSkip) btnSkip.addEventListener('click', closeModal);
 
   // Escape key closes modal
@@ -653,44 +676,46 @@ function initSkillModal() {
 
 
 // ─── Detail Modals ───────────────────────────────────────
-function initDetailModals() {
-  // ── Helper: open a backdrop+modal ──
-  function openModal(backdropEl) {
-    if (!backdropEl) return;
-    backdropEl.hidden = false;
-    document.body.style.overflow = 'hidden';
-    requestAnimationFrame(() => backdropEl.classList.add('dm-visible'));
-  }
+window.openModal = function(backdropEl) {
+  if (!backdropEl) return;
+  backdropEl.hidden = false;
+  document.body.style.overflow = 'hidden';
+  requestAnimationFrame(() => backdropEl.classList.add('dm-visible'));
+};
 
-  function closeModal(backdropEl) {
-    if (!backdropEl) return;
-    backdropEl.classList.remove('dm-visible');
-    document.body.style.overflow = '';
-    backdropEl.addEventListener('transitionend', function handler() {
-      backdropEl.hidden = true;
-      backdropEl.removeEventListener('transitionend', handler);
-    });
-  }
+window.closeModal = function(backdropEl) {
+  if (!backdropEl) return;
+  backdropEl.classList.remove('dm-visible');
+  document.body.style.overflow = '';
+  backdropEl.addEventListener('transitionend', function handler() {
+    backdropEl.hidden = true;
+    backdropEl.removeEventListener('transitionend', handler);
+  });
+};
+
+function initDetailModals() {
 
   // ── Close buttons inside each modal footer ──
   document.querySelectorAll('.dm-close-btn, .dm-close-footer-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const backdrop = btn.closest('.detail-backdrop');
-      closeModal(backdrop);
+      window.closeModal(backdrop);
     });
   });
 
   // ── Close on backdrop click (outside the modal box) ──
   document.querySelectorAll('.detail-backdrop').forEach(backdrop => {
     backdrop.addEventListener('click', (e) => {
-      if (e.target === backdrop) closeModal(backdrop);
+      if (e.target === backdrop) {
+        window.closeModal(backdrop);
+      }
     });
   });
 
   // ── Escape key ──
   document.addEventListener('keydown', e => {
     if (e.key !== 'Escape') return;
-    document.querySelectorAll('.detail-backdrop.dm-visible').forEach(b => closeModal(b));
+    document.querySelectorAll('.detail-backdrop.dm-visible').forEach(b => window.closeModal(b));
   });
 
   // ── Action: Ambil Proyek Button ──
@@ -699,7 +724,7 @@ function initDetailModals() {
     if (ambilBtn) {
       const backdrop = ambilBtn.closest('.detail-backdrop');
       if (backdrop) {
-        closeModal(backdrop);
+        window.closeModal(backdrop);
         setTimeout(() => {
           alert('Proyek berhasil diambil.');
         }, 300);
@@ -718,7 +743,7 @@ function initDetailModals() {
       const id = parseInt(projectCard.dataset.id, 10);
       const data = (projectCard.classList.contains('card-marketplace') ? db.getProjects() : aiMatchProjects)
                     .find(p => String(p.id) === String(id));
-      if (data) populateAndOpenProjectModal(data, openModal);
+      if (data) populateAndOpenProjectModal(data, window.openModal);
       return;
     }
 
@@ -727,7 +752,7 @@ function initDetailModals() {
     if (trailCard) {
       const id = parseInt(trailCard.id.replace('trail-card-', ''), 10);
       const data = trailLocations.find(l => l.id === id);
-      if (data) populateAndOpenLocationModal(data, openModal);
+      if (data) populateAndOpenLocationModal(data, window.openModal);
       return;
     }
 
@@ -736,7 +761,7 @@ function initDetailModals() {
     if (portfolioCard) {
       const id = parseInt(portfolioCard.dataset.id, 10);
       const data = portfolioProjects.find(p => p.id === id);
-      if (data) populateAndOpenPortfolioModal(data, openModal);
+      if (data) populateAndOpenPortfolioModal(data, window.openModal);
       return;
     }
   });
@@ -745,6 +770,15 @@ function initDetailModals() {
 function populateAndOpenProjectModal(p, openModal) {
   const backdrop = document.getElementById('project-detail-backdrop');
   if (!backdrop) return;
+
+  // Track the current project ID for approval actions
+  if (p && p.id) {
+    backdrop.setAttribute('data-current-project-id', p.id);
+  }
+
+  if (typeof window.switchProjectModalView === 'function') {
+    window.switchProjectModalView('project');
+  }
 
   // Detect which dataset this project is from
   const isAiMatch = typeof p.matchPercent !== 'undefined';
@@ -785,6 +819,38 @@ function populateAndOpenProjectModal(p, openModal) {
   backdrop.querySelector('#pdm-price').textContent = p.prize
     ? `${p.prize}`
     : '—';
+
+  // Applicants Rendering (UMKM Projects Only)
+  if (isUMKMProjectsPage) {
+    const applicantsList = backdrop.querySelector('#pdm-applicants-list');
+    if (applicantsList) {
+      if (!p.applicants || p.applicants.length === 0) {
+        applicantsList.innerHTML = `<p style="color: var(--text-muted); font-size: 0.9rem;">No applicants yet.</p>`;
+      } else {
+        const applicantHTML = p.applicants.map(applicantId => {
+          const user = window.db ? db.getUserById(applicantId) : null;
+          if (!user) return '';
+          
+          const avatar = user.name.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+          const primarySkill = (user.skills && user.skills[0]) || (user.interests && user.interests[0]) || 'Freelancer';
+          
+          return `
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+              <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <div class="user-avatar" style="width: 40px; height: 40px; font-size: 1rem;">${avatar}</div>
+                <div>
+                  <h4 style="margin: 0; font-size: 0.95rem; color: var(--text-color);">${user.name}</h4>
+                  <p style="margin: 0; font-size: 0.8rem; color: var(--text-muted);">${primarySkill}</p>
+                </div>
+              </div>
+              <button type="button" class="btn btn-outline btn-sm btn-view-profile" data-id="${user.id}">View Profile</button>
+            </div>
+          `;
+        }).join('');
+        applicantsList.innerHTML = applicantHTML;
+      }
+    }
+  }
 
   // Apply Button Integration
   const applyBtn = backdrop.querySelector('#btn-ambil-proyek');
@@ -982,14 +1048,9 @@ function initNotificationDropdown() {
 // ============================================================
 function updateProfileUI() {
   const userJson = localStorage.getItem('currentUser');
-  if (!userJson) {
-    // Optional: redirect to login if no user is found
-    // window.location.href = 'login.html';
-    return;
-  }
-  
+  if (!userJson) return;
   const user = JSON.parse(userJson);
-  
+
   // 1. Update text content
   const navName = document.getElementById('nav-user-name');
   const dropdownName = document.getElementById('dropdown-user-name');
@@ -1001,7 +1062,6 @@ function updateProfileUI() {
   if (dropdownEmail) dropdownEmail.textContent = user.email;
   
   // 2. Avatar Initials Logic
-  // Split name by spaces, take first letter of each word, max 2 chars
   const initials = user.name
     .split(' ')
     .map(word => word[0])
@@ -1014,7 +1074,230 @@ function updateProfileUI() {
   
   if (navAvatar) navAvatar.textContent = initials;
   if (dropdownAvatar) dropdownAvatar.textContent = initials;
+
+  // 3. Update Dropdown Content
+  const umkmSection = document.getElementById('pm-section-umkm');
+  const skillsSection = document.getElementById('pm-section-skills');
+  const interestsSection = document.getElementById('pm-section-interests');
+
+  if (user.role === 'umkm') {
+    if (umkmSection) {
+      umkmSection.style.display = 'block';
+      const catEl = document.getElementById('pm-umkm-category');
+      const locEl = document.getElementById('pm-umkm-location');
+      if (catEl) catEl.textContent = user.businessCategory || '—';
+      if (locEl) locEl.textContent = user.location || '—';
+    }
+    if (skillsSection) skillsSection.style.display = 'none';
+    if (interestsSection) interestsSection.style.display = 'none';
+  } else {
+    if (umkmSection) umkmSection.style.display = 'none';
+    
+    if (skillsSection) {
+      skillsSection.style.display = 'block';
+      const container = document.getElementById('pm-skills-container');
+      if (container) {
+        if (user.skills && user.skills.length > 0) {
+          container.innerHTML = user.skills.map(s => `<span>${s}</span>`).join('');
+        } else {
+          container.innerHTML = '<span style="color:var(--text-muted); font-size:var(--fs-sm);">Belum ada data</span>';
+        }
+      }
+    }
+
+    if (interestsSection) {
+      interestsSection.style.display = 'block';
+      const container = document.getElementById('pm-interests-container');
+      if (container) {
+        if (user.interests && user.interests.length > 0) {
+          container.innerHTML = user.interests.map(i => `<span>${i}</span>`).join('');
+        } else {
+          container.innerHTML = '<span style="color:var(--text-muted); font-size:var(--fs-sm);">Belum ada data</span>';
+        }
+      }
+    }
+  }
 }
+
+// ============================================================
+// FREELANCER PROFILE MODAL (UMKM VIEW)
+// ============================================================
+window.switchProjectModalView = function(viewName) {
+  const pHeader = document.getElementById('pdm-header-project');
+  const profHeader = document.getElementById('pdm-header-profile');
+  const pView = document.getElementById('pdm-view-project');
+  const profView = document.getElementById('pdm-view-profile');
+  
+  if (!pHeader || !profHeader || !pView || !profView) return;
+
+  if (viewName === 'profile') {
+    pHeader.style.display = 'none';
+    pView.style.display = 'none';
+    profHeader.style.display = 'flex';
+    profView.style.display = 'block';
+  } else {
+    // Default to 'project'
+    profHeader.style.display = 'none';
+    profView.style.display = 'none';
+    pHeader.style.display = 'flex';
+    pView.style.display = 'block';
+  }
+};
+
+window.showFreelancerProfileModal = function(userId) {
+  const backdrop = document.getElementById('project-detail-backdrop');
+  if (!backdrop) return;
+  
+  const user = window.db ? db.getUserById(userId) : null;
+  if (!user) return;
+
+  const avatar = backdrop.querySelector('#pdm-profile-avatar');
+  const name = backdrop.querySelector('#pdm-profile-name');
+  const role = backdrop.querySelector('#pdm-profile-role');
+  
+  const bioSec = backdrop.querySelector('#pdm-profile-section-bio');
+  const bioTxt = backdrop.querySelector('#pdm-profile-bio');
+  const skillsContainer = backdrop.querySelector('#pdm-profile-skills');
+  const interestsContainer = backdrop.querySelector('#pdm-profile-interests');
+  const portSec = backdrop.querySelector('#pdm-profile-section-portfolio');
+  const portLnk = backdrop.querySelector('#pdm-profile-portfolio');
+  const contSec = backdrop.querySelector('#pdm-profile-section-contact');
+  const contTxt = backdrop.querySelector('#pdm-profile-contact');
+
+  if (avatar) avatar.textContent = user.name.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+  if (name) name.textContent = user.name;
+  if (role) role.textContent = user.role || 'Freelancer';
+  
+  if (bioSec && bioTxt) {
+    if (user.bio) {
+      bioSec.style.display = '';
+      bioTxt.textContent = user.bio;
+    } else {
+      bioSec.style.display = 'none';
+    }
+  }
+
+  if (skillsContainer) {
+    if (user.skills && user.skills.length > 0) {
+      skillsContainer.innerHTML = user.skills.map(s => `<span class="dm-pill">${s}</span>`).join('');
+    } else {
+      skillsContainer.innerHTML = '<span style="color:var(--text-muted); font-size:var(--fs-sm);">Belum ada data</span>';
+    }
+  }
+
+  if (interestsContainer) {
+    if (user.interests && user.interests.length > 0) {
+      interestsContainer.innerHTML = user.interests.map(i => `<span class="dm-pill">${i}</span>`).join('');
+    } else {
+      interestsContainer.innerHTML = '<span style="color:var(--text-muted); font-size:var(--fs-sm);">Belum ada data</span>';
+    }
+  }
+
+  if (portSec && portLnk) {
+    if (user.portfolio) {
+      portSec.style.display = '';
+      portLnk.href = user.portfolio;
+      portLnk.textContent = user.portfolio;
+    } else {
+      portSec.style.display = 'none';
+    }
+  }
+
+  if (contSec && contTxt) {
+    if (user.contact) {
+      contSec.style.display = '';
+      if (typeof user.contact === 'object') {
+        const c = user.contact;
+        let html = '<div style="display: flex; flex-direction: column; gap: 0.5rem;">';
+        if (c.email) html += `<div><strong style="color:var(--text-muted); font-size:var(--fs-sm);">Email:</strong><br>${c.email}</div>`;
+        if (c.whatsapp) html += `<div><strong style="color:var(--text-muted); font-size:var(--fs-sm);">WhatsApp:</strong><br>${c.whatsapp}</div>`;
+        if (c.instagram) html += `<div><strong style="color:var(--text-muted); font-size:var(--fs-sm);">Instagram:</strong><br>${c.instagram}</div>`;
+        if (c.linkedin) html += `<div><strong style="color:var(--text-muted); font-size:var(--fs-sm);">LinkedIn:</strong><br>${c.linkedin}</div>`;
+        if (c.website) html += `<div><strong style="color:var(--text-muted); font-size:var(--fs-sm);">Website:</strong><br><a href="${c.website}" target="_blank" style="color:var(--primary-color);">${c.website}</a></div>`;
+        if (c.address) html += `<div><strong style="color:var(--text-muted); font-size:var(--fs-sm);">Alamat:</strong><br>${c.address}</div>`;
+        html += '</div>';
+        
+        // If empty object or all fields empty
+        if (html === '<div style="display: flex; flex-direction: column; gap: 0.5rem;"></div>') {
+          contTxt.innerHTML = '<span style="color:var(--text-muted); font-size:var(--fs-sm);">Belum ada kontak</span>';
+        } else {
+          contTxt.innerHTML = html;
+        }
+      } else {
+        contTxt.textContent = user.contact;
+      }
+    } else {
+      contSec.style.display = 'none';
+    }
+  }
+
+  // Handle Approve button logic
+  backdrop.setAttribute('data-current-applicant-id', userId);
+  const currentProjectId = backdrop.getAttribute('data-current-project-id');
+  const currentProject = window.db ? db.getProjectById(currentProjectId) : null;
+  const approveBtn = backdrop.querySelector('#btn-approve-freelancer');
+  
+  if (approveBtn && currentProject) {
+    if (currentProject.status !== 'Open') {
+      approveBtn.style.display = 'none';
+    } else {
+      approveBtn.style.display = 'block';
+    }
+  }
+
+  window.switchProjectModalView('profile');
+};
+
+document.body.addEventListener('click', (e) => {
+  const viewProfileBtn = e.target.closest('.btn-view-profile');
+  if (viewProfileBtn) {
+    const userId = viewProfileBtn.dataset.id;
+    if (typeof window.showFreelancerProfileModal === 'function') {
+      window.showFreelancerProfileModal(userId);
+    }
+  }
+  
+  const backBtn = e.target.closest('#pdm-back-btn');
+  if (backBtn) {
+    if (typeof window.switchProjectModalView === 'function') {
+      window.switchProjectModalView('project');
+    }
+  }
+  
+  const approveBtn = e.target.closest('#btn-approve-freelancer');
+  if (approveBtn) {
+    const backdrop = document.getElementById('project-detail-backdrop');
+    if (!backdrop) return;
+    
+    const projectId = backdrop.getAttribute('data-current-project-id');
+    const freelancerId = backdrop.getAttribute('data-current-applicant-id');
+    
+    if (projectId && freelancerId && window.db) {
+      const res = db.approveApplicant(projectId, freelancerId);
+      if (res) {
+        // Show quick success feedback
+        const toast = document.createElement('div');
+        toast.textContent = 'Freelancer successfully approved!';
+        Object.assign(toast.style, {
+          position: 'fixed', bottom: '20px', right: '20px', background: '#28a745', 
+          color: '#fff', padding: '12px 24px', borderRadius: '4px', zIndex: '9999',
+          boxShadow: '0 4px 6px rgba(0,0,0,0.1)', fontFamily: 'sans-serif'
+        });
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+        
+        window.closeModal(backdrop);
+        
+        // Refresh UMKM dashboard if it's the current page
+        if (typeof renderUMKMProjects === 'function' && document.getElementById('umkm-projects-grid')) {
+          renderUMKMProjects();
+        }
+      } else {
+        alert('Failed to approve freelancer.');
+      }
+    }
+  }
+});
 
 // Run the profile update as soon as the DOM is ready
 document.addEventListener('DOMContentLoaded', updateProfileUI);

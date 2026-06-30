@@ -36,6 +36,16 @@ window.initProfileModal = function () {
   /* ── Click on pill ────────────────────────────────────── */
   pill.addEventListener('click', function (e) {
     e.stopPropagation();
+
+    // Reset to current user and unhide actions (if they were hidden by another view)
+    if (typeof window.updateProfileUI === 'function') {
+      window.updateProfileUI();
+    }
+    const actionsContainer = modal.querySelector('.pm-actions');
+    if (actionsContainer) {
+      actionsContainer.style.display = '';
+    }
+
     toggleModal();
   });
 
@@ -87,8 +97,7 @@ window.initProfileModal = function () {
   if (btnSettings) {
     btnSettings.addEventListener('click', function () {
       closeModal();
-      // Signal settings/skill modal to open
-      document.dispatchEvent(new CustomEvent('open-skill-modal'));
+      window.location.href = 'profile.html';
     });
   }
 
