@@ -189,32 +189,6 @@
       let currentSkills = user.skills ? [...user.skills] : [];
       let currentInterests = user.interests ? [...user.interests] : [];
 
-      function renderTagSelector(containerId, options, selectedValues, baseClass, activeClass) {
-        const container = document.getElementById(containerId);
-        if (!container) return;
-        container.innerHTML = '';
-        container.className = 'sm-pill-grid';
-        
-        options.forEach(opt => {
-          const pill = document.createElement('div');
-          const isSelected = selectedValues.includes(opt);
-          pill.className = `${baseClass} ${isSelected ? activeClass : ''}`;
-          pill.textContent = opt;
-          
-          pill.addEventListener('click', () => {
-            if (selectedValues.includes(opt)) {
-              selectedValues.splice(selectedValues.indexOf(opt), 1);
-              pill.classList.remove(activeClass);
-            } else {
-              selectedValues.push(opt);
-              pill.classList.add(activeClass);
-            }
-          });
-          
-          container.appendChild(pill);
-        });
-      }
-
       if (role === 'umkm') {
         document.getElementById('prof-category').value = user.businessCategory || '';
         document.getElementById('contact-umkm-only').style.display = 'flex';
@@ -224,11 +198,10 @@
         document.getElementById('contact-freelancer-only').style.display = 'block';
         document.getElementById('prof-contact-linkedin').value = contactObj.linkedin || '';
         
-        const skillOptions = ["Branding", "Graphic Design", "Photography", "Videography", "Video Editing", "UI/UX Design", "Web Development", "Mobile Development", "Digital Marketing", "Content Writing", "Copywriting", "SEO", "Illustration", "Motion Graphic", "Social Media"];
         const interestOptions = ["Pariwisata", "Kuliner", "Kriya", "Budaya Lokal", "Fashion", "Musik", "Pendidikan", "Teknologi", "Lingkungan", "Event Organizer", "Seni Pertunjukan"];
         
-        renderTagSelector('prof-skills-container', skillOptions, currentSkills, 'skill-pill', 'skill-pill--active');
-        renderTagSelector('prof-interests-container', interestOptions, currentInterests, 'interest-pill', 'interest-pill--active');
+        window.renderTagSelector('prof-skills-container', window.SKILL_OPTIONS || [], currentSkills, 'skill-pill', 'skill-pill--active');
+        window.renderTagSelector('prof-interests-container', interestOptions, currentInterests, 'interest-pill', 'interest-pill--active');
       }
 
       form.addEventListener('submit', (e) => {

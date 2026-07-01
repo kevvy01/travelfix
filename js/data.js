@@ -5,70 +5,123 @@
 const marketplaceProjects = [
   {
     id: 1,
-    icon: "puzzle",
-    title: "Desain Identitas Visual Kerajinan Kasongan",
-    description: "Proyek ini bertujuan untuk membangun identitas merek (branding) yang komprehensif dan profesional untuk sentra pengrajin gerabah Kasongan. Kami mencari desainer yang mampu menciptakan logo, palet warna, tipografi, dan panduan gaya (brand guidelines) yang merepresentasikan warisan sejarah gerabah Kasongan sekaligus memberikan kesan premium agar produk dapat bersaing di pasar ekspor internasional. Desain harus aplikatif untuk kemasan, label produk, media sosial, dan materi pemasaran offline.",
-    requirements: "1. Berpengalaman dalam menciptakan brand identity untuk produk kriya atau UMKM.\n2. Melampirkan proposal konsep awal saat melamar.\n3. Bersedia menghadiri meeting online mingguan untuk update progress.\n4. Hasil akhir berupa Brand Guidelines Book (PDF) lengkap dengan aset logo berbagai format (SVG, PNG, EPS).\n5. Hak cipta desain sepenuhnya menjadi milik komunitas pengrajin Kasongan setelah pembayaran lunas.",
-    location: "Kasongan, Bantul",
-    categories: ["Desain Grafis", "Branding", "Logo Design", "Packaging Design", "Creative Direction"],
+    icon: "palette",
+    title: "Brand Identity Kedai Kopi Lokal",
+    description: "Membangun identitas visual baru untuk kedai kopi lokal yang akan melakukan ekspansi ke beberapa kota di Indonesia. Proyek meliputi pembuatan logo, pemilihan warna, tipografi, dan brand guideline.",
+    requirements: "1. Memiliki portofolio Branding.\n2. Menguasai Adobe Illustrator.\n3. Menyediakan maksimal 3 revisi.\n4. Menyerahkan file AI, SVG, PNG, dan PDF.",
+    location: "Yogyakarta",
+    categories: ["Branding", "Graphic Design"],
     status: "Open",
-    deadline: "30 Jun 2026",
-    prize: "Rp 3.500.000 - Rp 5.000.000",
+    deadline: "20 Jul 2026",
+    prize: "Rp 4.500.000",
   },
   {
     id: 2,
     icon: "camera",
-    title: "Dokumentasi Foto & Video Batik Imogiri",
-    description: "Abadikan proses pembuatan batik tulis tradisional Imogiri dengan estetika modern untuk keperluan promosi.",
-    location: "Imogiri, Bantul",
-    categories: ["Fotografi", "Videografi"],
+    title: "Dokumentasi Festival Kuliner Tradisional",
+    description: "Mengabadikan seluruh rangkaian festival kuliner dalam bentuk foto profesional dan video highlight untuk kebutuhan promosi digital.",
+    requirements: "1. Memiliki kamera sendiri.\n2. Menguasai editing dasar.\n3. Bersedia bekerja selama acara berlangsung.",
+    location: "Bantul, DIY",
+    categories: ["Photography", "Videography", "Kuliner"],
     status: "Open",
-    deadline: "15 Jul 2026",
-    prize: "Rp 2.800.000",
+    deadline: "28 Jul 2026",
+    prize: "Rp 3.200.000",
   },
   {
     id: 3,
-    icon: "globe",
-    title: "Website E-Commerce Produk Kulit Manding",
-    description: "Kembangkan toko online yang elegan untuk kerajinan kulit berkualitas tinggi dari sentra Manding.",
-    location: "Manding, Bantul",
-    categories: ["Web Dev", "UI/UX"],
+    icon: "palette",
+    title: "Redesign UI Aplikasi Pembelajaran",
+    description: "Merancang ulang tampilan aplikasi pembelajaran agar lebih modern, sederhana, dan mudah digunakan oleh siswa maupun guru.",
+    requirements: "1. Menguasai Figma.\n2. Membuat prototype interaktif.\n3. Menyusun design system.",
+    location: "Sleman, DIY",
+    categories: ["UI/UX Design", "Pendidikan"],
     status: "In Review",
-    deadline: "20 Jul 2026",
-    prize: "Rp 5.200.000",
+    deadline: "5 Aug 2026",
+    prize: "Rp 5.800.000",
   },
   {
     id: 4,
-    icon: "megaphone",
-    title: "Kampanye Media Sosial Wisata Parangtritis",
-    description: "Kelola strategi konten dan kampanye digital untuk meningkatkan kunjungan wisatawan ke Parangtritis.",
-    location: "Parangtritis, Bantul",
-    categories: ["Digital Marketing", "Konten"],
+    icon: "globe",
+    title: "Website Desa Wisata",
+    description: "Membangun website responsif yang menampilkan informasi destinasi wisata, paket wisata, galeri, artikel, dan sistem reservasi online.",
+    requirements: "1. Menguasai React atau Laravel.\n2. Responsive Design.\n3. Integrasi formulir reservasi.",
+    location: "Gunungkidul, DIY",
+    categories: ["Web Development", "Pariwisata"],
     status: "Open",
-    deadline: "5 Aug 2026",
-    prize: "Rp 4.100.000",
+    deadline: "12 Aug 2026",
+    prize: "Rp 7.000.000",
   },
   {
     id: 5,
-    icon: "palette",
-    title: "Ilustrasi Mural untuk Kampung Wisata",
-    description: "Ciptakan mural bertema budaya Bantul yang instagramable untuk mempercantik kampung wisata setempat.",
-    location: "Dlingo, Bantul",
-    categories: ["Ilustrasi", "Seni Publik"],
+    icon: "globe",
+    title: "Aplikasi Mobile Bank Sampah",
+    description: "Mengembangkan aplikasi Android untuk memudahkan masyarakat melakukan pencatatan dan penukaran sampah menjadi poin.",
+    requirements: "1. Flutter atau React Native.\n2. Terhubung dengan Firebase.\n3. Source code diserahkan melalui GitHub.",
+    location: "Yogyakarta",
+    categories: ["Mobile Development", "Lingkungan"],
     status: "Open",
-    deadline: "25 Jul 2026",
-    prize: "Rp 6.000.000",
+    deadline: "18 Aug 2026",
+    prize: "Rp 8.500.000",
   },
   {
     id: 6,
+    icon: "puzzle",
+    title: "Campaign Media Sosial Produk Fashion Lokal",
+    description: "Merancang strategi pemasaran digital untuk meningkatkan awareness dan penjualan produk fashion lokal melalui Instagram dan TikTok.",
+    requirements: "1. Berpengalaman mengelola Social Media.\n2. Memahami Meta Ads.\n3. Membuat content plan selama 30 hari.",
+    location: "Bandung",
+    categories: ["Digital Marketing", "Social Media", "Fashion"],
+    status: "Open",
+    deadline: "30 Jul 2026",
+    prize: "Rp 4.800.000",
+  },
+  {
+    id: 7,
+    icon: "puzzle",
+    title: "Artikel SEO Teknologi AI",
+    description: "Menulis artikel berkualitas mengenai perkembangan Artificial Intelligence yang dioptimalkan untuk mesin pencari.",
+    requirements: "1. Minimal 1000 kata.\n2. Original tanpa plagiarisme.\n3. Memahami riset keyword.",
+    location: "Remote",
+    categories: ["Content Writing", "SEO", "Teknologi"],
+    status: "Open",
+    deadline: "8 Aug 2026",
+    prize: "Rp 2.700.000",
+  },
+  {
+    id: 8,
+    icon: "palette",
+    title: "Ilustrasi Buku Cerita Anak Nusantara",
+    description: "Membuat ilustrasi penuh warna untuk buku cerita anak bertema budaya lokal Indonesia sebanyak 20 halaman.",
+    requirements: "1. Menguasai digital illustration.\n2. Gaya ilustrasi ramah anak.\n3. Menyerahkan file PSD dan PNG.",
+    location: "Solo",
+    categories: ["Illustration", "Budaya Lokal", "Pendidikan"],
+    status: "In Review",
+    deadline: "15 Aug 2026",
+    prize: "Rp 5.200.000",
+  },
+  {
+    id: 9,
+    icon: "camera",
+    title: "Video Motion Graphic Kampanye Lingkungan",
+    description: "Membuat motion graphic berdurasi satu menit untuk kampanye pengurangan sampah plastik dan pelestarian lingkungan.",
+    requirements: "1. Menguasai Adobe After Effects.\n2. Resolusi Full HD.\n3. Menyerahkan file project.",
+    location: "Semarang",
+    categories: ["Motion Graphic", "Video Editing", "Lingkungan"],
+    status: "Open",
+    deadline: "22 Aug 2026",
+    prize: "Rp 4.300.000",
+  },
+  {
+    id: 10,
     icon: "music",
-    title: "Aransemen & Rekaman Musik Tradisional",
-    description: "Produksi album musik gamelan Bantul yang diaransemen ulang dengan sentuhan kontemporer.",
-    location: "Bantul Kota",
-    categories: ["Musik", "Audio Produksi"],
-    status: "Closed",
-    deadline: "1 Jun 2026",
-    prize: "Rp 7.500.000",
+    title: "Festival Musik Tradisional Nusantara",
+    description: "Membantu perencanaan, koordinasi, dan pelaksanaan festival musik tradisional yang melibatkan berbagai komunitas seni daerah.",
+    requirements: "1. Berpengalaman sebagai Event Organizer.\n2. Mampu berkoordinasi dengan banyak pihak.\n3. Siap bekerja di lapangan.",
+    location: "Yogyakarta",
+    categories: ["Event Organizer", "Musik", "Seni Pertunjukan"],
+    status: "Open",
+    deadline: "28 Aug 2026",
+    prize: "Rp 9.000.000",
   },
 ];
 
@@ -218,6 +271,64 @@ const trailLocations = [
   },
 ];
 
+
+const SKILL_OPTIONS = [
+  "Branding", "Graphic Design", "Photography", "Videography", "Video Editing", 
+  "UI/UX Design", "Web Development", "Mobile Development", "Digital Marketing", 
+  "Content Writing", "Copywriting", "SEO", "Illustration", "Motion Graphic", "Social Media",
+  "Pariwisata", "Kuliner", "Kriya", "Budaya Lokal", "Fashion", "Musik", "Pendidikan", 
+  "Teknologi", "Lingkungan", "Event Organizer", "Seni Pertunjukan"
+];
+
+
+const portfolioData = [
+  {
+    id: 1,
+    freelancerId: 1,
+    title: "Rebranding Desa Wisata Kasongan",
+    client: "Koperasi Pengrajin Kasongan",
+    image: "https://images.unsplash.com/photo-1618220179428-22790b46a014?auto=format&fit=crop&q=80&w=800",
+    date: "Ags 2025",
+    tags: ["Branding", "Visual Identity"],
+    description: "Pembuatan identitas visual baru yang menonjolkan nilai historis kerajinan gerabah, lengkap dengan panduan aplikasi pada kemasan dan media sosial.",
+    impact: {
+      type: "Peningkatan Penjualan",
+      value: "+45%",
+      label: "Dalam 3 bulan setelah implementasi"
+    }
+  },
+  {
+    id: 2,
+    freelancerId: 2,
+    title: "Video Promosi Kuliner Mangut Lele",
+    client: "Paguyuban Kuliner Sewon",
+    image: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&q=80&w=800",
+    date: "Okt 2025",
+    tags: ["Video Editing", "Content Creation"],
+    description: "Produksi video dokumenter pendek berdurasi 3 menit yang menceritakan sejarah dan proses pembuatan mangut lele tradisional.",
+    impact: {
+      type: "Social Reach",
+      value: "120K+",
+      label: "Views di Instagram Reels"
+    }
+  },
+  {
+    id: 3,
+    freelancerId: 1,
+    title: "Website Interaktif Pengrajin Batik",
+    client: "Batik Giriloyo",
+    image: "https://images.unsplash.com/photo-1516062423079-7ca13cdc7f5a?auto=format&fit=crop&q=80&w=800",
+    date: "Jan 2026",
+    tags: ["Web Development", "UI/UX"],
+    description: "Pengembangan website e-commerce dengan fitur tur virtual 360 derajat ke area workshop pembuatan batik.",
+    impact: {
+      type: "Pasar Baru",
+      value: "Ekspor",
+      label: "Ke 3 negara di Asia Tenggara"
+    }
+  }
+];
+
 const portfolioProjects = [
   {
     id: 1,
@@ -284,3 +395,13 @@ const portfolioProjects = [
     category: "UI/UX & Dev",
   },
 ];
+
+if (typeof window !== 'undefined') {
+  window.portfolioData = portfolioData;
+  window.projectsData = marketplaceProjects;
+  window.aiMatchProjects = aiMatchProjects;
+  // TODO: Restore when Trail Map dataset is reintroduced.
+  //  window.trailMapVillages = trailMapVillages;
+  window.portfolioProjects = portfolioProjects;
+  window.SKILL_OPTIONS = SKILL_OPTIONS;
+}

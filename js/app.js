@@ -8,6 +8,120 @@ if (savedTheme) {
   document.documentElement.setAttribute('data-theme', savedTheme);
 }
 
+function renderTalentAI() {
+  const list = document.getElementById("talent-ai-list");
+  if (!list) return;
+
+  const currentUser = window.db ? window.db.getCurrentUser() : null;
+  if (!currentUser || currentUser.role !== 'umkm') return;
+
+  const allProjects = window.db ? window.db.getProjects() : [];
+  const myOpenProjects = allProjects.filter(p => p.createdBy === currentUser.id && p.status === 'Open');
+
+  // Aggregate required skills and categories from all open projects
+  const neededSkills = new Set();
+  const neededCats = new Set();
+  if (currentUser.businessCategory) neededCats.add(currentUser.businessCategory);
+
+  myOpenProjects.forEach(p => {
+    (p.skills || []).forEach(s => neededSkills.add(s));
+    (p.categories || []).forEach(c => neededCats.add(c));
+  });
+
+  const allUsers = window.db ? window.db.getUsers() : [];
+  const freelancers = allUsers.filter(u => u.role === 'freelancer');
+
+  const matches = freelancers.map(f => {
+    let score = 0;
+    let reasonParts = [];
+    const fSkills = f.skills || [];
+    const fInterests = f.interests || [];
+
+    // 1. Skills (60%)
+    let matchingSkills = [];
+    if (neededSkills.size > 0) {
+      matchingSkills = fSkills.filter(s => neededSkills.has(s));
+      score += (matchingSkills.length / neededSkills.size) * 60;
+    } else {
+      score += 60;
+    }
+
+    // 2. Categories/Interests (40%)
+    let matchingCats = [];
+    if (neededCats.size > 0) {
+      matchingCats = fInterests.filter(c => neededCats.has(c));
+      score += (matchingCats.length / neededCats.size) * 40;
+    } else {
+      score += 40;
+    }
+
+    if (matchingSkills.length > 0) {
+      reasonParts.push(`Memiliki skill ${matchingSkills.slice(0, 2).join(', ')} yang Anda butuhkan.`);
+    }
+    if (matchingCats.length > 0) {
+      reasonParts.push(`Minat di bidang ${matchingCats[0]} sesuai dengan profil proyek Anda.`);
+    }
+
+    return { 
+      ...f, 
+      matchPercent: Math.round(score), 
+      matchReason: reasonParts.join(' ') || 'Profil ini cukup potensial.' 
+    };
+  }).filter(f => f.matchPercent > 0);
+
+  matches.sort((a, b) => b.matchPercent - a.matchPercent);
+
+  const countSpan = document.querySelector('.section-count');
+  if (countSpan) countSpan.textContent = `${matches.length} talenta ditemukan`;
+  const pillCount = document.querySelectorAll('.ai-banner-pills .ai-pill')[1];
+  if (pillCount) pillCount.innerHTML = `<span class="dot"></span> ${matches.length} rekomendasi talenta`;
+
+  if (matches.length === 0) {
+    list.innerHTML = `<div class="empty-state">
+      ${getIcon("search")}
+      <h3>Belum ada rekomendasi talenta</h3>
+      <p>Buat proyek baru terlebih dahulu agar AI dapat mencocokkan kebutuhan Anda dengan talenta kami.</p>
+    </div>`;
+    return;
+  }
+
+  list.innerHTML = matches.map((f) => talentAiCard(f)).join("");
+}
+
+function talentAiCard(f) {
+  const skills = (f.skills || [])
+    .slice(0, 4) // Show max 4
+    .map((s) => `<span class="skill-tag">${getIcon("check", "icon-xs")}${s}</span>`)
+    .join("");
+  const initial = f.name.substring(0, 2).toUpperCase();
+  const matchClass = f.matchPercent >= 85 ? "match-high" : f.matchPercent >= 75 ? "match-mid" : "match-low";
+  
+  return `
+  <article class="card card-horizontal card-talentai" role="listitem">
+    <div class="card-h-left">
+      <div style="width:60px; height:60px; border-radius:50%; background:var(--card-bg); border: 2px solid var(--border-color); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:1.25rem; color:var(--primary-color);">${initial}</div>
+    </div>
+    <div class="card-h-body">
+      <div class="card-h-header">
+        <div>
+          <h3 class="card-title">${f.name}</h3>
+          <div class="card-meta">
+            ${getIcon("pin", "icon-sm")}
+            <span>${f.location || 'Bantul'}</span>
+          </div>
+        </div>
+        <span class="match-badge ${matchClass}">${f.matchPercent}% Cocok</span>
+      </div>
+      <p class="card-desc">${f.bio || f.role || 'Freelancer independen siap mengerjakan proyek Anda.'}</p>
+      ${f.matchReason ? `<p style="font-size: 0.85rem; color: var(--accent-green-dk); margin-bottom: 0.75rem;">${getIcon("check", "icon-xs")} ${f.matchReason}</p>` : ''}
+      <div class="card-tags skills-row">${skills}</div>
+      <div class="card-footer-h">
+        <button class="btn btn-outline" style="padding: 0.4rem 1rem; font-size: 0.85rem;" onclick="showFreelancerProfileModal(${f.id})">Lihat Profil</button>
+      </div>
+    </div>
+  </article>`;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   initThemeToggle();
   highlightActiveNav();
@@ -116,6 +230,16 @@ function renderMarketplace() {
   const statusFilter = document.getElementById("status-filter");
   const categoryFilter = document.getElementById("category-filter");
 
+  if (categoryFilter && categoryFilter.options.length <= 1) {
+    const options = window.SKILL_OPTIONS || [];
+    options.forEach(opt => {
+      const option = document.createElement("option");
+      option.value = opt;
+      option.textContent = opt;
+      categoryFilter.appendChild(option);
+    });
+  }
+
   function doRender() {
     const query = searchInput ? searchInput.value.toLowerCase() : "";
     const status = statusFilter ? statusFilter.value : "";
@@ -175,6 +299,17 @@ function renderMyProjects() {
   const searchInput = document.getElementById("search-input");
   const statusFilter = document.getElementById("status-filter");
   const categoryFilter = document.getElementById("category-filter");
+  
+  if (categoryFilter && categoryFilter.options.length <= 1) {
+    const options = window.SKILL_OPTIONS || [];
+    options.forEach(opt => {
+      const option = document.createElement("option");
+      option.value = opt;
+      option.textContent = opt;
+      categoryFilter.appendChild(option);
+    });
+  }
+  
   const currentUser = window.db ? db.getCurrentUser() : null;
 
   if (!currentUser) {
@@ -279,8 +414,16 @@ function initCreateProjectModal() {
   const errorSpan = document.getElementById("cp-error");
   const form = document.getElementById("create-project-form");
 
+  let selectedCategories = [];
+
   function openModal() {
     modal.removeAttribute("hidden");
+    selectedCategories = [];
+    
+    // Render the tag selector using the global function
+    if (typeof window.renderTagSelector === 'function') {
+      window.renderTagSelector('cp-category-container', window.SKILL_OPTIONS || [], selectedCategories, 'skill-pill', 'skill-pill--active');
+    }
 
     requestAnimationFrame(() => {
       modal.classList.add("dm-visible");
@@ -307,7 +450,6 @@ function initCreateProjectModal() {
       e.preventDefault();
       
       const title = document.getElementById("cp-title").value.trim();
-      const categorySelect = document.getElementById("cp-category");
       const location = document.getElementById("cp-location").value.trim();
       const budget = document.getElementById("cp-budget").value.trim();
       const deadline = document.getElementById("cp-deadline").value.trim();
@@ -315,7 +457,7 @@ function initCreateProjectModal() {
       const requirements = document.getElementById("cp-requirements").value.trim();
       const icon = document.getElementById("cp-icon").value;
 
-      const categories = Array.from(categorySelect.selectedOptions).map(opt => opt.value);
+      const categories = [...selectedCategories];
 
       if (!title || categories.length === 0 || !location || !budget || !deadline || !description || !requirements) {
         errorSpan.style.display = "block";
@@ -410,14 +552,85 @@ function umkmProjectCard(p) {
 }
 
 // ─── Page: AI Match (ai-match.html) ───────────────────────
+function calculateFreelancerMatch(user, project) {
+  let score = 0;
+  let reasonParts = [];
+
+  const userSkills = user.skills || [];
+  const userInterests = user.interests || [];
+  const projCategories = project.categories || [];
+
+  let matchingSkills = [];
+  let matchingCats = [];
+
+  if (projCategories.length === 0) {
+    score = 100; // Default high if no requirements
+  } else {
+    // Score is strictly based on skills match percentage
+    matchingSkills = projCategories.filter(c => userSkills.includes(c));
+    score = (matchingSkills.length / projCategories.length) * 100;
+
+    // Interests are only used for explanations
+    matchingCats = projCategories.filter(c => userInterests.includes(c));
+
+    if (matchingSkills.length > 0) {
+      reasonParts.push(`Membutuhkan ${matchingSkills.length} keahlian Anda (${matchingSkills.slice(0, 2).join(', ')}${matchingSkills.length > 2 ? ', dll' : ''}).`);
+    }
+    if (matchingCats.length > 0 && matchingSkills.length < projCategories.length) {
+      reasonParts.push(`Sesuai minat Anda di bidang ${matchingCats[0]}.`);
+    }
+  }
+
+  // Location is only used for explanations
+  let locMatch = false;
+  if (project.location && user.location && project.location.toLowerCase().includes(user.location.toLowerCase())) {
+    locMatch = true;
+    reasonParts.push(`Lokasi sesuai domisili Anda.`);
+  }
+
+  return {
+    score: Math.min(100, Math.round(score)),
+    reason: reasonParts.join(' ') || 'Profil cocok.'
+  };
+}
+
 function renderAIMatch() {
   const list = document.getElementById("ai-match-list");
   if (!list) return;
-  list.innerHTML = aiMatchProjects.map((p) => aiMatchCard(p)).join("");
+
+  const currentUser = window.db ? window.db.getCurrentUser() : null;
+  if (!currentUser) return;
+
+  const allProjects = window.db ? window.db.getProjects() : [];
+  const openProjects = allProjects.filter(p => p.status === 'Open');
+
+  const matches = openProjects.map(p => {
+    const matchData = calculateFreelancerMatch(currentUser, p);
+    return { ...p, matchPercent: matchData.score, matchReason: matchData.reason };
+  }).filter(p => p.matchPercent > 0);
+
+  matches.sort((a, b) => b.matchPercent - a.matchPercent);
+
+  // Update banner count
+  const countSpan = document.querySelector('.section-count');
+  if (countSpan) countSpan.textContent = `${matches.length} proyek ditemukan`;
+  const pillCount = document.querySelectorAll('.ai-banner-pills .ai-pill')[1];
+  if (pillCount) pillCount.innerHTML = `<span class="dot"></span> ${matches.length} rekomendasi untukmu`;
+
+  if (matches.length === 0) {
+    list.innerHTML = `<div class="empty-state">
+      ${getIcon("search")}
+      <h3>Belum ada rekomendasi</h3>
+      <p>Lengkapi profil (skill dan minat) Anda untuk mendapatkan rekomendasi proyek yang cocok.</p>
+    </div>`;
+    return;
+  }
+
+  list.innerHTML = matches.map((p) => aiMatchCard(p)).join("");
 }
 
 function aiMatchCard(p) {
-  const skills = p.skills
+  const categories = (p.categories || [])
     .map((s) => `<span class="skill-tag">${getIcon("check", "icon-xs")}${s}</span>`)
     .join("");
   const matchClass = p.matchPercent >= 85 ? "match-high" : p.matchPercent >= 75 ? "match-mid" : "match-low";
@@ -432,16 +645,17 @@ function aiMatchCard(p) {
           <h3 class="card-title">${p.title}</h3>
           <div class="card-meta">
             ${getIcon("pin", "icon-sm")}
-            <span>${p.location}</span>
+            <span>${p.location || 'Bantul'}</span>
           </div>
         </div>
         <span class="match-badge ${matchClass}">${p.matchPercent}% Cocok</span>
       </div>
       <p class="card-desc">${p.description}</p>
-      <div class="card-tags skills-row">${skills}</div>
+      ${p.matchReason ? `<p style="font-size: 0.85rem; color: var(--accent-green-dk); margin-bottom: 0.75rem;">${getIcon("check", "icon-xs")} ${p.matchReason}</p>` : ''}
+      <div class="card-tags skills-row">${categories}</div>
       <div class="card-footer-h">
         <div class="footer-meta-row">
-          <span class="meta-item">${getIcon("users", "icon-sm")} ${p.applicants} pelamar</span>
+          <span class="meta-item">${getIcon("users", "icon-sm")} ${(p.applicants || []).length} pelamar</span>
           <span class="meta-item">${getIcon("calendar", "icon-sm")} ${p.deadline}</span>
           <span class="badge badge-open">${p.status}</span>
         </div>
@@ -739,10 +953,10 @@ function initDetailModals() {
 
     // Project cards: Marketplace & AI Match
     const projectCard = e.target.closest('.card-marketplace, .card-aimatch');
-    if (projectCard) {
+    // Ensure we don't accidentally intercept freelancer cards in Talent AI
+    if (projectCard && !projectCard.classList.contains('card-talentai')) {
       const id = parseInt(projectCard.dataset.id, 10);
-      const data = (projectCard.classList.contains('card-marketplace') ? db.getProjects() : aiMatchProjects)
-                    .find(p => String(p.id) === String(id));
+      const data = db.getProjects().find(p => String(p.id) === String(id));
       if (data) populateAndOpenProjectModal(data, window.openModal);
       return;
     }

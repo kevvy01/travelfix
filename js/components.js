@@ -251,3 +251,32 @@ document.addEventListener("DOMContentLoaded", () => {
     window.initThemeToggle();
   }
 });
+
+// =========================================================
+// UI COMPONENTS
+// =========================================================
+window.renderTagSelector = function(containerId, options, selectedValues, baseClass, activeClass) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = '';
+  container.className = 'sm-pill-grid';
+  
+  options.forEach(opt => {
+    const pill = document.createElement('div');
+    const isSelected = selectedValues.includes(opt);
+    pill.className = `${baseClass} ${isSelected ? activeClass : ''}`;
+    pill.textContent = opt;
+    
+    pill.addEventListener('click', () => {
+      if (selectedValues.includes(opt)) {
+        selectedValues.splice(selectedValues.indexOf(opt), 1);
+        pill.classList.remove(activeClass);
+      } else {
+        selectedValues.push(opt);
+        pill.classList.add(activeClass);
+      }
+    });
+    
+    container.appendChild(pill);
+  });
+};
