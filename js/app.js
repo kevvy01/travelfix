@@ -1515,3 +1515,229 @@ document.body.addEventListener('click', (e) => {
 
 // Run the profile update as soon as the DOM is ready
 document.addEventListener('DOMContentLoaded', updateProfileUI);
+
+// ============================================================
+// ADMIN DASHBOARD
+// ============================================================
+function initAdminDashboard() {
+  // Render based on the current page context
+  if (document.getElementById('admin-view-dashboard')) {
+    renderAdminStats();
+  }
+  if (document.getElementById('admin-view-users')) {
+    renderAdminUsers();
+  }
+  if (document.getElementById('admin-view-projects')) {
+    renderAdminProjects();
+  }
+  if (document.getElementById('admin-view-umkm')) {
+    renderAdminUMKM();
+  }
+
+  // Global event delegation for admin actions
+  document.body.addEventListener('click', (e) => {
+    if (e.target.closest('.btn-suspend-user')) {
+      const id = e.target.closest('.btn-suspend-user').dataset.id;
+      db.suspendUser(id);
+      renderAdminUsers();
+    }
+    if (e.target.closest('.btn-delete-user')) {
+      const id = e.target.closest('.btn-delete-user').dataset.id;
+      if(confirm('Are you sure you want to delete this user?')) {
+        db.deleteUser(id);
+        renderAdminUsers();
+      }
+    }
+    if (e.target.closest('.btn-close-project')) {
+      const id = e.target.closest('.btn-close-project').dataset.id;
+      if(confirm('Are you sure you want to force close this project?')) {
+        db.forceCloseProject(id);
+        renderAdminProjects();
+      }
+    }
+    if (e.target.closest('.btn-delete-project')) {
+      const id = e.target.closest('.btn-delete-project').dataset.id;
+      if(confirm('Are you sure you want to delete this project?')) {
+        db.deleteProject(id);
+        renderAdminProjects();
+      }
+    }
+    if (e.target.closest('.btn-view-project')) {
+      const id = parseInt(e.target.closest('.btn-view-project').dataset.id, 10);
+      const data = db.getProjects().find(p => String(p.id) === String(id));
+      if (data && typeof populateAndOpenProjectModal === 'function') {
+        populateAndOpenProjectModal(data, window.openModal);
+      }
+    }
+  });
+
+  // Search and Filter Listeners
+  const searchUsers = document.getElementById('admin-search-users');
+  const filterRole = document.getElementById('admin-filter-role');
+  if(searchUsers) searchUsers.addEventListener('input', renderAdminUsers);
+  if(filterRole) filterRole.addEventListener('change', renderAdminUsers);
+
+  const searchProjects = document.getElementById('admin-search-projects');
+  const filterStatus = document.getElementById('admin-filter-status');
+  if(searchProjects) searchProjects.addEventListener('input', renderAdminProjects);
+  if(filterStatus) filterStatus.addEventListener('change', renderAdminProjects);
+
+  const searchUmkm = document.getElementById('admin-search-umkm');
+  if(searchUmkm) searchUmkm.addEventListener('input', renderAdminUMKM);
+
+  // Initial render
+}
+
+function renderAdminStats() {
+  const users = window.db ? db.getUsers() : [];
+  const projects = window.db ? db.getProjects() : [];
+
+  const totalUsers = users.length;
+  const totalFreelancers = users.filter(u => u.role === 'freelancer').length;
+  const totalUMKM = users.filter(u => u.role === 'umkm').length;
+  const totalProjects = projects.length;
+  const openProjects = projects.filter(p => p.status === 'Open').length;
+  const inReviewProjects = projects.filter(p => p.status === 'In Review' || p.status === 'In Progress').length;
+  const completedProjects = projects.filter(p => p.status === 'Done' || p.status === 'Closed').length;
+
+  const statValues = document.querySelectorAll('.admin-stat-card .admin-stat-value');
+  const statTitles = document.querySelectorAll('.admin-stat-card .admin-stat-header');
+  
+  if (statValues.length >= 7) {
+    statTitles[0].innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> TOTAL PENGGUNA`;
+    statValues[0].textContent = totalUsers;
+    
+    statTitles[1].innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg> TOTAL PROYEK`;
+    statValues[1].textContent = totalProjects;
+    
+    statTitles[2].innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> TOTAL FREELANCER`;
+    statValues[2].textContent = totalFreelancers;
+    
+    statTitles[3].innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> TOTAL UMKM`;
+    statValues[3].textContent = totalUMKM;
+    
+    statTitles[4].innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> OPEN PROJECTS`;
+    statValues[4].textContent = openProjects;
+    
+    statTitles[5].innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> IN REVIEW PROJECTS`;
+    statValues[5].textContent = inReviewProjects;
+    
+    statTitles[6].innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg> COMPLETED PROJECTS`;
+    statValues[6].textContent = completedProjects;
+  }
+}
+
+function renderAdminUsers() {
+  const tbody = document.getElementById('admin-users-table');
+  if (!tbody) return;
+  
+  const query = (document.getElementById('admin-search-users')?.value || '').toLowerCase();
+  const role = document.getElementById('admin-filter-role')?.value || '';
+  
+  const users = window.db ? db.getUsers() : [];
+  
+  const filtered = users.filter(u => {
+    const matchQ = (u.name || '').toLowerCase().includes(query) || (u.email || '').toLowerCase().includes(query);
+    const matchR = !role || u.role === role;
+    return matchQ && matchR;
+  });
+  
+  tbody.innerHTML = filtered.map(u => {
+    const isSuspended = u.status === 'Suspended';
+    const statusBadge = isSuspended ? 'badge-suspended' : 'badge-active';
+    return `
+      <tr data-id="${u.id}">
+        <td><strong>${u.name || '-'}</strong></td>
+        <td>${u.email}</td>
+        <td style="text-transform:capitalize;">${u.role}</td>
+        <td><span class="admin-badge ${statusBadge}">${u.status || 'Active'}</span></td>
+        <td>
+          <div class="admin-table-actions">
+            ${u.role === 'freelancer' ? `<button class="admin-btn-action btn-view-profile" data-id="${u.id}">Profile</button>` : ''}
+            <button class="admin-btn-action admin-btn-warning btn-suspend-user" data-id="${u.id}">${isSuspended ? 'Unsuspend' : 'Suspend'}</button>
+            <button class="admin-btn-action admin-btn-danger btn-delete-user" data-id="${u.id}">Delete</button>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function renderAdminProjects() {
+  const tbody = document.getElementById('admin-projects-table');
+  if (!tbody) return;
+  
+  const query = (document.getElementById('admin-search-projects')?.value || '').toLowerCase();
+  const statusFilter = document.getElementById('admin-filter-status')?.value || '';
+  
+  const projects = window.db ? db.getProjects() : [];
+  const users = window.db ? db.getUsers() : [];
+  
+  const filtered = projects.filter(p => {
+    const matchQ = (p.title || '').toLowerCase().includes(query);
+    const matchS = !statusFilter || p.status === statusFilter;
+    return matchQ && matchS;
+  });
+  
+  tbody.innerHTML = filtered.map(p => {
+    const creator = users.find(u => String(u.id) === String(p.createdBy));
+    const creatorName = creator ? creator.name : 'Unknown';
+    let badgeClass = 'badge-active';
+    if(p.status === 'Open') badgeClass = 'badge-open';
+    if(p.status === 'In Review' || p.status === 'In Progress') badgeClass = 'badge-review';
+    if(p.status === 'Closed' || p.status === 'Done') badgeClass = 'badge-closed';
+    
+    return `
+      <tr data-id="${p.id}">
+        <td><strong>${p.title}</strong></td>
+        <td>${creatorName}</td>
+        <td><span class="admin-badge ${badgeClass}">${p.status}</span></td>
+        <td>${(p.applicants || []).length}</td>
+        <td>
+          <div class="admin-table-actions">
+            <button class="admin-btn-action btn-view-project" data-id="${p.id}">Detail</button>
+            ${p.status !== 'Closed' && p.status !== 'Done' ? `<button class="admin-btn-action admin-btn-warning btn-close-project" data-id="${p.id}">Close</button>` : ''}
+            <button class="admin-btn-action admin-btn-danger btn-delete-project" data-id="${p.id}">Delete</button>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function renderAdminUMKM() {
+  const tbody = document.getElementById('admin-umkm-table');
+  if (!tbody) return;
+  
+  const query = (document.getElementById('admin-search-umkm')?.value || '').toLowerCase();
+  
+  const users = window.db ? db.getUsers() : [];
+  const projects = window.db ? db.getProjects() : [];
+  
+  const umkms = users.filter(u => u.role === 'umkm');
+  
+  const filtered = umkms.filter(u => {
+    return (u.businessName || u.name || '').toLowerCase().includes(query);
+  });
+  
+  tbody.innerHTML = filtered.map(u => {
+    const uProjects = projects.filter(p => String(p.createdBy) === String(u.id));
+    const approvedCount = uProjects.filter(p => p.assignedTo).length;
+    
+    return `
+      <tr data-id="${u.id}">
+        <td><strong>${u.businessName || u.name || '-'}</strong></td>
+        <td>${u.businessCategory || '-'}</td>
+        <td>${uProjects.length}</td>
+        <td>${approvedCount}</td>
+      </tr>
+    `;
+  }).join('');
+}
+
+// Attach init to DOMContentLoaded if we are on the admin page
+document.addEventListener('DOMContentLoaded', () => {
+  if (document.querySelector('.admin-layout')) {
+    initAdminDashboard();
+  }
+});

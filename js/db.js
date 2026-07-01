@@ -257,7 +257,34 @@
     return null;
   }
 
-  // Project CRUD
+  function deleteUser(id) {
+    const users = getUsers();
+    const index = users.findIndex(u => String(u.id) === String(id));
+    if (index !== -1) {
+      users.splice(index, 1);
+      saveUsers(users);
+      return true;
+    }
+    return false;
+  }
+
+  function suspendUser(id) {
+    const users = getUsers();
+    const index = users.findIndex(u => String(u.id) === String(id));
+    if (index !== -1) {
+      // Toggle suspended status
+      if (users[index].status === 'Suspended') {
+        users[index].status = 'Active';
+      } else {
+        users[index].status = 'Suspended';
+      }
+      saveUsers(users);
+      return users[index];
+    }
+    return null;
+  }
+
+  // --- Project CRUD ---
   function getProjectById(id) {
     const projects = getProjects();
     const project = projects.find(p => String(p.id) === String(id));
@@ -316,6 +343,18 @@
       return true;
     }
     return false;
+  }
+
+  function forceCloseProject(id) {
+    const projects = getProjects();
+    const index = projects.findIndex(p => String(p.id) === String(id));
+    if (index !== -1) {
+      projects[index].status = "Closed";
+      projects[index].updatedAt = new Date().toISOString();
+      saveProjects(projects);
+      return projects[index];
+    }
+    return null;
   }
 
   // --- Workflow Engine API ---
@@ -394,10 +433,13 @@
     logout,
     getUserById,
     updateUser,
+    deleteUser,
+    suspendUser,
     getProjectById,
     createProject,
     updateProject,
     deleteProject,
+    forceCloseProject,
     applyProject,
     approveApplicant,
     finishProject,

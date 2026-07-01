@@ -444,3 +444,104 @@
     gap: var(--space-4);
   }
 }
+
+/* --- Admin Table Styles --- */
+.admin-table-container {
+  overflow-x: auto;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  margin-top: var(--space-4);
+}
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-sm);
+}
+.admin-table th, .admin-table td {
+  padding: var(--space-3);
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+.admin-table th {
+  font-weight: 600;
+  color: var(--text-muted);
+  background: rgba(0,0,0,0.02);
+}
+.admin-table tr:hover {
+  background: rgba(0,0,0,0.01);
+}
+.admin-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: var(--radius-full);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+}
+.admin-badge.badge-active {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10B981;
+}
+.admin-badge.badge-suspended {
+  background: rgba(239, 68, 68, 0.1);
+  color: #EF4444;
+}
+.admin-badge.badge-open {
+  background: rgba(59, 130, 246, 0.1);
+  color: #3B82F6;
+}
+.admin-badge.badge-review {
+  background: rgba(245, 158, 11, 0.1);
+  color: #F59E0B;
+}
+.admin-badge.badge-closed {
+  background: rgba(107, 114, 128, 0.1);
+  color: #6B7280;
+}
+.admin-table-actions {
+  display: flex;
+  gap: var(--space-2);
+}
+.admin-btn-action {
+  background: none;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 4px 8px;
+  font-size: var(--fs-xs);
+  cursor: pointer;
+  color: var(--text-main);
+  transition: var(--trans-fast);
+}
+.admin-btn-action:hover {
+  background: var(--bg-primary);
+}
+.admin-btn-danger {
+  color: #EF4444;
+  border-color: #EF4444;
+}
+.admin-btn-danger:hover {
+  background: rgba(239, 68, 68, 0.1);
+}
+.admin-btn-warning {
+  color: #F59E0B;
+  border-color: #F59E0B;
+}
+.admin-btn-warning:hover {
+  background: rgba(245, 158, 11, 0.1);
+}
+.admin-view-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-4);
+}
+.admin-view-title {
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  color: var(--text-main);
+}
+.admin-filters {
+  display: flex;
+  gap: var(--space-3);
+}
+
