@@ -1653,7 +1653,7 @@ function renderAdminUsers() {
         <td><span class="admin-badge ${statusBadge}">${u.status || 'Active'}</span></td>
         <td>
           <div class="admin-table-actions">
-            ${u.role === 'freelancer' ? `<button class="admin-btn-action btn-view-profile" data-id="${u.id}">Profile</button>` : ''}
+            ${u.role === 'freelancer' ? `<button class="admin-btn-action admin-btn-view-profile" data-id="${u.id}">Profile</button>` : ''}
             <button class="admin-btn-action admin-btn-warning btn-suspend-user" data-id="${u.id}">${isSuspended ? 'Unsuspend' : 'Suspend'}</button>
             <button class="admin-btn-action admin-btn-danger btn-delete-user" data-id="${u.id}">Delete</button>
           </div>
@@ -1739,5 +1739,181 @@ function renderAdminUMKM() {
 document.addEventListener('DOMContentLoaded', () => {
   if (document.querySelector('.admin-layout')) {
     initAdminDashboard();
+  }
+});
+
+// ============================================================
+// ADMIN USER PROFILE VIEWER
+// ============================================================
+
+function injectAdminUserProfileModal() {
+  let modal = document.getElementById('admin-user-profile-modal');
+  if (modal) return modal;
+
+  modal = document.createElement('div');
+  modal.className = 'detail-backdrop';
+  modal.id = 'admin-user-profile-modal';
+  modal.hidden = true;
+  modal.setAttribute('aria-modal', 'true');
+  modal.setAttribute('role', 'dialog');
+  modal.setAttribute('aria-labelledby', 'admin-pm-name');
+  
+  modal.innerHTML = `
+    <div class="detail-modal">
+      <div class="dm-header">
+        <div style="display: flex; gap: 16px; align-items: center;">
+          <div class="user-avatar" id="admin-pm-avatar" style="width: 40px; height: 40px; font-size: 1rem;">U</div>
+          <div>
+            <h2 class="dm-title" id="admin-pm-name" style="margin:0; font-size: 1.1rem;">User Name</h2>
+            <span class="badge" id="admin-pm-role" style="font-size: 0.7rem; text-transform: uppercase;">Role</span>
+          </div>
+        </div>
+        <button class="dm-close-btn" id="admin-pm-close-btn" aria-label="Tutup modal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="dm-body">
+        <div class="dm-section" id="admin-pm-section-bio">
+          <span class="dm-section-label">Tentang</span>
+          <p class="dm-section-text" id="admin-pm-bio">—</p>
+        </div>
+        <div class="dm-section">
+          <span class="dm-section-label">Skill</span>
+          <div class="dm-pills" id="admin-pm-skills"></div>
+        </div>
+        <div class="dm-section">
+          <span class="dm-section-label">Minat &amp; Bidang</span>
+          <div class="dm-pills" id="admin-pm-interests"></div>
+        </div>
+        <div class="dm-section" id="admin-pm-section-portfolio">
+          <span class="dm-section-label">Portfolio</span>
+          <p class="dm-section-text"><a href="#" id="admin-pm-portfolio" target="_blank" style="color: var(--accent-green); text-decoration: none; word-break: break-all;"></a></p>
+        </div>
+        <div class="dm-section" id="admin-pm-section-contact">
+          <span class="dm-section-label">Kontak</span>
+          <p class="dm-section-text" id="admin-pm-contact"></p>
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+
+  const closeBtn = modal.querySelector('#admin-pm-close-btn');
+  closeBtn.addEventListener('click', () => {
+    if (typeof window.closeModal === 'function') {
+      window.closeModal(modal);
+    }
+  });
+
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      if (typeof window.closeModal === 'function') {
+        window.closeModal(modal);
+      }
+    }
+  });
+
+  return modal;
+}
+
+window.showAdminUserProfileModal = function(userId) {
+  const modal = injectAdminUserProfileModal();
+  
+  const user = window.db ? db.getUserById(userId) : null;
+  if (!user) return;
+
+  const avatar = modal.querySelector('#admin-pm-avatar');
+  const name = modal.querySelector('#admin-pm-name');
+  const role = modal.querySelector('#admin-pm-role');
+  
+  const bioSec = modal.querySelector('#admin-pm-section-bio');
+  const bioTxt = modal.querySelector('#admin-pm-bio');
+  const skillsContainer = modal.querySelector('#admin-pm-skills');
+  const interestsContainer = modal.querySelector('#admin-pm-interests');
+  const portSec = modal.querySelector('#admin-pm-section-portfolio');
+  const portLnk = modal.querySelector('#admin-pm-portfolio');
+  const contSec = modal.querySelector('#admin-pm-section-contact');
+  const contTxt = modal.querySelector('#admin-pm-contact');
+
+  if (avatar) avatar.textContent = user.name.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+  if (name) name.textContent = user.name;
+  if (role) role.textContent = user.role || 'User';
+  
+  if (bioSec && bioTxt) {
+    if (user.bio) {
+      bioSec.style.display = '';
+      bioTxt.textContent = user.bio;
+    } else {
+      bioSec.style.display = 'none';
+    }
+  }
+
+  if (skillsContainer) {
+    if (user.skills && user.skills.length > 0) {
+      skillsContainer.innerHTML = user.skills.map(s => `<span class="dm-pill">${s}</span>`).join('');
+    } else {
+      skillsContainer.innerHTML = '<span style="color:var(--text-muted); font-size:var(--fs-sm);">Belum ada data</span>';
+    }
+  }
+
+  if (interestsContainer) {
+    if (user.interests && user.interests.length > 0) {
+      interestsContainer.innerHTML = user.interests.map(i => `<span class="dm-pill">${i}</span>`).join('');
+    } else {
+      interestsContainer.innerHTML = '<span style="color:var(--text-muted); font-size:var(--fs-sm);">Belum ada data</span>';
+    }
+  }
+
+  if (portSec && portLnk) {
+    if (user.portfolio) {
+      portSec.style.display = '';
+      portLnk.href = user.portfolio;
+      portLnk.textContent = user.portfolio;
+    } else {
+      portSec.style.display = 'none';
+    }
+  }
+
+  if (contSec && contTxt) {
+    if (user.contact) {
+      contSec.style.display = '';
+      if (typeof user.contact === 'object') {
+        const c = user.contact;
+        let html = '<div style="display: flex; flex-direction: column; gap: 0.5rem;">';
+        if (c.email) html += `<div><strong style="color:var(--text-muted); font-size:var(--fs-sm);">Email:</strong><br>${c.email}</div>`;
+        if (c.whatsapp) html += `<div><strong style="color:var(--text-muted); font-size:var(--fs-sm);">WhatsApp:</strong><br>${c.whatsapp}</div>`;
+        if (c.instagram) html += `<div><strong style="color:var(--text-muted); font-size:var(--fs-sm);">Instagram:</strong><br>${c.instagram}</div>`;
+        if (c.linkedin) html += `<div><strong style="color:var(--text-muted); font-size:var(--fs-sm);">LinkedIn:</strong><br>${c.linkedin}</div>`;
+        if (c.website) html += `<div><strong style="color:var(--text-muted); font-size:var(--fs-sm);">Website:</strong><br><a href="${c.website}" target="_blank" style="color:var(--primary-color);">${c.website}</a></div>`;
+        if (c.address) html += `<div><strong style="color:var(--text-muted); font-size:var(--fs-sm);">Alamat:</strong><br>${c.address}</div>`;
+        html += '</div>';
+        
+        if (html === '<div style="display: flex; flex-direction: column; gap: 0.5rem;"></div>') {
+          contTxt.innerHTML = '<span style="color:var(--text-muted); font-size:var(--fs-sm);">Belum ada kontak</span>';
+        } else {
+          contTxt.innerHTML = html;
+        }
+      } else {
+        contTxt.textContent = user.contact;
+      }
+    } else {
+      contSec.style.display = 'none';
+    }
+  }
+
+  document.body.style.overflow = 'hidden';
+  modal.hidden = false;
+  void modal.offsetWidth;
+  modal.classList.add('dm-visible');
+};
+
+document.body.addEventListener('click', (e) => {
+  const adminViewProfileBtn = e.target.closest('.admin-btn-view-profile');
+  if (adminViewProfileBtn) {
+    const userId = adminViewProfileBtn.dataset.id;
+    if (typeof window.showAdminUserProfileModal === 'function') {
+      window.showAdminUserProfileModal(userId);
+    }
   }
 });
