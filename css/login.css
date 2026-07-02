@@ -560,3 +560,14 @@ input { font-family: inherit; }
   .left-headline { font-size: 1.3rem; }
   .form-title { font-size: 1.35rem; }
 }
+
+
+/* ── Sprint 9A: Smart Forms Button Visual Weight ── */
+.btn-submit {
+  font-weight: 700 !important;
+  box-shadow: 0 4px 14px rgba(45, 106, 79, 0.4) !important;
+}
+.btn-submit:hover {
+  transform: translateY(-2px) scale(1.02) !important;
+  box-shadow: 0 6px 20px rgba(45, 106, 79, 0.5) !important;
+}

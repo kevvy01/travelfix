@@ -83,20 +83,20 @@
               </div>
               <div>
                 <label class="form-label" style="font-weight: 600; margin-bottom: 0.5rem; display: block;">WhatsApp</label>
-                <input type="text" id="prof-contact-whatsapp" class="form-input" placeholder="08123456789" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+                <input type="tel" id="prof-contact-whatsapp" class="form-input" placeholder="08123456789" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);" pattern="^\\+?[0-9]{10,15}$" title="Nomor WhatsApp tidak valid. Gunakan format angka, minimal 10 digit.">
               </div>
               <div>
                 <label class="form-label" style="font-weight: 600; margin-bottom: 0.5rem; display: block;">Instagram</label>
-                <input type="text" id="prof-contact-instagram" class="form-input" placeholder="@username" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+                <input type="url" id="prof-contact-instagram" class="form-input" placeholder="@username" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);" pattern="https?://(www\\.)?instagram\\.com/.*" title="URL Instagram tidak valid.">
               </div>
               <div id="contact-freelancer-only" style="display: none;">
                 <label class="form-label" style="font-weight: 600; margin-bottom: 0.5rem; display: block;">LinkedIn</label>
-                <input type="text" id="prof-contact-linkedin" class="form-input" placeholder="URL Profil LinkedIn" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+                <input type="url" id="prof-contact-linkedin" class="form-input" placeholder="URL Profil LinkedIn" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);" pattern="https?://(www\\.)?linkedin\\.com/.*" title="URL LinkedIn tidak valid.">
               </div>
               <div id="contact-umkm-only" style="display: none; flex-direction: column; gap: 1rem;">
                 <div>
                   <label class="form-label" style="font-weight: 600; margin-bottom: 0.5rem; display: block;">Website</label>
-                  <input type="text" id="prof-contact-website" class="form-input" placeholder="https://websiteanda.com" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+                  <input type="url" id="prof-contact-website" class="form-input" placeholder="https://websiteanda.com" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);" pattern="https?://.+" title="URL harus dimulai dengan http:// atau https://">
                 </div>
                 <div>
                   <label class="form-label" style="font-weight: 600; margin-bottom: 0.5rem; display: block;">Alamat Lengkap</label>
@@ -147,10 +147,16 @@
     </div>
   </main>
 
+  <script src="js/utils/toast.js"></script>
   <script src="js/db.js"></script>
   <script src="js/data.js"></script>
   <script src="js/components.js"></script>
   <script src="js/profile-modal.js"></script>
+  <script src="js/utils/format.js"></script>
+  <script src="js/utils/helpers.js"></script>
+  <script src="js/modules/auth.js"></script>
+  <script src="js/modules/admin.js"></script>
+  <script src="js/modules/ai.js"></script>
   <script src="js/app.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -235,21 +241,13 @@
           localStorage.setItem('currentUser', JSON.stringify(updatedUser));
           
           // Show quick success feedback
-          const toast = document.createElement('div');
-          toast.textContent = 'Profil berhasil diperbarui!';
-          Object.assign(toast.style, {
-            position: 'fixed', bottom: '20px', right: '20px', background: '#28a745', 
-            color: '#fff', padding: '12px 24px', borderRadius: '4px', zIndex: '9999',
-            boxShadow: '0 4px 6px rgba(0,0,0,0.1)', fontFamily: 'sans-serif'
-          });
-          document.body.appendChild(toast);
-          setTimeout(() => toast.remove(), 3000);
+          window.toast.success('Profil berhasil diperbarui!');
           
           if (typeof window.updateProfileUI === 'function') {
             window.updateProfileUI();
           }
         } else {
-          alert('Gagal memperbarui profil.');
+          window.toast.alert('Gagal memperbarui profil.');
         }
       });
 

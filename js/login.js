@@ -52,7 +52,7 @@
       // ❌ Wrong credentials — shake inputs & alert
       emailInput.classList.add('error');
       passInput.classList.add('error');
-      alert('Email atau password salah.');
+      window.toast.alert('Email atau password salah.');
       passInput.value = '';
       passInput.focus();
     }

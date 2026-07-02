@@ -1410,6 +1410,54 @@
 
 .dm-btn-outline:hover { background: var(--accent-green-lt); }
 
+.dm-btn-secondary {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: 13px 24px;
+  background: var(--bg-body);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-family: var(--font-family);
+  font-size: var(--fs-base);
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: -0.01em;
+  transition: all var(--trans-base);
+}
+
+.dm-btn-secondary:hover {
+  background: var(--border-color);
+}
+
+.dm-btn-danger {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: 13px 24px;
+  background: #DC2626;
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: var(--font-family);
+  font-size: var(--fs-base);
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: -0.01em;
+  transition: all var(--trans-base);
+}
+
+.dm-btn-danger:hover {
+  background: #B91C1C;
+  box-shadow: 0 4px 14px rgba(220, 38, 38, 0.4);
+  transform: translateY(-1px);
+}
+
 @media (max-width: 560px) {
   .dm-header { padding: var(--space-5) var(--space-4) var(--space-4); }
   .dm-body { padding: var(--space-4); }
@@ -1652,3 +1700,84 @@
   display: none;
 }
 
+
+
+/* ── Sprint 9A: Smart Forms Button Visual Weight ── */
+.sm-btn-primary, .dm-btn-primary, .pm-btn--primary {
+  font-weight: 700 !important;
+  box-shadow: 0 4px 14px rgba(45, 106, 79, 0.4) !important;
+}
+.sm-btn-primary:hover, .dm-btn-primary:hover, .pm-btn--primary:hover {
+  transform: translateY(-2px) scale(1.02) !important;
+  box-shadow: 0 6px 20px rgba(45, 106, 79, 0.5) !important;
+}
+
+/* ==========================================================================
+   GLOBAL EMPTY STATE
+   ========================================================================== */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 4rem 1.5rem;
+  background: var(--bg-surface);
+  border: 1px dashed var(--border-color);
+  border-radius: 12px;
+  width: 100%;
+}
+
+.empty-state-icon {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 1.25rem;
+  color: var(--text-muted);
+}
+
+.empty-state-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-color);
+  margin-bottom: 0.5rem;
+}
+
+.empty-state-desc {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  max-width: 400px;
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+}
+
+/* ==========================================================================
+   RC1 RESPONSIVE FIXES (max-width: 768px)
+   ========================================================================== */
+@media (max-width: 768px) {
+  /* Navigation Fixes */
+  .navbar-container { padding: 0.75rem 1rem; }
+  .nav-links { gap: 1rem; }
+  .nav-links a { font-size: 0.85rem; }
+  
+  /* Cards Grid */
+  .project-list, .applicant-list, .admin-stat-grid, .admin-middle-section, .ai-talent-grid, .ai-match-grid, .freelancer-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  /* Admin Cards specific */
+  .admin-panel { overflow-x: auto; }
+
+  /* Buttons */
+  .btn, .dm-btn-primary, .dm-btn-secondary, .dm-btn-danger, .dm-btn-outline, .pm-btn {
+    font-size: 0.85rem;
+    padding: 0.5rem 0.75rem;
+    white-space: normal;
+    height: auto;
+  }
+  
+  /* Empty States */
+  .empty-state { padding: 3rem 1rem; }
+  .empty-state-icon { width: 40px; height: 40px; }
+  .empty-state-title { font-size: 1rem; }
+}

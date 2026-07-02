@@ -84,7 +84,9 @@ window.initProfileModal = function () {
 
   if (btnLogout) {
     btnLogout.addEventListener('click', function () {
-      window.location.href = 'login.html';   // login.html = login page
+      if (window.auth && typeof window.auth.logout === 'function') {
+        window.auth.logout();
+      }
     });
   }
 

@@ -240,19 +240,21 @@
               <line x1="0" y1="100" x2="500" y2="100" stroke="var(--border-color)" stroke-width="1" stroke-dasharray="4" />
               <line x1="0" y1="150" x2="500" y2="150" stroke="var(--border-color)" stroke-width="1" stroke-dasharray="4" />
               <!-- Chart Fill -->
-              <polygon points="0,200 0,140 100,100 200,120 300,70 400,90 500,30 500,200" fill="url(#chartGradient)"/>
+              <polygon id="admin-chart-fill" points="0,200 0,140 100,100 200,120 300,70 400,90 500,30 500,200" fill="url(#chartGradient)"/>
               <!-- Chart Line -->
-              <polyline points="0,140 100,100 200,120 300,70 400,90 500,30" fill="none" stroke="var(--accent-green)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+              <polyline id="admin-chart-line" points="0,140 100,100 200,120 300,70 400,90 500,30" fill="none" stroke="var(--accent-green)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
               <!-- Data Points -->
-              <circle cx="0" cy="140" r="4" fill="var(--bg-surface)" stroke="var(--accent-green)" stroke-width="2"/>
-              <circle cx="100" cy="100" r="4" fill="var(--bg-surface)" stroke="var(--accent-green)" stroke-width="2"/>
-              <circle cx="200" cy="120" r="4" fill="var(--bg-surface)" stroke="var(--accent-green)" stroke-width="2"/>
-              <circle cx="300" cy="70" r="4" fill="var(--bg-surface)" stroke="var(--accent-green)" stroke-width="2"/>
-              <circle cx="400" cy="90" r="4" fill="var(--bg-surface)" stroke="var(--accent-green)" stroke-width="2"/>
-              <circle cx="500" cy="30" r="4" fill="var(--bg-surface)" stroke="var(--accent-green)" stroke-width="2"/>
+              <g id="admin-chart-points">
+                <circle cx="0" cy="140" r="4" fill="var(--bg-surface)" stroke="var(--accent-green)" stroke-width="2"/>
+                <circle cx="100" cy="100" r="4" fill="var(--bg-surface)" stroke="var(--accent-green)" stroke-width="2"/>
+                <circle cx="200" cy="120" r="4" fill="var(--bg-surface)" stroke="var(--accent-green)" stroke-width="2"/>
+                <circle cx="300" cy="70" r="4" fill="var(--bg-surface)" stroke="var(--accent-green)" stroke-width="2"/>
+                <circle cx="400" cy="90" r="4" fill="var(--bg-surface)" stroke="var(--accent-green)" stroke-width="2"/>
+                <circle cx="500" cy="30" r="4" fill="var(--bg-surface)" stroke="var(--accent-green)" stroke-width="2"/>
+              </g>
             </svg>
             <!-- X Axis Labels -->
-            <div style="position:absolute;bottom:-25px;width:100%;display:flex;justify-content:space-between;font-size:var(--fs-xs);color:var(--text-muted);font-weight:600;">
+            <div id="admin-chart-labels" style="position:absolute;bottom:-25px;width:100%;display:flex;justify-content:space-between;font-size:var(--fs-xs);color:var(--text-muted);font-weight:600;">
               <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>Mei</span><span>Jun</span>
             </div>
           </div>
@@ -500,9 +502,15 @@
   </div>
 
   <div id="modal-container"></div>
+  <script src="js/utils/toast.js"></script>
   <script src="js/data.js"></script>
   <script src="js/db.js"></script>
   <script src="js/components.js"></script>
+  <script src="js/utils/format.js"></script>
+  <script src="js/utils/helpers.js"></script>
+  <script src="js/modules/auth.js"></script>
+  <script src="js/modules/admin.js"></script>
+  <script src="js/modules/ai.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

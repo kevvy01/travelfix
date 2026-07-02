@@ -9,8 +9,12 @@ if (savedTheme) {
 }
 
 function renderTalentAI() {
-  const list = document.getElementById("talent-ai-list");
-  if (!list) return;
+  const controls = document.getElementById("ai-controls-container");
+  const emptyState = document.getElementById("ai-empty-state");
+  const select = document.getElementById("ai-project-select");
+  const btn = document.getElementById("btn-find-talent");
+  
+  if (!controls || !emptyState || !select || !btn) return;
 
   const currentUser = window.db ? window.db.getCurrentUser() : null;
   if (!currentUser || currentUser.role !== 'umkm') return;
@@ -18,74 +22,76 @@ function renderTalentAI() {
   const allProjects = window.db ? window.db.getProjects() : [];
   const myOpenProjects = allProjects.filter(p => p.createdBy === currentUser.id && p.status === 'Open');
 
-  // Aggregate required skills and categories from all open projects
-  const neededSkills = new Set();
-  const neededCats = new Set();
-  if (currentUser.businessCategory) neededCats.add(currentUser.businessCategory);
-
-  myOpenProjects.forEach(p => {
-    (p.skills || []).forEach(s => neededSkills.add(s));
-    (p.categories || []).forEach(c => neededCats.add(c));
-  });
-
-  const allUsers = window.db ? window.db.getUsers() : [];
-  const freelancers = allUsers.filter(u => u.role === 'freelancer');
-
-  const matches = freelancers.map(f => {
-    let score = 0;
-    let reasonParts = [];
-    const fSkills = f.skills || [];
-    const fInterests = f.interests || [];
-
-    // 1. Skills (60%)
-    let matchingSkills = [];
-    if (neededSkills.size > 0) {
-      matchingSkills = fSkills.filter(s => neededSkills.has(s));
-      score += (matchingSkills.length / neededSkills.size) * 60;
-    } else {
-      score += 60;
-    }
-
-    // 2. Categories/Interests (40%)
-    let matchingCats = [];
-    if (neededCats.size > 0) {
-      matchingCats = fInterests.filter(c => neededCats.has(c));
-      score += (matchingCats.length / neededCats.size) * 40;
-    } else {
-      score += 40;
-    }
-
-    if (matchingSkills.length > 0) {
-      reasonParts.push(`Memiliki skill ${matchingSkills.slice(0, 2).join(', ')} yang Anda butuhkan.`);
-    }
-    if (matchingCats.length > 0) {
-      reasonParts.push(`Minat di bidang ${matchingCats[0]} sesuai dengan profil proyek Anda.`);
-    }
-
-    return { 
-      ...f, 
-      matchPercent: Math.round(score), 
-      matchReason: reasonParts.join(' ') || 'Profil ini cukup potensial.' 
-    };
-  }).filter(f => f.matchPercent > 0);
-
-  matches.sort((a, b) => b.matchPercent - a.matchPercent);
-
-  const countSpan = document.querySelector('.section-count');
-  if (countSpan) countSpan.textContent = `${matches.length} talenta ditemukan`;
-  const pillCount = document.querySelectorAll('.ai-banner-pills .ai-pill')[1];
-  if (pillCount) pillCount.innerHTML = `<span class="dot"></span> ${matches.length} rekomendasi talenta`;
-
-  if (matches.length === 0) {
-    list.innerHTML = `<div class="empty-state">
-      ${getIcon("search")}
-      <h3>Belum ada rekomendasi talenta</h3>
-      <p>Buat proyek baru terlebih dahulu agar AI dapat mencocokkan kebutuhan Anda dengan talenta kami.</p>
-    </div>`;
+  // Step 1: No projects
+  if (myOpenProjects.length === 0) {
+    emptyState.style.display = 'flex';
+    controls.style.display = 'none';
+    document.getElementById("ai-results-area").style.display = 'none';
+    document.getElementById("ai-loading-state").style.display = 'none';
     return;
   }
 
-  list.innerHTML = matches.map((f) => talentAiCard(f)).join("");
+  // Step 2: Projects exist
+  emptyState.style.display = 'none';
+  controls.style.display = 'block';
+  document.getElementById("ai-results-area").style.display = 'none';
+  document.getElementById("ai-loading-state").style.display = 'none';
+
+  select.innerHTML = myOpenProjects.map(p => `<option value="${p.id}">${p.title}</option>`).join('');
+
+  btn.onclick = function() {
+    // Step 3: Loading state
+    const resultsArea = document.getElementById("ai-results-area");
+    const loadingState = document.getElementById("ai-loading-state");
+    const list = document.getElementById("talent-ai-list");
+
+    resultsArea.style.display = 'none';
+    loadingState.style.display = 'flex';
+
+    setTimeout(() => {
+      // Step 4: Render ranked recommendations
+      const selectedId = select.value;
+      const project = myOpenProjects.find(p => String(p.id) === selectedId);
+      if (!project) return;
+
+      const neededSkills = new Set(project.skills || []);
+      const neededCats = new Set(project.categories || []);
+
+      const allUsers = window.db ? window.db.getUsers() : [];
+      const freelancers = allUsers.filter(u => u.role === 'freelancer');
+
+      const matches = freelancers.map(f => {
+        const aiResult = window.ai ? window.ai.evaluateTalent(f, neededSkills, neededCats) : { matchPercent: 0, matchReason: 'Profil ini cukup potensial.' };
+        return { 
+          ...f, 
+          matchPercent: aiResult.matchPercent, 
+          matchReason: aiResult.matchReason 
+        };
+      }).filter(f => f.matchPercent > 0);
+
+      matches.sort((a, b) => b.matchPercent - a.matchPercent);
+
+      const countSpan = document.getElementById('ai-results-count');
+      if (countSpan) countSpan.textContent = `${matches.length} talenta ditemukan`;
+      
+      const pillCount = document.querySelectorAll('.ai-banner-pills .ai-pill')[1];
+      if (pillCount) pillCount.innerHTML = `<span class="dot"></span> ${matches.length} rekomendasi talenta`;
+
+      if (matches.length === 0) {
+        list.innerHTML = `<div class="empty-state">
+        <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <h3 class="empty-state-title">Belum ada rekomendasi talenta</h3>
+        <p class="empty-state-desc">Pilih proyek Anda di atas untuk melihat rekomendasi dari AI.</p>
+      </div>`;
+      } else {
+        list.innerHTML = matches.map((f) => talentAiCard(f)).join("");
+      }
+
+      loadingState.style.display = 'none';
+      resultsArea.style.display = 'block';
+
+    }, 800);
+  };
 }
 
 function talentAiCard(f) {
@@ -93,9 +99,28 @@ function talentAiCard(f) {
     .slice(0, 4) // Show max 4
     .map((s) => `<span class="skill-tag">${getIcon("check", "icon-xs")}${s}</span>`)
     .join("");
-  const initial = f.name.substring(0, 2).toUpperCase();
-  const matchClass = f.matchPercent >= 85 ? "match-high" : f.matchPercent >= 75 ? "match-mid" : "match-low";
+  const initial = window.getAvatarInitials(f.name);
   
+  let badgeLabel = "Low";
+  let matchClass = "match-low";
+
+  if (f.matchPercent >= 90) {
+    badgeLabel = "Excellent";
+    matchClass = "match-high";
+  } else if (f.matchPercent >= 80) {
+    badgeLabel = "Strong";
+    matchClass = "match-high";
+  } else if (f.matchPercent >= 70) {
+    badgeLabel = "Good";
+    matchClass = "match-mid";
+  } else if (f.matchPercent >= 60) {
+    badgeLabel = "Moderate";
+    matchClass = "match-mid";
+  }
+  
+  const portCount = window.portfolioProjects ? window.portfolioProjects.filter(p => p.freelancer === f.name).length : 0;
+  const portHtml = portCount > 0 ? `<div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">${getIcon("briefcase", "icon-xs")} ${portCount} Proyek Portofolio</div>` : '';
+
   return `
   <article class="card card-horizontal card-talentai" role="listitem">
     <div class="card-h-left">
@@ -110,13 +135,15 @@ function talentAiCard(f) {
             <span>${f.location || 'Bantul'}</span>
           </div>
         </div>
-        <span class="match-badge ${matchClass}">${f.matchPercent}% Cocok</span>
+        <span class="match-badge ${matchClass}">${f.matchPercent}% Cocok (${badgeLabel})</span>
       </div>
       <p class="card-desc">${f.bio || f.role || 'Freelancer independen siap mengerjakan proyek Anda.'}</p>
       ${f.matchReason ? `<p style="font-size: 0.85rem; color: var(--accent-green-dk); margin-bottom: 0.75rem;">${getIcon("check", "icon-xs")} ${f.matchReason}</p>` : ''}
+      ${portHtml}
       <div class="card-tags skills-row">${skills}</div>
       <div class="card-footer-h">
         <button class="btn btn-outline" style="padding: 0.4rem 1rem; font-size: 0.85rem;" onclick="showFreelancerProfileModal(${f.id})">Lihat Profil</button>
+        <button class="btn btn-primary" style="padding: 0.4rem 1rem; font-size: 0.85rem;" onclick="window.toast.info('Invitation feature will be implemented with the backend.')">Undang</button>
       </div>
     </div>
   </article>`;
@@ -124,10 +151,9 @@ function talentAiCard(f) {
 
 document.addEventListener("DOMContentLoaded", () => {
   initThemeToggle();
-  highlightActiveNav();
+  initNavigation();
   initSkillModal();
   initDetailModals();
-  initNotificationDropdown();
   const page = window.location.pathname.split("/").pop() || "";
 
   if (page === "marketplace.html") {
@@ -142,6 +168,8 @@ document.addEventListener("DOMContentLoaded", () => {
     renderUMKMDashboard();
   } else if (page === "umkm-projects.html") {
     renderUMKMProjects();
+  } else if (page === "talent-ai.html") {
+    renderTalentAI();
   }
 });
 
@@ -159,24 +187,24 @@ function initThemeToggle() {
   });
 }
 
-// ─── Active Nav Highlight ─────────────────────────────────
-function highlightActiveNav() {
-  const path = window.location.pathname.split("/").pop() || "";
-  const links = document.querySelectorAll(".nav-tab");
-  links.forEach((link) => {
-    const href = link.getAttribute("href").split("/").pop();
-    const isMarket = (href === "marketplace.html") && (path === "marketplace.html");
-    if (href === path || isMarket) {
-      link.classList.add("active");
+// ─── Navigation Initialization ────────────────────────────
+function initNavigation() {
+  const script = document.createElement('script');
+  script.src = 'js/modules/navigation.js';
+  script.onload = () => {
+    if (typeof window.initNavigation === 'function') {
+      window.initNavigation();
     }
-  });
+  };
+  script.onerror = () => console.error('Failed to load navigation module');
+  document.head.appendChild(script);
 }
 
 // ─── SVG Icons ───────────────────────────────────────────
 const icons = {
   puzzle: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 14.5a2 2 0 0 0 0-4V8a2 2 0 0 0-2-2h-2.5a2 2 0 0 0-4 0H9.5a2 2 0 0 0-2 2v2.5a2 2 0 0 0 0 4V17a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-2.5z"/></svg>`,
   camera: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>`,
-  globe: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`,
+  globe: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`,
   megaphone: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>`,
   palette: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>`,
   music: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>`,
@@ -254,7 +282,11 @@ function renderMarketplace() {
 
     grid.innerHTML = filtered.length
       ? filtered.map((p) => marketplaceCard(p)).join("")
-      : `<div class="empty-state"><p>Tidak ada proyek yang cocok dengan filter ini.</p></div>`;
+      : `<div class="empty-state">
+           <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+           <h3 class="empty-state-title">Tidak ada hasil</h3>
+           <p class="empty-state-desc">Tidak ada proyek yang cocok dengan filter ini.</p>
+         </div>`;
   }
 
   if (searchInput) searchInput.addEventListener("input", doRender);
@@ -313,7 +345,11 @@ function renderMyProjects() {
   const currentUser = window.db ? db.getCurrentUser() : null;
 
   if (!currentUser) {
-    grid.innerHTML = `<div class="empty-state"><p>Silakan login terlebih dahulu.</p></div>`;
+    grid.innerHTML = `<div class="empty-state">
+      <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <h3 class="empty-state-title">Akses Ditolak</h3>
+      <p class="empty-state-desc">Silakan login terlebih dahulu untuk melihat profil Anda.</p>
+    </div>`;
     if (countEl) countEl.textContent = `0 proyek dilamar`;
     return;
   }
@@ -347,10 +383,11 @@ function renderMyProjects() {
 
     grid.innerHTML = filtered.length
       ? filtered.map((p) => marketplaceCard({ ...p, status: mapStatusForFreelancer(p.status) })).join("")
-      : `<div class="empty-state">
-           <p>Belum ada proyek yang sesuai atau dilamar.</p>
-           <button class="dm-btn-primary" onclick="window.location.href='marketplace.html'" style="margin-top: 15px;">Browse Marketplace</button>
-         </div>`;
+      : `<div class="empty-state" style="grid-column: 1 / -1; min-height: 300px;">
+           <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+           <h3 class="empty-state-title">Kosong</h3>
+           <p class="empty-state-desc">Belum ada proyek yang sesuai atau dilamar.</p>
+        </div>`;
   }
 
   if (searchInput) searchInput.addEventListener("input", doRender);
@@ -385,9 +422,11 @@ function renderUMKMDashboard() {
 
   if (projects.length === 0) {
     recentGrid.innerHTML = `
-      <div class="empty-state" style="grid-column: 1 / -1; padding: var(--space-8); text-align: center;">
-        <p style="margin-bottom: var(--space-4);">You don't have any projects yet.</p>
-        <button type="button" class="btn btn-primary btn-md btn-open-create-project" id="create-project-btn-empty">Create Project</button>
+      <div class="empty-state">
+        <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        <h3 class="empty-state-title">Belum Ada Proyek</h3>
+        <p class="empty-state-desc">Anda belum memiliki proyek. Buat proyek pertama Anda untuk mulai bekerja sama dengan talenta terbaik.</p>
+        <button type="button" class="btn btn-primary btn-md btn-open-create-project" id="create-project-btn-empty">Buat Proyek</button>
       </div>
     `;
     initCreateProjectModal();
@@ -452,7 +491,10 @@ function initCreateProjectModal() {
       const title = document.getElementById("cp-title").value.trim();
       const location = document.getElementById("cp-location").value.trim();
       const budget = document.getElementById("cp-budget").value.trim();
-      const deadline = document.getElementById("cp-deadline").value.trim();
+      let deadline = document.getElementById("cp-deadline").value.trim();
+      if (deadline && window.formatDate) {
+        deadline = window.formatDate(deadline);
+      }
       const description = document.getElementById("cp-description").value.trim();
       const requirements = document.getElementById("cp-requirements").value.trim();
       const icon = document.getElementById("cp-icon").value;
@@ -510,9 +552,11 @@ function renderUMKMProjects() {
 
   if (projects.length === 0) {
     grid.innerHTML = `
-      <div class="empty-state" style="grid-column: 1 / -1; padding: var(--space-8); text-align: center;">
-        <p style="margin-bottom: var(--space-4);">You don't have any projects yet.</p>
-        <button type="button" class="btn btn-primary btn-md btn-open-create-project" id="create-project-btn-empty">Create Project</button>
+      <div class="empty-state">
+        <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        <h3 class="empty-state-title">Belum Ada Proyek</h3>
+        <p class="empty-state-desc">Anda belum memiliki proyek. Buat proyek pertama Anda untuk mulai bekerja sama dengan talenta terbaik.</p>
+        <button type="button" class="btn btn-primary btn-md btn-open-create-project" id="create-project-btn-empty">Buat Proyek</button>
       </div>
     `;
     initCreateProjectModal();
@@ -552,48 +596,6 @@ function umkmProjectCard(p) {
 }
 
 // ─── Page: AI Match (ai-match.html) ───────────────────────
-function calculateFreelancerMatch(user, project) {
-  let score = 0;
-  let reasonParts = [];
-
-  const userSkills = user.skills || [];
-  const userInterests = user.interests || [];
-  const projCategories = project.categories || [];
-
-  let matchingSkills = [];
-  let matchingCats = [];
-
-  if (projCategories.length === 0) {
-    score = 100; // Default high if no requirements
-  } else {
-    // Score is strictly based on skills match percentage
-    matchingSkills = projCategories.filter(c => userSkills.includes(c));
-    score = (matchingSkills.length / projCategories.length) * 100;
-
-    // Interests are only used for explanations
-    matchingCats = projCategories.filter(c => userInterests.includes(c));
-
-    if (matchingSkills.length > 0) {
-      reasonParts.push(`Membutuhkan ${matchingSkills.length} keahlian Anda (${matchingSkills.slice(0, 2).join(', ')}${matchingSkills.length > 2 ? ', dll' : ''}).`);
-    }
-    if (matchingCats.length > 0 && matchingSkills.length < projCategories.length) {
-      reasonParts.push(`Sesuai minat Anda di bidang ${matchingCats[0]}.`);
-    }
-  }
-
-  // Location is only used for explanations
-  let locMatch = false;
-  if (project.location && user.location && project.location.toLowerCase().includes(user.location.toLowerCase())) {
-    locMatch = true;
-    reasonParts.push(`Lokasi sesuai domisili Anda.`);
-  }
-
-  return {
-    score: Math.min(100, Math.round(score)),
-    reason: reasonParts.join(' ') || 'Profil cocok.'
-  };
-}
-
 function renderAIMatch() {
   const list = document.getElementById("ai-match-list");
   if (!list) return;
@@ -605,7 +607,7 @@ function renderAIMatch() {
   const openProjects = allProjects.filter(p => p.status === 'Open');
 
   const matches = openProjects.map(p => {
-    const matchData = calculateFreelancerMatch(currentUser, p);
+    const matchData = window.ai ? window.ai.calculateMatch(currentUser, p) : { score: 0, reason: 'Profil cocok.' };
     return { ...p, matchPercent: matchData.score, matchReason: matchData.reason };
   }).filter(p => p.matchPercent > 0);
 
@@ -619,9 +621,9 @@ function renderAIMatch() {
 
   if (matches.length === 0) {
     list.innerHTML = `<div class="empty-state">
-      ${getIcon("search")}
-      <h3>Belum ada rekomendasi</h3>
-      <p>Lengkapi profil (skill dan minat) Anda untuk mendapatkan rekomendasi proyek yang cocok.</p>
+      <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <h3 class="empty-state-title">Belum ada rekomendasi</h3>
+      <p class="empty-state-desc">Lengkapi profil (skill dan minat) Anda untuk mendapatkan rekomendasi proyek yang cocok.</p>
     </div>`;
     return;
   }
@@ -840,14 +842,13 @@ function initSkillModal() {
       const activeInterests = Array.from(document.querySelectorAll('#interest-pill-grid .interest-pill--active')).map(p => p.textContent.trim());
 
       // Update in DB and synchronize UI immediately
-      const userJson = localStorage.getItem('currentUser');
-      if (userJson && window.db) {
-        const currentUser = JSON.parse(userJson);
+      const currentUser = window.auth ? window.auth.getCurrentUser() : null;
+      if (currentUser && window.db) {
         window.db.updateUser(currentUser.id, { skills: activeSkills, interests: activeInterests });
         
         // Update local session to persist on reload
         const updatedUser = window.db.getUserById(currentUser.id);
-        localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+        if (window.auth) window.auth.setCurrentUser(updatedUser);
         
         // Refresh the profile modal DOM dynamically
         if (typeof updateProfileUI === 'function') {
@@ -890,47 +891,13 @@ function initSkillModal() {
 
 
 // ─── Detail Modals ───────────────────────────────────────
-window.openModal = function(backdropEl) {
-  if (!backdropEl) return;
-  backdropEl.hidden = false;
-  document.body.style.overflow = 'hidden';
-  requestAnimationFrame(() => backdropEl.classList.add('dm-visible'));
-};
-
-window.closeModal = function(backdropEl) {
-  if (!backdropEl) return;
-  backdropEl.classList.remove('dm-visible');
-  document.body.style.overflow = '';
-  backdropEl.addEventListener('transitionend', function handler() {
-    backdropEl.hidden = true;
-    backdropEl.removeEventListener('transitionend', handler);
-  });
-};
-
 function initDetailModals() {
-
-  // ── Close buttons inside each modal footer ──
-  document.querySelectorAll('.dm-close-btn, .dm-close-footer-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const backdrop = btn.closest('.detail-backdrop');
-      window.closeModal(backdrop);
-    });
-  });
-
-  // ── Close on backdrop click (outside the modal box) ──
-  document.querySelectorAll('.detail-backdrop').forEach(backdrop => {
-    backdrop.addEventListener('click', (e) => {
-      if (e.target === backdrop) {
-        window.closeModal(backdrop);
-      }
-    });
-  });
-
-  // ── Escape key ──
-  document.addEventListener('keydown', e => {
-    if (e.key !== 'Escape') return;
-    document.querySelectorAll('.detail-backdrop.dm-visible').forEach(b => window.closeModal(b));
-  });
+  // Load reusable modal logic from external module
+  import('./modules/modal.js').then(module => {
+    window.openModal = module.openModal;
+    window.closeModal = module.closeModal;
+    module.initDetailModalsCore();
+  }).catch(err => console.error('Failed to load modal module:', err));
 
   // ── Action: Ambil Proyek Button ──
   document.body.addEventListener('click', (e) => {
@@ -940,7 +907,7 @@ function initDetailModals() {
       if (backdrop) {
         window.closeModal(backdrop);
         setTimeout(() => {
-          alert('Proyek berhasil diambil.');
+          window.toast.success('Proyek berhasil diambil.');
         }, 300);
       }
     }
@@ -1021,7 +988,7 @@ function populateAndOpenProjectModal(p, openModal) {
   const reqEl = backdrop.querySelector('#pdm-requirements');
   if (reqEl) {
     // Preserve line breaks if provided
-    reqEl.innerHTML = p.requirements ? p.requirements.replace(/\n/g, '<br>') : 'Freelancer wajib memiliki portofolio relevan. Pembayaran 50% di muka, 50% setelah selesai.';
+    reqEl.innerHTML = p.requirements ? window.nl2br(p.requirements) : 'Freelancer wajib memiliki portofolio relevan. Pembayaran 50% di muka, 50% setelah selesai.';
   }
 
   // Skills or Categories as pills
@@ -1045,7 +1012,7 @@ function populateAndOpenProjectModal(p, openModal) {
           const user = window.db ? db.getUserById(applicantId) : null;
           if (!user) return '';
           
-          const avatar = user.name.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+          const avatar = window.getAvatarInitials(user.name);
           const primarySkill = (user.skills && user.skills[0]) || (user.interests && user.interests[0]) || 'Freelancer';
           
           return `
@@ -1082,24 +1049,9 @@ function populateAndOpenProjectModal(p, openModal) {
       newApplyBtn.addEventListener('click', () => {
         const res = db.finishProject(currentProject.id);
         if (res) {
-          const toast = document.createElement('div');
-          toast.textContent = 'Successfully finished the project!';
-          Object.assign(toast.style, {
-            position: 'fixed', bottom: '20px', right: '20px', background: '#28a745', 
-            color: '#fff', padding: '12px 24px', borderRadius: '4px', zIndex: '9999',
-            boxShadow: '0 4px 6px rgba(0,0,0,0.1)', fontFamily: 'sans-serif'
-          });
-          document.body.appendChild(toast);
-          setTimeout(() => toast.remove(), 3000);
-
-          newApplyBtn.textContent = 'Completed';
-          newApplyBtn.disabled = true;
-
-          if (typeof renderMyProjects === 'function' && document.getElementById('my-projects-grid')) {
-            renderMyProjects();
-          }
+          renderUmkmProjects();
         } else {
-          alert('Failed to finish project.');
+          window.toast.error('Failed to finish project.');
         }
       });
     } else {
@@ -1121,28 +1073,19 @@ function populateAndOpenProjectModal(p, openModal) {
 
       newApplyBtn.addEventListener('click', () => {
         if (!currentUser) {
-          alert('You must be logged in to apply.');
+          window.toast.validation('You must be logged in to apply.');
           return;
         }
         
         const res = db.applyProject(currentProject.id, currentUser.id);
         if (res) {
-          // Show success toast
-          const toast = document.createElement('div');
-          toast.textContent = 'Successfully applied to the project!';
-          Object.assign(toast.style, {
-            position: 'fixed', bottom: '20px', right: '20px', background: '#28a745', 
-            color: '#fff', padding: '12px 24px', borderRadius: '4px', zIndex: '9999',
-            boxShadow: '0 4px 6px rgba(0,0,0,0.1)', fontFamily: 'sans-serif'
-          });
-          document.body.appendChild(toast);
-          setTimeout(() => toast.remove(), 3000);
+          window.toast.success('Project berhasil dilamar.');
 
           // Update ONLY this specific modal's button state
           newApplyBtn.textContent = 'Applied';
           newApplyBtn.disabled = true;
         } else {
-          alert('Failed to apply. The project might be closed or you have already applied.');
+          window.toast.error('Gagal melamar. Proyek mungkin sudah ditutup atau Anda sudah melamar.');
         }
       });
     }
@@ -1187,151 +1130,7 @@ function populateAndOpenPortfolioModal(p, openModal) {
 }
 
 
-// ─── Notification Dropdown ───────────────────────────────
-function initNotificationDropdown() {
-  const notifWrap = document.querySelector('.notif-btn-wrap');
-  const notifBtn  = document.querySelector('.notif-btn');
-  const dropdown  = document.getElementById('notif-dropdown');
 
-  if (!notifWrap || !notifBtn || !dropdown) return;
-
-  let isOpen = false;
-
-  function openDropdown() {
-    dropdown.hidden = false;
-    requestAnimationFrame(() => dropdown.classList.add('nd-visible'));
-    isOpen = true;
-  }
-
-  function closeDropdown() {
-    dropdown.classList.remove('nd-visible');
-    dropdown.addEventListener('transitionend', function handler() {
-      dropdown.hidden = true;
-      dropdown.removeEventListener('transitionend', handler);
-    });
-    isOpen = false;
-  }
-
-  notifBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    isOpen ? closeDropdown() : openDropdown();
-  });
-
-  // Close on outside click
-  document.addEventListener('click', (e) => {
-    if (isOpen && !notifWrap.contains(e.target)) closeDropdown();
-  });
-
-  // Escape key
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && isOpen) closeDropdown();
-  });
-
-  // Tab switching
-  const tabs = dropdown.querySelectorAll('.nd-tab');
-  const panels = dropdown.querySelectorAll('.nd-panel');
-
-  tabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      tabs.forEach(t => t.classList.remove('nd-tab--active'));
-      panels.forEach(p => p.classList.remove('nd-panel--active'));
-      tab.classList.add('nd-tab--active');
-      const target = dropdown.querySelector(`#${tab.dataset.target}`);
-      if (target) target.classList.add('nd-panel--active');
-    });
-  });
-
-  // Mark all as read
-  const markAllBtn = dropdown.querySelector('.nd-mark-all');
-  if (markAllBtn) {
-    markAllBtn.addEventListener('click', () => {
-      dropdown.querySelectorAll('.nd-item.nd-unread').forEach(item => {
-        item.classList.remove('nd-unread');
-        const dot = item.querySelector('.nd-item-dot');
-        if (dot) dot.style.visibility = 'hidden';
-      });
-      // Reset badge count
-      const badge = document.querySelector('.notif-badge');
-      if (badge) badge.textContent = '0';
-    });
-  }
-}
-
-// ============================================================
-// PROFILE UPDATE LOGIC
-// ============================================================
-function updateProfileUI() {
-  const userJson = localStorage.getItem('currentUser');
-  if (!userJson) return;
-  const user = JSON.parse(userJson);
-
-  // 1. Update text content
-  const navName = document.getElementById('nav-user-name');
-  const dropdownName = document.getElementById('dropdown-user-name');
-  const dropdownEmail = document.getElementById('dropdown-user-email');
-  
-  // Display only first name in navbar to save space
-  if (navName) navName.textContent = user.name.split(' ')[0]; 
-  if (dropdownName) dropdownName.textContent = user.name;
-  if (dropdownEmail) dropdownEmail.textContent = user.email;
-  
-  // 2. Avatar Initials Logic
-  const initials = user.name
-    .split(' ')
-    .map(word => word[0])
-    .join('')
-    .substring(0, 2)
-    .toUpperCase();
-    
-  const navAvatar = document.getElementById('nav-user-avatar');
-  const dropdownAvatar = document.getElementById('dropdown-user-avatar');
-  
-  if (navAvatar) navAvatar.textContent = initials;
-  if (dropdownAvatar) dropdownAvatar.textContent = initials;
-
-  // 3. Update Dropdown Content
-  const umkmSection = document.getElementById('pm-section-umkm');
-  const skillsSection = document.getElementById('pm-section-skills');
-  const interestsSection = document.getElementById('pm-section-interests');
-
-  if (user.role === 'umkm') {
-    if (umkmSection) {
-      umkmSection.style.display = 'block';
-      const catEl = document.getElementById('pm-umkm-category');
-      const locEl = document.getElementById('pm-umkm-location');
-      if (catEl) catEl.textContent = user.businessCategory || '—';
-      if (locEl) locEl.textContent = user.location || '—';
-    }
-    if (skillsSection) skillsSection.style.display = 'none';
-    if (interestsSection) interestsSection.style.display = 'none';
-  } else {
-    if (umkmSection) umkmSection.style.display = 'none';
-    
-    if (skillsSection) {
-      skillsSection.style.display = 'block';
-      const container = document.getElementById('pm-skills-container');
-      if (container) {
-        if (user.skills && user.skills.length > 0) {
-          container.innerHTML = user.skills.map(s => `<span>${s}</span>`).join('');
-        } else {
-          container.innerHTML = '<span style="color:var(--text-muted); font-size:var(--fs-sm);">Belum ada data</span>';
-        }
-      }
-    }
-
-    if (interestsSection) {
-      interestsSection.style.display = 'block';
-      const container = document.getElementById('pm-interests-container');
-      if (container) {
-        if (user.interests && user.interests.length > 0) {
-          container.innerHTML = user.interests.map(i => `<span>${i}</span>`).join('');
-        } else {
-          container.innerHTML = '<span style="color:var(--text-muted); font-size:var(--fs-sm);">Belum ada data</span>';
-        }
-      }
-    }
-  }
-}
 
 // ============================================================
 // FREELANCER PROFILE MODAL (UMKM VIEW)
@@ -1378,7 +1177,7 @@ window.showFreelancerProfileModal = function(userId) {
   const contSec = backdrop.querySelector('#pdm-profile-section-contact');
   const contTxt = backdrop.querySelector('#pdm-profile-contact');
 
-  if (avatar) avatar.textContent = user.name.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+  if (avatar) avatar.textContent = window.getAvatarInitials(user.name);
   if (name) name.textContent = user.name;
   if (role) role.textContent = user.role || 'Freelancer';
   
@@ -1460,6 +1259,18 @@ window.showFreelancerProfileModal = function(userId) {
   }
 
   window.switchProjectModalView('profile');
+  
+  // Ensure the modal actually opens if it was called while hidden (e.g., from Talent AI page)
+  if (backdrop.hidden) {
+    backdrop.hidden = false;
+    document.body.style.overflow = 'hidden';
+    
+    // Force reflow
+    backdrop.offsetHeight;
+    
+    // Apply animation class to the backdrop itself
+    backdrop.classList.add('dm-visible');
+  }
 };
 
 document.body.addEventListener('click', (e) => {
@@ -1489,32 +1300,22 @@ document.body.addEventListener('click', (e) => {
     if (projectId && freelancerId && window.db) {
       const res = db.approveApplicant(projectId, freelancerId);
       if (res) {
-        // Show quick success feedback
-        const toast = document.createElement('div');
-        toast.textContent = 'Freelancer successfully approved!';
-        Object.assign(toast.style, {
-          position: 'fixed', bottom: '20px', right: '20px', background: '#28a745', 
-          color: '#fff', padding: '12px 24px', borderRadius: '4px', zIndex: '9999',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.1)', fontFamily: 'sans-serif'
-        });
-        document.body.appendChild(toast);
-        setTimeout(() => toast.remove(), 3000);
+        window.toast.success('Freelancer successfully approved!');
         
         window.closeModal(backdrop);
         
         // Refresh UMKM dashboard if it's the current page
-        if (typeof renderUMKMProjects === 'function' && document.getElementById('umkm-projects-grid')) {
-          renderUMKMProjects();
+        if (typeof renderUmkmApplicants === 'function') {
+          renderUmkmApplicants(projectId);
         }
       } else {
-        alert('Failed to approve freelancer.');
+        window.toast.error('Failed to approve freelancer.');
       }
     }
   }
 });
 
-// Run the profile update as soon as the DOM is ready
-document.addEventListener('DOMContentLoaded', updateProfileUI);
+// Profile initialization is now delegated to navigation.js on load
 
 // ============================================================
 // ADMIN DASHBOARD
@@ -1543,24 +1344,30 @@ function initAdminDashboard() {
     }
     if (e.target.closest('.btn-delete-user')) {
       const id = e.target.closest('.btn-delete-user').dataset.id;
-      if(confirm('Are you sure you want to delete this user?')) {
-        db.deleteUser(id);
-        renderAdminUsers();
-      }
+      window.toast.confirm('Are you sure you want to delete this user?', (confirmed) => {
+        if (confirmed) {
+          db.deleteUser(id);
+          renderAdminUsers();
+        }
+      });
     }
     if (e.target.closest('.btn-close-project')) {
       const id = e.target.closest('.btn-close-project').dataset.id;
-      if(confirm('Are you sure you want to force close this project?')) {
-        db.forceCloseProject(id);
-        renderAdminProjects();
-      }
+      window.toast.confirm('Are you sure you want to force close this project?', (confirmed) => {
+        if (confirmed) {
+          db.forceCloseProject(id);
+          renderAdminProjects();
+        }
+      });
     }
     if (e.target.closest('.btn-delete-project')) {
       const id = e.target.closest('.btn-delete-project').dataset.id;
-      if(confirm('Are you sure you want to delete this project?')) {
-        db.deleteProject(id);
-        renderAdminProjects();
-      }
+      window.toast.confirm('Are you sure you want to delete this project?', (confirmed) => {
+        if (confirmed) {
+          db.deleteProject(id);
+          renderAdminProjects();
+        }
+      });
     }
     if (e.target.closest('.btn-view-project')) {
       const id = parseInt(e.target.closest('.btn-view-project').dataset.id, 10);
@@ -1589,41 +1396,8 @@ function initAdminDashboard() {
 }
 
 function renderAdminStats() {
-  const users = window.db ? db.getUsers() : [];
-  const projects = window.db ? db.getProjects() : [];
-
-  const totalUsers = users.length;
-  const totalFreelancers = users.filter(u => u.role === 'freelancer').length;
-  const totalUMKM = users.filter(u => u.role === 'umkm').length;
-  const totalProjects = projects.length;
-  const openProjects = projects.filter(p => p.status === 'Open').length;
-  const inReviewProjects = projects.filter(p => p.status === 'In Review' || p.status === 'In Progress').length;
-  const completedProjects = projects.filter(p => p.status === 'Done' || p.status === 'Closed').length;
-
-  const statValues = document.querySelectorAll('.admin-stat-card .admin-stat-value');
-  const statTitles = document.querySelectorAll('.admin-stat-card .admin-stat-header');
-  
-  if (statValues.length >= 7) {
-    statTitles[0].innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> TOTAL PENGGUNA`;
-    statValues[0].textContent = totalUsers;
-    
-    statTitles[1].innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg> TOTAL PROYEK`;
-    statValues[1].textContent = totalProjects;
-    
-    statTitles[2].innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> TOTAL FREELANCER`;
-    statValues[2].textContent = totalFreelancers;
-    
-    statTitles[3].innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> TOTAL UMKM`;
-    statValues[3].textContent = totalUMKM;
-    
-    statTitles[4].innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> OPEN PROJECTS`;
-    statValues[4].textContent = openProjects;
-    
-    statTitles[5].innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> IN REVIEW PROJECTS`;
-    statValues[5].textContent = inReviewProjects;
-    
-    statTitles[6].innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg> COMPLETED PROJECTS`;
-    statValues[6].textContent = completedProjects;
+  if (window.admin && typeof window.admin.renderStats === 'function') {
+    window.admin.renderStats();
   }
 }
 
@@ -1836,7 +1610,7 @@ window.showAdminUserProfileModal = function(userId) {
   const contSec = modal.querySelector('#admin-pm-section-contact');
   const contTxt = modal.querySelector('#admin-pm-contact');
 
-  if (avatar) avatar.textContent = user.name.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+  if (avatar) avatar.textContent = window.getAvatarInitials(user.name);
   if (name) name.textContent = user.name;
   if (role) role.textContent = user.role || 'User';
   

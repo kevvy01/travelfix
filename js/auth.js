@@ -23,8 +23,34 @@
       // Reset errors
       [nameInput, emailInput, passInput, confirmInput].forEach(el => el.classList.remove('error'));
 
+      // Validate empty fields
+      if (!name || !email || !password || !confirmPassword) {
+        window.toast.validation("Semua kolom harus diisi.");
+        if (!name) nameInput.classList.add('error');
+        if (!email) emailInput.classList.add('error');
+        if (!password) passInput.classList.add('error');
+        if (!confirmPassword) confirmInput.classList.add('error');
+        return;
+      }
+
+      // Validate email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        window.toast.validation("Format email tidak valid.");
+        emailInput.classList.add('error');
+        return;
+      }
+
+      // Validate password length
+      if (password.length < 8) {
+        window.toast.validation("Password minimal 8 karakter.");
+        passInput.classList.add('error');
+        return;
+      }
+
+      // Validate password match
       if (password !== confirmPassword) {
-        alert("Password dan Konfirmasi Password tidak cocok!");
+        window.toast.validation("Password dan Konfirmasi Password tidak cocok!");
         passInput.classList.add('error');
         confirmInput.classList.add('error');
         return;
@@ -34,10 +60,10 @@
       const result = window.db.registerUser(name, email, password, role);
 
       if (result.success) {
-        alert("Registrasi berhasil! Silakan login.");
+        window.toast.success("Registrasi berhasil! Silakan login.");
         window.location.href = 'login.html';
       } else {
-        alert(result.message);
+        window.toast.validation(result.message);
         emailInput.classList.add('error');
       }
     });
@@ -86,7 +112,7 @@
       } else {
         emailInput.classList.add('error');
         passInput.classList.add('error');
-        alert(result.message);
+        window.toast.validation(result.message);
         passInput.value = '';
         passInput.focus();
       }

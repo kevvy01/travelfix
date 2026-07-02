@@ -796,3 +796,8 @@ p {
   }
 }
 
+
+
+/* ── Sprint 9A: Smart Forms Button Visual Weight ── */
+.btn-primary { font-weight: 700 !important; box-shadow: 0 4px 14px rgba(45, 106, 79, 0.4) !important; padding: 0.75rem 1.5rem !important; }
+.btn-primary:hover { transform: translateY(-2px) scale(1.02) !important; box-shadow: 0 6px 20px rgba(45, 106, 79, 0.5) !important; }

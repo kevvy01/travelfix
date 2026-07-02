@@ -92,12 +92,12 @@
 
           <div class="form-group" style="margin-bottom: 1rem;">
             <label class="form-label" style="display:block; margin-bottom: 0.5rem; font-weight: 600;">Budget / Hadiah</label>
-            <input type="text" id="cp-budget" class="form-input" required placeholder="Contoh: Rp 2.000.000" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+            <input type="text" id="cp-budget" class="form-input" required placeholder="Contoh: Rp 2.000.000" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);" oninput="let v=this.value.replace(/[^0-9]/g, ''); this.value = v ? 'Rp ' + new Intl.NumberFormat('id-ID').format(v) : '';">
           </div>
 
           <div class="form-group" style="margin-bottom: 1rem;">
             <label class="form-label" style="display:block; margin-bottom: 0.5rem; font-weight: 600;">Deadline</label>
-            <input type="text" id="cp-deadline" class="form-input" required placeholder="Contoh: 15 Okt 2026" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+            <input type="date" id="cp-deadline" class="form-input" required style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);">
           </div>
 
           <div class="form-group" style="margin-bottom: 1rem;">
@@ -246,16 +246,16 @@
     </div>
   </div><!-- /project-detail-modal -->
 
+  <script src="js/utils/toast.js"></script>
   <script src="js/db.js"></script>
   <script src="js/data.js"></script>
   <script src="js/components.js"></script>
+  <script src="js/utils/format.js"></script>
+  <script src="js/utils/helpers.js"></script>
+  <script src="js/modules/auth.js"></script>
+  <script src="js/modules/admin.js"></script>
+  <script src="js/modules/ai.js"></script>
   <script src="js/app.js"></script>
   <script src="js/profile-modal.js"></script>
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      // Re-initialize dynamic components if needed
-      if (typeof renderUMKMProjects === "function") renderUMKMProjects();
-    });
-  </script>
 </body>
 </html>

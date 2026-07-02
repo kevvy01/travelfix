@@ -44,10 +44,8 @@ function renderSharedNavbar() {
   } else if (role === 'umkm') {
     tabsHTML = `
         <a href="umkm-dashboard.html" class="nav-tab ${currentPath === 'umkm-dashboard.html' ? 'active' : ''}">Dashboard</a>
-        <a href="marketplace.html" class="nav-tab ${currentPath === 'marketplace.html' ? 'active' : ''}">Marketplace</a>
         <a href="umkm-projects.html" class="nav-tab ${currentPath === 'umkm-projects.html' ? 'active' : ''}">Kelola Proyek</a>
         <a href="talent-ai.html" class="nav-tab ${currentPath === 'talent-ai.html' ? 'active' : ''}">Talent AI</a>
-        <a href="profile.html" class="nav-tab ${currentPath === 'profile.html' ? 'active' : ''}">Profil UMKM</a>
     `;
   } else if (role === 'admin') {
     tabsHTML = `
