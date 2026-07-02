@@ -88,5 +88,82 @@ window.admin = {
     ).join('');
     
     labelsEl.innerHTML = labels.map(l => `<span>${l}</span>`).join('');
+  },
+
+  initMobileNav: function() {
+    // Generate tooltips from existing text for tablet mode
+    document.querySelectorAll('.admin-nav-item').forEach(el => {
+      const textEl = el.querySelector('.admin-nav-left');
+      const text = textEl ? textEl.textContent.trim() : el.textContent.trim();
+      if (text) {
+        el.setAttribute('data-tooltip', text);
+      }
+    });
+
+    const sidebar = document.querySelector('.admin-sidebar');
+    if (!sidebar) return;
+
+    // Create backdrop
+    let backdrop = document.querySelector('.admin-sidebar-backdrop');
+    if (!backdrop) {
+      backdrop = document.createElement('div');
+      backdrop.className = 'admin-sidebar-backdrop';
+      document.body.appendChild(backdrop);
+    }
+
+    // Inject hamburger button into active header
+    const header = document.querySelector('.admin-header') || document.querySelector('.admin-view-header');
+    if (header) {
+      // Prevent duplicate injection
+      if (header.querySelector('.admin-hamburger')) return;
+
+      const hamburger = document.createElement('button');
+      hamburger.className = 'admin-hamburger';
+      hamburger.setAttribute('aria-expanded', 'false');
+      hamburger.setAttribute('aria-label', 'Toggle Navigation');
+      hamburger.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:24px;height:24px;"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>';
+      
+      header.prepend(hamburger);
+
+      const toggleSidebar = () => {
+        const isOpen = sidebar.classList.contains('drawer-open');
+        if (isOpen) {
+          sidebar.classList.remove('drawer-open');
+          backdrop.classList.remove('backdrop-visible');
+          hamburger.setAttribute('aria-expanded', 'false');
+          document.body.style.overflow = '';
+        } else {
+          sidebar.classList.add('drawer-open');
+          backdrop.classList.add('backdrop-visible');
+          hamburger.setAttribute('aria-expanded', 'true');
+          document.body.style.overflow = 'hidden';
+        }
+      };
+
+      hamburger.addEventListener('click', toggleSidebar);
+      backdrop.addEventListener('click', toggleSidebar);
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && sidebar.classList.contains('drawer-open')) {
+          toggleSidebar();
+        }
+      });
+
+      // Close drawer when selecting menu items on mobile
+      sidebar.querySelectorAll('.admin-nav-item').forEach(item => {
+        item.addEventListener('click', () => {
+          if (window.innerWidth <= 768 && sidebar.classList.contains('drawer-open')) {
+            toggleSidebar();
+          }
+        });
+      });
+    }
   }
 };
+
+// Initialize responsive navigation automatically
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => window.admin.initMobileNav());
+} else {
+  window.admin.initMobileNav();
+}

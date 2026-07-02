@@ -23,25 +23,41 @@
         <p>Jelajahi Bantul sambil berkarya — temukan komunitas kreatif, pengrajin, dan seniman lokal di setiap sudut.</p>
       </section>
 
-      <!-- Map Visual -->
-      <section class="map-section" aria-label="Peta kreatif Bantul">
+      <!-- Trail Map Explorer -->
+      <section class="trail-explorer" aria-label="Eksplorasi Peta Kreatif Bantul">
+        <!-- SVG Interactive Map -->
         <div class="map-container" id="map-container" role="img" aria-label="Peta visual lokasi kreatif Bantul">
+          <svg class="map-svg-bg" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern id="gridPattern" width="40" height="40" patternUnits="userSpaceOnUse">
+                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(45, 106, 79, 0.05)" stroke-width="1"/>
+              </pattern>
+            </defs>
+            <rect width="1000" height="600" fill="url(#gridPattern)" />
+            <!-- Stylized Coastline / Region Path -->
+            <path d="M-50,650 C 200,600 400,620 600,580 C 800,540 950,560 1050,520 L1050,-50 L-50,-50 Z" fill="#E8EDE4" />
+            <!-- Roads/Rivers (Decorative) -->
+            <path d="M 200,-50 Q 300,200 400,300 T 700,500 Q 800,650 900,700" fill="none" stroke="rgba(210,230,215,0.8)" stroke-width="12" stroke-linecap="round"/>
+            <path d="M 500,-50 Q 550,150 450,250 T 600,450 Q 650,550 500,650" fill="none" stroke="rgba(210,230,215,0.6)" stroke-width="8" stroke-linecap="round"/>
+            <path d="M -50,300 Q 150,350 300,250 T 650,300 Q 850,250 1050,400" fill="none" stroke="rgba(45,106,79,0.06)" stroke-width="16" stroke-linecap="round"/>
+          </svg>
+          
           <!-- Dynamic Location Pins -->
           <div class="map-pins-layer" id="map-pins" aria-label="Titik lokasi kreatif">
             <!-- Rendered by app.js -->
           </div>
         </div>
+
+        <!-- Detail Side Panel -->
+        <div class="trail-detail-panel" id="trail-detail-panel">
+          <div class="trail-detail-empty">
+            <div class="icon-wrap-xl">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:40px;height:40px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </div>
+            <p>Pilih salah satu desa kreatif di peta untuk melihat detail lokasi, jumlah UMKM, dan proyek aktif.</p>
+          </div>
+        </div>
       </section>
-
-      <!-- Location Cards Grid -->
-      <div class="section-title-row">
-        <h2 class="section-title">Semua Lokasi Kreatif</h2>
-        <span class="section-count">6 lokasi ditemukan</span>
-      </div>
-
-      <div class="trail-grid" id="trail-grid" role="list" aria-label="Daftar lokasi kreatif">
-        <!-- Rendered by app.js -->
-      </div>
 
     </div>
   </main>

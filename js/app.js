@@ -669,46 +669,78 @@ function aiMatchCard(p) {
 // ─── Page: Creative Trail Map (trail-map.html) ────────────
 function renderTrailMap() {
   const pins = document.getElementById("map-pins");
-  const grid = document.getElementById("trail-grid");
-  if (!pins || !grid) return;
+  if (!pins) return;
 
   pins.innerHTML = trailLocations
     .map(
       (loc) => `
-    <button class="map-pin-btn" style="top:${loc.lat};left:${loc.lng};"
-      onclick="highlightCard(${loc.id})">
+    <button class="map-pin-btn" id="map-pin-${loc.id}" style="top:${loc.lat};left:${loc.lng};"
+      onclick="selectTrailLocation(${loc.id})">
       ${getIcon("pin", "icon-sm")} ${loc.tag}
     </button>`
     )
     .join("");
-
-  grid.innerHTML = trailLocations.map((loc) => trailCard(loc)).join("");
 }
 
-function highlightCard(id) {
-  document.querySelectorAll(".card-trail").forEach((c) => c.classList.remove("highlighted"));
-  const target = document.getElementById(`trail-card-${id}`);
-  if (target) {
-    target.classList.add("highlighted");
-    target.scrollIntoView({ behavior: "smooth", block: "nearest" });
+function selectTrailLocation(id) {
+  // Highlight pin
+  document.querySelectorAll(".map-pin-btn").forEach((p) => {
+    p.style.background = "white";
+    p.style.color = "var(--accent-green)";
+  });
+  const activePin = document.getElementById(`map-pin-${id}`);
+  if (activePin) {
+    activePin.style.background = "var(--accent-green)";
+    activePin.style.color = "white";
   }
-}
 
-function trailCard(loc) {
-  const tags = loc.categories.map((c) => `<span class="tag">${c}</span>`).join("");
-  return `
-  <article class="card card-trail" id="trail-card-${loc.id}">
-    <div class="card-top">
-      <div class="card-icon-wrap">${getIcon(loc.icon)}</div>
+  const loc = trailLocations.find(l => l.id === id);
+  if (!loc) return;
+
+  const panel = document.getElementById("trail-detail-panel");
+  if (!panel) return;
+
+  panel.innerHTML = `
+    <div class="trail-detail-header">
+      <div class="icon-wrap-lg" style="margin-bottom: var(--space-2); color: var(--accent-green);">
+        ${getIcon(loc.icon)}
+      </div>
+      <h3 class="trail-detail-title">${loc.name}</h3>
+      <span class="tag" style="align-self: flex-start; margin-top: 4px;">${loc.tag}</span>
     </div>
-    <h3 class="card-title">${loc.name}</h3>
-    <p class="card-desc">${loc.description}</p>
-    <div class="card-tags">${tags}</div>
-    <div class="trail-stats">
-      <span>${getIcon("pin", "icon-sm")} ${loc.projects} proyek</span>
-      <span>${getIcon("star", "icon-sm")} ${loc.rating}</span>
+    
+    <div class="trail-detail-stats">
+      <div class="trail-detail-stat">
+        <span class="trail-detail-stat-label">UMKM</span>
+        <span class="trail-detail-stat-value">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          ${loc.umkmCount || '15+'}
+        </span>
+      </div>
+      <div class="trail-detail-stat">
+        <span class="trail-detail-stat-label">Proyek</span>
+        <span class="trail-detail-stat-value">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          ${loc.projects}
+        </span>
+      </div>
+      <div class="trail-detail-stat" style="grid-column: span 2;">
+        <span class="trail-detail-stat-label">Rating & Kategori</span>
+        <span class="trail-detail-stat-value" style="font-size: var(--fs-sm); color: var(--text-main);">
+          <svg viewBox="0 0 24 24" fill="#F59E0B" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          ${loc.rating} &nbsp;&bull;&nbsp; ${loc.categories.slice(0, 2).join(', ')}
+        </span>
+      </div>
     </div>
-  </article>`;
+
+    <p class="trail-detail-desc">${loc.description}</p>
+    
+    <div class="trail-detail-action">
+      <button class="btn btn-primary" style="width: 100%;" onclick='populateAndOpenLocationModal(${JSON.stringify(loc)}, window.openModal)'>
+        Lihat Detail
+      </button>
+    </div>
+  `;
 }
 
 // ─── Page: Impact Portfolio (portfolio.html) ──────────────
